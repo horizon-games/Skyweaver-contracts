@@ -8,14 +8,6 @@ This repository includes smart contracts that are specific to Skyweaver. These c
 4. `yarn ganache`
 5. (Different terminal) `yarn test`
 
-## For deployment to dev/stg/prod
-1. `yarn install`
-2. `yarn build`
-3. update deployer mnemonics/infura keys in `config/(dev|stg|prod).env`
-5. (Different terminal) `yarn migrate:rinkeby-(deg|stg|prod)`
-
-ps: if migration fails due to gas, try tweaking values in truffle.js network settings
-
 # SkyWeaver's Smart Contracts Environment
 This is a overview of all the smart contracts in this repository. 
 
