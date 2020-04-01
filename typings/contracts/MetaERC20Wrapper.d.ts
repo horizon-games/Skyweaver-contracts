@@ -92,7 +92,11 @@ interface MetaERC20WrapperInterface extends Interface {
     }>;
 
     deposit: TypedFunctionDescription<{
-      encode([_token, _value]: [string, BigNumberish]): string;
+      encode([_token, _recipient, _value]: [
+        string,
+        string,
+        BigNumberish
+      ]): string;
     }>;
 
     withdraw: TypedFunctionDescription<{
@@ -267,6 +271,7 @@ export class MetaERC20Wrapper extends Contract {
 
     deposit(
       _token: string,
+      _recipient: string,
       _value: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
@@ -375,6 +380,7 @@ export class MetaERC20Wrapper extends Contract {
 
   deposit(
     _token: string,
+    _recipient: string,
     _value: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
@@ -505,7 +511,11 @@ export class MetaERC20Wrapper extends Contract {
       _approved: boolean
     ): Promise<BigNumber>;
 
-    deposit(_token: string, _value: BigNumberish): Promise<BigNumber>;
+    deposit(
+      _token: string,
+      _recipient: string,
+      _value: BigNumberish
+    ): Promise<BigNumber>;
 
     withdraw(
       _token: string,

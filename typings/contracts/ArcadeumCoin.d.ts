@@ -21,7 +21,11 @@ interface ArcadeumCoinInterface extends Interface {
     }>;
 
     deposit: TypedFunctionDescription<{
-      encode([_token, _value]: [string, BigNumberish]): string;
+      encode([_token, _recipient, _value]: [
+        string,
+        string,
+        BigNumberish
+      ]): string;
     }>;
 
     getIdAddress: TypedFunctionDescription<{
@@ -203,6 +207,7 @@ export class ArcadeumCoin extends Contract {
 
     deposit(
       _token: string,
+      _recipient: string,
       _value: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
@@ -311,6 +316,7 @@ export class ArcadeumCoin extends Contract {
 
   deposit(
     _token: string,
+    _recipient: string,
     _value: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
@@ -447,7 +453,11 @@ export class ArcadeumCoin extends Contract {
 
     balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber>;
 
-    deposit(_token: string, _value: BigNumberish): Promise<BigNumber>;
+    deposit(
+      _token: string,
+      _recipient: string,
+      _value: BigNumberish
+    ): Promise<BigNumber>;
 
     getIdAddress(_id: BigNumberish): Promise<BigNumber>;
 
