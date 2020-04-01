@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "boxen": "^4.2.0",
-    "erc20-meta-wrapper": "0.2.2",
+    "erc20-meta-token": "0.2.2",
     "multi-token-standard": "0.8.13",
-    "niftyswap": "0.1.2"
+    "niftyswap": "0.2.1"
   },
   "devDependencies": {
     "@types/chai-as-promised": "^7.1.0",
