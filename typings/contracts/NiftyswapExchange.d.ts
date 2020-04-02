@@ -127,21 +127,21 @@ interface NiftyswapExchangeInterface extends Interface {
       ]): string;
     }>;
 
-    getBaseTokenReserves: TypedFunctionDescription<{
+    getCurrencyReserves: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getPrice_baseToToken: TypedFunctionDescription<{
-      encode([_ids, _tokensBoughts]: [BigNumberish[], BigNumberish[]]): string;
+    getPrice_currencyToToken: TypedFunctionDescription<{
+      encode([_ids, _tokensBought]: [BigNumberish[], BigNumberish[]]): string;
     }>;
 
-    getPrice_tokenToBase: TypedFunctionDescription<{
+    getPrice_tokenToCurrency: TypedFunctionDescription<{
       encode([_ids, _tokensSold]: [BigNumberish[], BigNumberish[]]): string;
     }>;
 
     getTokenAddress: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    getBaseTokenInfo: TypedFunctionDescription<{ encode([]: []): string }>;
+    getCurrencyInfo: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getTotalSupply: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
@@ -163,18 +163,18 @@ interface NiftyswapExchangeInterface extends Interface {
       ]): string[];
     }>;
 
-    BaseTokenPurchase: TypedEventDescription<{
+    CurrencyPurchase: TypedEventDescription<{
       encodeTopics([
         buyer,
         recipient,
         tokensSoldIds,
         tokensSoldAmounts,
-        baseTokensBoughtAmounts
+        currencyBoughtAmounts
       ]: [string | null, string | null, null, null, null]): string[];
     }>;
 
     LiquidityAdded: TypedEventDescription<{
-      encodeTopics([provider, tokenIds, tokenAmounts, baseTokenAmounts]: [
+      encodeTopics([provider, tokenIds, tokenAmounts, currencyAmounts]: [
         string | null,
         null,
         null,
@@ -183,7 +183,7 @@ interface NiftyswapExchangeInterface extends Interface {
     }>;
 
     LiquidityRemoved: TypedEventDescription<{
-      encodeTopics([provider, tokenIds, tokenAmounts, baseTokenAmounts]: [
+      encodeTopics([provider, tokenIds, tokenAmounts, currencyAmounts]: [
         string | null,
         null,
         null,
@@ -201,7 +201,7 @@ interface NiftyswapExchangeInterface extends Interface {
         recipient,
         tokensBoughtIds,
         tokensBoughtAmounts,
-        baseTokensSoldAmounts
+        currencySoldAmounts
       ]: [string | null, string | null, null, null, null]): string[];
     }>;
 
@@ -349,23 +349,21 @@ export class NiftyswapExchange extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getBaseTokenReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-    getPrice_baseToToken(
+    getPrice_currencyToToken(
       _ids: BigNumberish[],
-      _tokensBoughts: BigNumberish[]
+      _tokensBought: BigNumberish[]
     ): Promise<BigNumber[]>;
 
-    getPrice_tokenToBase(
+    getPrice_tokenToCurrency(
       _ids: BigNumberish[],
       _tokensSold: BigNumberish[]
     ): Promise<BigNumber[]>;
 
     getTokenAddress(): Promise<string>;
 
-    getBaseTokenInfo(): Promise<{
-      _baseTokenAddress: string;
-      _baseTokenID: BigNumber;
+    getCurrencyInfo(): Promise<{
       0: string;
       1: BigNumber;
     }>;
@@ -475,23 +473,21 @@ export class NiftyswapExchange extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getBaseTokenReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-  getPrice_baseToToken(
+  getPrice_currencyToToken(
     _ids: BigNumberish[],
-    _tokensBoughts: BigNumberish[]
+    _tokensBought: BigNumberish[]
   ): Promise<BigNumber[]>;
 
-  getPrice_tokenToBase(
+  getPrice_tokenToCurrency(
     _ids: BigNumberish[],
     _tokensSold: BigNumberish[]
   ): Promise<BigNumber[]>;
 
   getTokenAddress(): Promise<string>;
 
-  getBaseTokenInfo(): Promise<{
-    _baseTokenAddress: string;
-    _baseTokenID: BigNumber;
+  getCurrencyInfo(): Promise<{
     0: string;
     1: BigNumber;
   }>;
@@ -509,26 +505,26 @@ export class NiftyswapExchange extends Contract {
       _approved: null
     ): EventFilter;
 
-    BaseTokenPurchase(
+    CurrencyPurchase(
       buyer: string | null,
       recipient: string | null,
       tokensSoldIds: null,
       tokensSoldAmounts: null,
-      baseTokensBoughtAmounts: null
+      currencyBoughtAmounts: null
     ): EventFilter;
 
     LiquidityAdded(
       provider: string | null,
       tokenIds: null,
       tokenAmounts: null,
-      baseTokenAmounts: null
+      currencyAmounts: null
     ): EventFilter;
 
     LiquidityRemoved(
       provider: string | null,
       tokenIds: null,
       tokenAmounts: null,
-      baseTokenAmounts: null
+      currencyAmounts: null
     ): EventFilter;
 
     NonceChange(signer: string | null, newNonce: null): EventFilter;
@@ -538,7 +534,7 @@ export class NiftyswapExchange extends Contract {
       recipient: string | null,
       tokensBoughtIds: null,
       tokensBoughtAmounts: null,
-      baseTokensSoldAmounts: null
+      currencySoldAmounts: null
     ): EventFilter;
 
     TransferBatch(
@@ -651,21 +647,21 @@ export class NiftyswapExchange extends Contract {
       _data: Arrayish
     ): Promise<BigNumber>;
 
-    getBaseTokenReserves(_ids: BigNumberish[]): Promise<BigNumber>;
+    getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber>;
 
-    getPrice_baseToToken(
+    getPrice_currencyToToken(
       _ids: BigNumberish[],
-      _tokensBoughts: BigNumberish[]
+      _tokensBought: BigNumberish[]
     ): Promise<BigNumber>;
 
-    getPrice_tokenToBase(
+    getPrice_tokenToCurrency(
       _ids: BigNumberish[],
       _tokensSold: BigNumberish[]
     ): Promise<BigNumber>;
 
     getTokenAddress(): Promise<BigNumber>;
 
-    getBaseTokenInfo(): Promise<BigNumber>;
+    getCurrencyInfo(): Promise<BigNumber>;
 
     getTotalSupply(_ids: BigNumberish[]): Promise<BigNumber>;
 

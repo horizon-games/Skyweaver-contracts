@@ -1,7 +1,7 @@
 pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
-import "erc20-meta-wrapper/contracts/mocks/ERC20Mock.sol";
+import "erc20-meta-token/contracts/mocks/ERC20Mock.sol";
 import "../utils/Ownable.sol";
 
 contract MockDAI is ERC20Mock, Ownable {

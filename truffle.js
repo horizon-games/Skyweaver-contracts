@@ -33,30 +33,6 @@ module.exports = {
       network_id: 127001,
       host: "127.0.0.1",
       port: 8545
-    },
-    rinkeby: {
-      network_id: 4,
-      provider: provider('rinkeby', 'rinkeby'),
-      gas: 6796752,
-      skipDryRun: true
-    },
-    dev: {
-      network_id: 4,
-      provider: provider('rinkeby', 'dev'),
-      gas: 6796752,
-      skipDryRun: true
-    },
-    stg: {
-      network_id: 4,
-      provider: provider('rinkeby', 'stg'),
-      gas: 6796752,
-      skipDryRun: true
-    },
-    prod: {
-      network_id: 4,
-      provider: provider('rinkeby', 'prod'),
-      gas: 6796752,
-      skipDryRun: true
     }
   },
   compilers: {

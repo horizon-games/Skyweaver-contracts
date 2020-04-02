@@ -22,6 +22,16 @@ interface INiftyswapExchangeInterface extends Interface {
       ]): string;
     }>;
 
+    onERC1155BatchReceived: TypedFunctionDescription<{
+      encode([, _from, _ids, _amounts, _data]: [
+        string,
+        string,
+        BigNumberish[],
+        BigNumberish[],
+        Arrayish
+      ]): string;
+    }>;
+
     getBuyPrice: TypedFunctionDescription<{
       encode([_assetBoughtAmount, _assetSoldReserve, _assetBoughtReserve]: [
         BigNumberish,
@@ -38,52 +48,66 @@ interface INiftyswapExchangeInterface extends Interface {
       ]): string;
     }>;
 
-    getPrice_baseToToken: TypedFunctionDescription<{
-      encode([_id, _tokensBought]: [BigNumberish, BigNumberish]): string;
+    getCurrencyReserves: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getPrice_tokenToBase: TypedFunctionDescription<{
-      encode([_id, _tokensSold]: [BigNumberish, BigNumberish]): string;
+    getPrice_currencyToToken: TypedFunctionDescription<{
+      encode([_ids, _tokensBought]: [BigNumberish[], BigNumberish[]]): string;
+    }>;
+
+    getPrice_tokenToCurrency: TypedFunctionDescription<{
+      encode([_ids, _tokensSold]: [BigNumberish[], BigNumberish[]]): string;
+    }>;
+
+    getTotalSupply: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
     }>;
 
     getTokenAddress: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    getBaseTokenInfo: TypedFunctionDescription<{ encode([]: []): string }>;
+    getCurrencyInfo: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getFactoryAddress: TypedFunctionDescription<{ encode([]: []): string }>;
   };
 
   events: {
-    AddLiquidity: TypedEventDescription<{
-      encodeTopics([provider, baseTokenAmount, tokenAmount]: [
+    CurrencyPurchase: TypedEventDescription<{
+      encodeTopics([
+        buyer,
+        recipient,
+        tokensSoldIds,
+        tokensSoldAmounts,
+        currencyBoughtAmounts
+      ]: [string | null, string | null, null, null, null]): string[];
+    }>;
+
+    LiquidityAdded: TypedEventDescription<{
+      encodeTopics([provider, tokenIds, tokenAmounts, currencyAmounts]: [
         string | null,
-        BigNumberish | null,
-        BigNumberish | null
+        null,
+        null,
+        null
       ]): string[];
     }>;
 
-    BaseTokenPurchase: TypedEventDescription<{
-      encodeTopics([buyer, tokensSold, baseTokensBought]: [
+    LiquidityRemoved: TypedEventDescription<{
+      encodeTopics([provider, tokenIds, tokenAmounts, currencyAmounts]: [
         string | null,
-        BigNumberish | null,
-        BigNumberish | null
+        null,
+        null,
+        null
       ]): string[];
     }>;
 
-    RemoveLiquidity: TypedEventDescription<{
-      encodeTopics([provider, baseTokenAmount, tokenAmount]: [
-        string | null,
-        BigNumberish | null,
-        BigNumberish | null
-      ]): string[];
-    }>;
-
-    TokenPurchase: TypedEventDescription<{
-      encodeTopics([buyer, baseTokeSold, tokensBought]: [
-        string | null,
-        BigNumberish | null,
-        BigNumberish | null
-      ]): string[];
+    TokensPurchase: TypedEventDescription<{
+      encodeTopics([
+        buyer,
+        recipient,
+        tokensBoughtIds,
+        tokensBoughtAmounts,
+        currencySoldAmounts
+      ]: [string | null, string | null, null, null, null]): string[];
     }>;
   };
 }
@@ -114,6 +138,15 @@ export class INiftyswapExchange extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     getBuyPrice(
       _assetBoughtAmount: BigNumberish,
       _assetSoldReserve: BigNumberish,
@@ -126,19 +159,23 @@ export class INiftyswapExchange extends Contract {
       _assetBoughtReserve: BigNumberish
     ): Promise<BigNumber>;
 
-    getPrice_baseToToken(
-      _id: BigNumberish,
-      _tokensBought: BigNumberish
-    ): Promise<BigNumber>;
+    getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-    getPrice_tokenToBase(
-      _id: BigNumberish,
-      _tokensSold: BigNumberish
-    ): Promise<BigNumber>;
+    getPrice_currencyToToken(
+      _ids: BigNumberish[],
+      _tokensBought: BigNumberish[]
+    ): Promise<BigNumber[]>;
+
+    getPrice_tokenToCurrency(
+      _ids: BigNumberish[],
+      _tokensSold: BigNumberish[]
+    ): Promise<BigNumber[]>;
+
+    getTotalSupply(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     getTokenAddress(): Promise<string>;
 
-    getBaseTokenInfo(): Promise<{
+    getCurrencyInfo(): Promise<{
       0: string;
       1: BigNumber;
     }>;
@@ -155,6 +192,15 @@ export class INiftyswapExchange extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  onERC1155BatchReceived(
+    arg0: string,
+    _from: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
   getBuyPrice(
     _assetBoughtAmount: BigNumberish,
     _assetSoldReserve: BigNumberish,
@@ -167,19 +213,23 @@ export class INiftyswapExchange extends Contract {
     _assetBoughtReserve: BigNumberish
   ): Promise<BigNumber>;
 
-  getPrice_baseToToken(
-    _id: BigNumberish,
-    _tokensBought: BigNumberish
-  ): Promise<BigNumber>;
+  getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-  getPrice_tokenToBase(
-    _id: BigNumberish,
-    _tokensSold: BigNumberish
-  ): Promise<BigNumber>;
+  getPrice_currencyToToken(
+    _ids: BigNumberish[],
+    _tokensBought: BigNumberish[]
+  ): Promise<BigNumber[]>;
+
+  getPrice_tokenToCurrency(
+    _ids: BigNumberish[],
+    _tokensSold: BigNumberish[]
+  ): Promise<BigNumber[]>;
+
+  getTotalSupply(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   getTokenAddress(): Promise<string>;
 
-  getBaseTokenInfo(): Promise<{
+  getCurrencyInfo(): Promise<{
     0: string;
     1: BigNumber;
   }>;
@@ -187,28 +237,34 @@ export class INiftyswapExchange extends Contract {
   getFactoryAddress(): Promise<string>;
 
   filters: {
-    AddLiquidity(
-      provider: string | null,
-      baseTokenAmount: BigNumberish | null,
-      tokenAmount: BigNumberish | null
-    ): EventFilter;
-
-    BaseTokenPurchase(
+    CurrencyPurchase(
       buyer: string | null,
-      tokensSold: BigNumberish | null,
-      baseTokensBought: BigNumberish | null
+      recipient: string | null,
+      tokensSoldIds: null,
+      tokensSoldAmounts: null,
+      currencyBoughtAmounts: null
     ): EventFilter;
 
-    RemoveLiquidity(
+    LiquidityAdded(
       provider: string | null,
-      baseTokenAmount: BigNumberish | null,
-      tokenAmount: BigNumberish | null
+      tokenIds: null,
+      tokenAmounts: null,
+      currencyAmounts: null
     ): EventFilter;
 
-    TokenPurchase(
+    LiquidityRemoved(
+      provider: string | null,
+      tokenIds: null,
+      tokenAmounts: null,
+      currencyAmounts: null
+    ): EventFilter;
+
+    TokensPurchase(
       buyer: string | null,
-      baseTokeSold: BigNumberish | null,
-      tokensBought: BigNumberish | null
+      recipient: string | null,
+      tokensBoughtIds: null,
+      tokensBoughtAmounts: null,
+      currencySoldAmounts: null
     ): EventFilter;
   };
 
@@ -218,6 +274,14 @@ export class INiftyswapExchange extends Contract {
       _from: string,
       _id: BigNumberish,
       _amount: BigNumberish,
+      _data: Arrayish
+    ): Promise<BigNumber>;
+
+    onERC1155BatchReceived(
+      arg0: string,
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       _data: Arrayish
     ): Promise<BigNumber>;
 
@@ -233,19 +297,23 @@ export class INiftyswapExchange extends Contract {
       _assetBoughtReserve: BigNumberish
     ): Promise<BigNumber>;
 
-    getPrice_baseToToken(
-      _id: BigNumberish,
-      _tokensBought: BigNumberish
+    getCurrencyReserves(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    getPrice_currencyToToken(
+      _ids: BigNumberish[],
+      _tokensBought: BigNumberish[]
     ): Promise<BigNumber>;
 
-    getPrice_tokenToBase(
-      _id: BigNumberish,
-      _tokensSold: BigNumberish
+    getPrice_tokenToCurrency(
+      _ids: BigNumberish[],
+      _tokensSold: BigNumberish[]
     ): Promise<BigNumber>;
+
+    getTotalSupply(_ids: BigNumberish[]): Promise<BigNumber>;
 
     getTokenAddress(): Promise<BigNumber>;
 
-    getBaseTokenInfo(): Promise<BigNumber>;
+    getCurrencyInfo(): Promise<BigNumber>;
 
     getFactoryAddress(): Promise<BigNumber>;
   };
