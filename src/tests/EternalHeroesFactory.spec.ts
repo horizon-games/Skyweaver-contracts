@@ -139,9 +139,9 @@ contract('EternalHeroesFactory', (accounts: string[]) => {
 
   describe('Getter functions', () => {
 
-    describe('getFactoryManager() function', () => {
+    describe('getSkyweaverAssets() function', () => {
       it('should return Factory manager contract address', async () => {
-        const address = await factoryContract.functions.getFactoryManager()
+        const address = await factoryContract.functions.getSkyweaverAssets()
         expect(address).to.be.eql(skyweaverAssetsContract.address)
       })
     })

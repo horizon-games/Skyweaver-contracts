@@ -109,7 +109,7 @@ interface GoldCardsFactoryInterface extends Interface {
 
     getCardPool: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    getFactoryManager: TypedFunctionDescription<{ encode([]: []): string }>;
+    getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getWeave: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -286,7 +286,7 @@ export class GoldCardsFactory extends Contract {
 
     getCardPool(): Promise<BigNumber[]>;
 
-    getFactoryManager(): Promise<string>;
+    getSkyweaverAssets(): Promise<string>;
 
     getWeave(): Promise<string>;
 
@@ -402,7 +402,7 @@ export class GoldCardsFactory extends Contract {
 
   getCardPool(): Promise<BigNumber[]>;
 
-  getFactoryManager(): Promise<string>;
+  getSkyweaverAssets(): Promise<string>;
 
   getWeave(): Promise<string>;
 
@@ -516,7 +516,7 @@ export class GoldCardsFactory extends Contract {
 
     getCardPool(): Promise<BigNumber>;
 
-    getFactoryManager(): Promise<BigNumber>;
+    getSkyweaverAssets(): Promise<BigNumber>;
 
     getWeave(): Promise<BigNumber>;
 

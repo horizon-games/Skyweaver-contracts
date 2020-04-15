@@ -54,7 +54,7 @@ interface EternalHeroesFactoryInterface extends Interface {
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getFactoryManager: TypedFunctionDescription<{ encode([]: []): string }>;
+    getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getArcadeumCoin: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -169,7 +169,7 @@ export class EternalHeroesFactory extends Contract {
 
     getPurchasableStatus(_ids: BigNumberish[]): Promise<boolean[]>;
 
-    getFactoryManager(): Promise<string>;
+    getSkyweaverAssets(): Promise<string>;
 
     getArcadeumCoin(): Promise<string>;
 
@@ -239,7 +239,7 @@ export class EternalHeroesFactory extends Contract {
 
   getPurchasableStatus(_ids: BigNumberish[]): Promise<boolean[]>;
 
-  getFactoryManager(): Promise<string>;
+  getSkyweaverAssets(): Promise<string>;
 
   getArcadeumCoin(): Promise<string>;
 
@@ -313,7 +313,7 @@ export class EternalHeroesFactory extends Contract {
 
     getPurchasableStatus(_ids: BigNumberish[]): Promise<BigNumber>;
 
-    getFactoryManager(): Promise<BigNumber>;
+    getSkyweaverAssets(): Promise<BigNumber>;
 
     getArcadeumCoin(): Promise<BigNumber>;
 

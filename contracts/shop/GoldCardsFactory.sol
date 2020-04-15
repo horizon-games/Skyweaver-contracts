@@ -59,7 +59,7 @@ contract GoldCardsFactory is Ownable {
   |__________________________________*/
 
   /**
-   * @notice Create factory, link factory manager and store initial paramters
+   * @notice Create factory, link Skyweaver Assets contract and store initial paramters
    * @param _assetsAddr  The address of the ERC-1155 Assets Token
    * @param _weaveAddr   The address of the ERC-1155 Base Token
    * @param _weaveID     The ID of the ERC-1155 Base Token
@@ -214,7 +214,7 @@ contract GoldCardsFactory is Ownable {
     // call onERC1155BatchReceived()
     require(
       ERC1155_BATCH_RECEIVED_VALUE == onERC1155BatchReceived(_operator, _from, ids, amounts, _data),
-      "NiftyswapExchange#onERC1155Received: INVALID_ONRECEIVED_MESSAGE"
+      "GoldCardsFactory#onERC1155Received: INVALID_ONRECEIVED_MESSAGE"
     );
 
     return ERC1155_RECEIVED_VALUE;
@@ -480,9 +480,9 @@ contract GoldCardsFactory is Ownable {
   }
 
   /**
-   * @notice Returns the address of the factory manager contract
+   * @notice Returns the address of the skyweaver assets contract
    */
-  function getFactoryManager() external view returns (address) {
+  function getSkyweaverAssets() external view returns (address) {
     return address(skyweaverAssets);
   }
 

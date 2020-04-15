@@ -13,21 +13,15 @@ import "multi-token-standard/contracts/utils/SafeMath.sol";
 contract EternalHeroesFactory is Ownable {
   using SafeMath for uint256;
 
-  /**
-   * TO DO
-   *   - Check for SLOADs for stepsFrequency and stepSize in `_buy`
-   *   - Add getter function
-   */
-
   /***********************************|
-  |        Variables && Events        |
+  |             Variables             |
   |__________________________________*/
 
   // Constants
   uint256 constant internal decimals = 2; // Number of decimals
 
   // Initiate Variables
-  ISWSupplyManager internal factoryManager;  // SkyWeaver Factory manager contract
+  ISWSupplyManager internal skyweaverAssets; // SkyWeaver Assets Contract
   IERC1155 internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
   uint256 internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
 
@@ -60,16 +54,16 @@ contract EternalHeroesFactory is Ownable {
   |__________________________________*/
 
   /**
-   * @notice Create factory, link factory manager and store initial paramters
-   * @param _factoryManagerAddr  The address of the Skyweaver Factory Manager contract
+   * @notice Create factory, link skyweaver assets and store initial paramters
+   * @param _skyweaverAssetsAddr The address of the Skyweaver Assets contract
    * @param _arcadeumCoinAddr    The address of the ERC-1155 Base Token
    * @param _arcadeumCoinID      The ID of the ERC-1155 Base Token
    * @param _floorPrice          Base, most discounted price
    * @param _tierSize            How many asset need to be purchased to move to next discount tier
-   * @param _priceIncrement       Discount you get when you move up a discount step
+   * @param _priceIncrement      Discount you get when you move up a discount step
    */
   constructor(
-    address _factoryManagerAddr,
+    address _skyweaverAssetsAddr,
     address _arcadeumCoinAddr,
     uint256 _arcadeumCoinID,
     uint256 _floorPrice,
@@ -79,7 +73,7 @@ contract EternalHeroesFactory is Ownable {
 
     //Input validation
     require(
-      _factoryManagerAddr != address(0) &&
+      _skyweaverAssetsAddr != address(0) &&
       _arcadeumCoinAddr != address(0) &&
       _floorPrice > 100000000 && //Sanity check to "make sure" decimals are accounted for
       _tierSize > 0 &&
@@ -88,7 +82,7 @@ contract EternalHeroesFactory is Ownable {
     );
 
     // Set variables and constants
-    factoryManager = ISWSupplyManager(_factoryManagerAddr);
+    skyweaverAssets = ISWSupplyManager(_skyweaverAssetsAddr);
     arcadeumCoin = IERC1155(_arcadeumCoinAddr);
     arcadeumCoinID = _arcadeumCoinID;
     floorPrice = _floorPrice;
@@ -108,7 +102,7 @@ contract EternalHeroesFactory is Ownable {
    * @param _ids Array of asset IDs to allow for purchasing
    */
   function registerIDs(uint256[] calldata _ids) external onlyOwner() {
-    uint256[] memory maxSupplies = factoryManager.getMaxSupplies(_ids);
+    uint256[] memory maxSupplies = skyweaverAssets.getMaxSupplies(_ids);
     for (uint256 i = 0; i < _ids.length; i++) {
       require(maxSupplies[i] > 0, "EternalHeroesFactory#registerIDs: UNCAPPED_SUPPLY");
       isPurchasable[_ids[i]] = true;
@@ -224,7 +218,7 @@ contract EternalHeroesFactory is Ownable {
     uint256 tier_size = tierSize;
 
     // Load tokens to purchase supplies
-    uint256[] memory current_supplies = factoryManager.getCurrentSupplies(_ids);
+    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
 
     // Total amount of card to purchase
     uint256 total_cost = 0;
@@ -281,7 +275,7 @@ contract EternalHeroesFactory is Ownable {
     }
 
     // Mint tokens to recipient
-    factoryManager.batchMint(_recipient, _ids, amounts_to_mint, "");
+    skyweaverAssets.batchMint(_recipient, _ids, amounts_to_mint, "");
 
     // Emit event
     emit AssetsPurchased(_recipient, _ids, amounts_to_mint, total_cost);
@@ -310,10 +304,10 @@ contract EternalHeroesFactory is Ownable {
   }
 
   /**
-   * @notice Returns the address of the factory manager contract
+   * @notice Returns the address of the skyweaver assets contract
    */
-  function getFactoryManager() external view returns (address) {
-    return address(factoryManager);
+  function getSkyweaverAssets() external view returns (address) {
+    return address(skyweaverAssets);
   }
 
   /**
@@ -336,7 +330,7 @@ contract EternalHeroesFactory is Ownable {
    */
   function getPrices(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256[] memory current_prices = new uint256[](_ids.length);
-    uint256[] memory current_supplies = factoryManager.getCurrentSupplies(_ids);
+    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
     for (uint256 i = 0;  i < _ids.length; i++) {
       uint256 current_tier = current_supplies[i].div(tierSize);
       current_prices[i] = floorPrice.add(current_tier.mul(priceIncrement));
@@ -350,7 +344,7 @@ contract EternalHeroesFactory is Ownable {
    */
   function getPriceTiers(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256[] memory current_tiers = new uint256[](_ids.length);
-    uint256[] memory current_supplies = factoryManager.getCurrentSupplies(_ids);
+    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
     for (uint256 i = 0;  i < _ids.length; i++) {
       current_tiers[i] = current_supplies[i].div(tierSize);
     }
@@ -367,7 +361,7 @@ contract EternalHeroesFactory is Ownable {
     supplies = new uint256[](_ids.length);
 
     // Load supplies and tierSize
-    uint256[] memory current_supplies = factoryManager.getCurrentSupplies(_ids);
+    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
     uint256 tier_size = tierSize;
 
     // Get current tiers and asset left per tier

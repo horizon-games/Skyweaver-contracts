@@ -22,7 +22,9 @@ interface WeaveFactoryInterface extends Interface {
       encode([_recipient, _data]: [string, Arrayish]): string;
     }>;
 
-    getFactoryManager: TypedFunctionDescription<{ encode([]: []): string }>;
+    getSkyweaverCurrencies: TypedFunctionDescription<{
+      encode([]: []): string;
+    }>;
 
     getWeaveID: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -77,7 +79,7 @@ export class WeaveFactory extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getFactoryManager(): Promise<string>;
+    getSkyweaverCurrencies(): Promise<string>;
 
     getWeaveID(): Promise<BigNumber>;
 
@@ -101,7 +103,7 @@ export class WeaveFactory extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getFactoryManager(): Promise<string>;
+  getSkyweaverCurrencies(): Promise<string>;
 
   getWeaveID(): Promise<BigNumber>;
 
@@ -127,7 +129,7 @@ export class WeaveFactory extends Contract {
 
     harvestWeave(_recipient: string, _data: Arrayish): Promise<BigNumber>;
 
-    getFactoryManager(): Promise<BigNumber>;
+    getSkyweaverCurrencies(): Promise<BigNumber>;
 
     getWeaveID(): Promise<BigNumber>;
 

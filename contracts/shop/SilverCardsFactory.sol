@@ -14,14 +14,14 @@ contract SilverCardsFactory is Ownable {
   using SafeMath for uint256;
 
   /***********************************|
-  |        Variables && Events        |
+  |             Variables             |
   |__________________________________*/
 
   // Constants
   uint256 constant internal decimals = 2; // Number of decimals
 
   // Initiate Variables
-  ISWSupplyManager internal factoryManager;  // SkyWeaver Asset contract
+  ISWSupplyManager internal skyweaverAssets;  // SkyWeaver Asset contract
   IERC1155 internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
   uint256 internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
   uint256 internal cardPrice;                // Price per Silver Card
@@ -51,15 +51,15 @@ contract SilverCardsFactory is Ownable {
   |__________________________________*/
 
   /**
-   * @notice Create factory, link factory manager and store initial paramters
+   * @notice Create factory, link skyweaver assets contract and store initial paramters
    * @dev The _cardPrice should be per fraction of a card
-   * @param _factoryManagerAddr The address of the Skyweaver Factory Manager contract
+   * @param _skyweaverAssetsAddr The address of the Skyweaver assets contract
    * @param _arcadeumCoinAddr   The address of the ERC-1155 Base Token
    * @param _arcadeumCoinID     The ID of the ERC-1155 Base Token
    * @param _cardPrice          Price for each card
    */
   constructor(
-    address _factoryManagerAddr,
+    address _skyweaverAssetsAddr,
     address _arcadeumCoinAddr,
     uint256 _arcadeumCoinID,
     uint256 _cardPrice
@@ -67,14 +67,14 @@ contract SilverCardsFactory is Ownable {
 
     //Input validation
     require(
-      _factoryManagerAddr != address(0) &&
+      _skyweaverAssetsAddr != address(0) &&
       _arcadeumCoinAddr != address(0) &&
       _cardPrice > 100000000, //Sanity check to "make sure" decimals are accounted for
       "SilverCardsFactory#constructor: INVALID_INPUT"
     );
 
     // Set variables and constants
-    factoryManager = ISWSupplyManager(_factoryManagerAddr);
+    skyweaverAssets = ISWSupplyManager(_skyweaverAssetsAddr);
     arcadeumCoin = IERC1155(_arcadeumCoinAddr);
     arcadeumCoinID = _arcadeumCoinID;
     cardPrice = _cardPrice;
@@ -237,7 +237,7 @@ contract SilverCardsFactory is Ownable {
     }
 
     // Mint tokens to recipient
-    factoryManager.batchMint(_recipient, _ids, _amounts, "");
+    skyweaverAssets.batchMint(_recipient, _ids, _amounts, "");
 
     // Emit event
     emit CardsPurchased(_recipient, _ids, _amounts, total_cost);
@@ -266,10 +266,10 @@ contract SilverCardsFactory is Ownable {
   }
 
   /**
-   * @notice Returns the address of the factory manager contract
+   * @notice Returns the address of the skyweaver assets contract
    */
-  function getFactoryManager() external view returns (address) {
-    return address(factoryManager);
+  function getSkyweaverAssets() external view returns (address) {
+    return address(skyweaverAssets);
   }
 
   /**
