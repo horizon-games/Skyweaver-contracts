@@ -95,6 +95,8 @@ contract GoldCardsFactory is Ownable {
     rngDelay = _rngDelay;
 
     emit GoldPriceChanged(0, _goldPrice);
+    emit GoldRefundChanged(0, _goldRefund);
+    emit RNGDelayChanged(0, _rngDelay);
   }
 
 
@@ -275,8 +277,8 @@ contract GoldCardsFactory is Ownable {
     internal
   {
     // Check if weave sent is sufficient for order
-    uint256 total_cost = _order.cardAmount.mul(goldPrice).add(_order.feeAmount);
-    uint256 refund_amount = _weaveAmount.sub(total_cost); // Will throw if insufficient amount received
+    uint256 order_cost = _order.cardAmount.mul(goldPrice);
+    uint256 refund_amount = _weaveAmount.sub(order_cost.add(_order.feeAmount)); // Will throw if insufficient amount received
 
     // Set RNG block
     _order.rngBlock = block.number.add(rngDelay);
@@ -290,6 +292,10 @@ contract GoldCardsFactory is Ownable {
     if (refund_amount > 0) {
       weaveContract.safeTransferFrom(address(this), _order.cardRecipient, weaveID, refund_amount, "");
     }
+
+    // Burn the non-refundable weave
+    uint256 weave_to_burn = order_cost.sub(_order.cardAmount.mul(goldRefund));
+    weaveContract.burn(weaveID, weave_to_burn);
 
     // Emit event
     emit OrderCommited(_order);
@@ -367,10 +373,6 @@ contract GoldCardsFactory is Ownable {
 
     // Get random cards
     uint256[] memory amounts = validateRandomCards(rng_seed, _ids, _indexes);
-
-    // Burn the non-refundable weave
-    uint256 weave_to_burn = (_order.cardAmount.mul(goldPrice)).sub(_order.cardAmount.mul(goldRefund));
-    weaveContract.burn(weaveID, weave_to_burn);
 
     // Mint gold cards
     skyweaverAssets.batchMint(_order.cardRecipient, _ids, amounts, "");

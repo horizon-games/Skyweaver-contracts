@@ -675,7 +675,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       await userWeaveContract.functions.safeTransferFrom(userAddress, factory, weaveID, baseTokenAmount, buyCardsData, TX_PARAM)
       let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
       let user_balance = await weaveContract.functions.balanceOf(userAddress, weaveID)
-      expect(factory_balance).to.be.eql(cost);
+      expect(factory_balance).to.be.eql(refund.mul(nGoldsBuy).add(feeAmount));
       expect(user_balance).to.be.eql(baseTokenAmount.sub(cost));
     })
 
@@ -752,7 +752,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
 
       it('should update factory weave balance', async () => {
         let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
-        expect(factory_balance).to.be.eql(cost);
+        expect(factory_balance).to.be.eql(refund.mul(nGoldsBuy).add(feeAmount));
       })
 
       it('should update user weave balance', async () => {
@@ -1409,11 +1409,11 @@ contract('GoldCardsFactory', (accounts: string[]) => {
         logs = await operatorProvider.getLogs(filter);
       })
   
-      it('should update factory weave balance with enough for refund', async () => {
+      it('should update factory weave balance with enough for refund, minus fee paid', async () => {
         let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
-        let refund_amount = order.cardAmount.mul(refund)
-        let attempts_cost = cost.mul(n_loop-1)
-        expect(factory_balance).to.be.eql(refund_amount.add(attempts_cost));
+        let refund_amount = order.cardAmount.mul(refund).mul(n_loop)
+        let fees = feeAmount.mul(n_loop-1) // -1 because miner gets reimbursed once
+        expect(factory_balance).to.be.eql(refund_amount.add(fees));
       })
 
       it('should update operator weave balance', async () => {
