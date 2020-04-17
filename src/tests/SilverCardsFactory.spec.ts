@@ -70,7 +70,7 @@ contract('SilverCardsFactory', (accounts: string[]) => {
 
   // Token Param
   const nTokenTypes    = 30 
-  const nTokensPerType = 5
+  const nTokensPerType = 500
 
   // Range values 
   const minRange = new BigNumber(1);
@@ -78,8 +78,8 @@ contract('SilverCardsFactory', (accounts: string[]) => {
 
   // Base Token Param
   const arcID = new BigNumber(666);
-  const baseTokenAmount = new BigNumber(10000000).mul(new BigNumber(10).pow(18))
-  const price = new BigNumber(100).mul(new BigNumber(10).pow(18))
+  const baseTokenAmount = new BigNumber(1000000000).mul(new BigNumber(10).pow(16))
+  const price = new BigNumber(1).mul(new BigNumber(10).pow(16))
 
   // Arrays
   const ids = new Array(nTokenTypes).fill('').map((a, i) => getBig(i+1))
@@ -127,9 +127,9 @@ contract('SilverCardsFactory', (accounts: string[]) => {
   })
 
   describe('Getter functions', () => {
-    describe('getFactoryManager() function', () => {
+    describe('getSkyweaverAssets() function', () => {
       it('should return Factory manager contract address', async () => {
-        const manager = await factoryContract.functions.getFactoryManager()
+        const manager = await factoryContract.functions.getSkyweaverAssets()
         expect(manager).to.be.eql(skyweaverAssetsContract.address)
       })
     })
@@ -288,7 +288,7 @@ contract('SilverCardsFactory', (accounts: string[]) => {
       await expect(tx).to.be.rejectedWith(RevertError("SilverCardsFactory#updateCardPrice: INVALID_PRICE"))
     })
 
-    context('When tokens were deRegistered', () => {
+    context('When price was updated', () => {
       let tx;
       beforeEach(async () => {
         tx = await factoryContract.functions.updateCardPrice(newPrice)

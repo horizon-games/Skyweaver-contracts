@@ -16,17 +16,16 @@ contract WeaveFactory is Ownable {
   |        Variables && Events        |
   |__________________________________*/
 
+  // Number of decimals
+  uint256 constant internal decimals = 18;
+
   // Initiate Variables
-  ISWSupplyManager internal factoryManager; //SkyWeaver Curencies Factory Manager Contract
+  ISWSupplyManager internal skyweaverCurrencies; //SkyWeaver Currencies Contract
 
   // Mapping variables
   uint256 internal weavePerSecond; // Amount of Weave that is created per second
   uint256 internal lastHarvest;    // Last timestamp weave was harvested
   uint256 internal weaveID;        // ID for weave, the only ID this contract can mint
-
-  /***********************************|
-  |               Events              |
-  |__________________________________*/
 
   event WeaveHarvested(address recipient, uint256 amount);
 
@@ -36,21 +35,21 @@ contract WeaveFactory is Ownable {
   |__________________________________*/
 
   /**
-   * @notice Create weave factory, link SW factory manager and set weekly weave limit
-   * @param _factoryManagerAddr The address of the Skyweaver Factory Manager contract
+   * @notice Create weave factory, link SW currencies contract and set weekly weave limit
+   * @param _skyweaverCurrenciesAddr The address of the Skyweaver currencies contract
    * @param _weavePerSecond     Amount of weave that is created per second
    * @param _weaveID            Weave's token ID
    */
-  constructor(address _factoryManagerAddr, uint256 _weavePerSecond, uint256 _weaveID) public {
+  constructor(address _skyweaverCurrenciesAddr, uint256 _weavePerSecond, uint256 _weaveID) public {
 
     //Input validation
     require(
-      _factoryManagerAddr != address(0),
+      _skyweaverCurrenciesAddr != address(0),
       "WeaveFactory#constructor: INVALID_INPUT"
     );
 
     // Set variables and constants
-    factoryManager = ISWSupplyManager(_factoryManagerAddr);
+    skyweaverCurrencies = ISWSupplyManager(_skyweaverCurrenciesAddr);
     weavePerSecond = _weavePerSecond;
     lastHarvest = now;
     weaveID = _weaveID;
@@ -75,7 +74,7 @@ contract WeaveFactory is Ownable {
     lastHarvest = now;
 
     // Mint weave
-    factoryManager.mint(_recipient, weaveID, weave_to_harvest, _data);
+    skyweaverCurrencies.mint(_recipient, weaveID, weave_to_harvest, _data);
     emit WeaveHarvested(_recipient, weave_to_harvest);
   }
 
@@ -96,10 +95,10 @@ contract WeaveFactory is Ownable {
   |__________________________________*/
 
   /**
-   * @notice Returns the address of the factory manager contract
+   * @notice Returns the address of the skyweaver currencies contract
    */
-  function getFactoryManager() external view returns (address) {
-    return address(factoryManager);
+  function getSkyweaverCurrencies() external view returns (address) {
+    return address(skyweaverCurrencies);
   }
 
   /**

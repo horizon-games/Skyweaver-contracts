@@ -165,9 +165,9 @@ contract('GoldCardsFactory', (accounts: string[]) => {
   })
 
   describe('Getter functions', () => {
-    describe('getFactoryManager() function', () => {
+    describe('getSkyweaverAssets() function', () => {
       it('should return Factory manager contract address', async () => {
-        const manager = await factoryContract.functions.getFactoryManager()
+        const manager = await factoryContract.functions.getSkyweaverAssets()
         expect(manager).to.be.eql(skyweaverAssetsContract.address)
       })
     })

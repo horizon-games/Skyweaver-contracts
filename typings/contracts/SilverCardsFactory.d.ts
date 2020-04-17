@@ -58,7 +58,7 @@ interface SilverCardsFactoryInterface extends Interface {
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getFactoryManager: TypedFunctionDescription<{ encode([]: []): string }>;
+    getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getArcadeumCoin: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -166,7 +166,7 @@ export class SilverCardsFactory extends Contract {
 
     getPurchasableStatus(_ids: BigNumberish[]): Promise<boolean[]>;
 
-    getFactoryManager(): Promise<string>;
+    getSkyweaverAssets(): Promise<string>;
 
     getArcadeumCoin(): Promise<string>;
 
@@ -224,7 +224,7 @@ export class SilverCardsFactory extends Contract {
 
   getPurchasableStatus(_ids: BigNumberish[]): Promise<boolean[]>;
 
-  getFactoryManager(): Promise<string>;
+  getSkyweaverAssets(): Promise<string>;
 
   getArcadeumCoin(): Promise<string>;
 
@@ -285,7 +285,7 @@ export class SilverCardsFactory extends Contract {
 
     getPurchasableStatus(_ids: BigNumberish[]): Promise<BigNumber>;
 
-    getFactoryManager(): Promise<BigNumber>;
+    getSkyweaverAssets(): Promise<BigNumber>;
 
     getArcadeumCoin(): Promise<BigNumber>;
 

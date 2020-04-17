@@ -102,9 +102,9 @@ contract('WeaveFactory', (accounts: string[]) => {
   })
 
   describe('Getter functions', () => {
-    describe('getFactoryManager() function', () => {
+    describe('getSkyweaverCurrencies() function', () => {
       it('should return Factory manager contract address', async () => {
-        const manager = await factoryContract.functions.getFactoryManager()
+        const manager = await factoryContract.functions.getSkyweaverCurrencies()
         expect(manager).to.be.eql(skyweaverCurrenciesContract.address)
       })
     })
