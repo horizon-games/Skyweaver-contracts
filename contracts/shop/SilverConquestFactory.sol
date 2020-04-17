@@ -22,7 +22,7 @@ contract SilverConquestFactory is Ownable {
 
   // Initiate Variables
   ISkyweaverAssets internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
-  uint256 internal mintBurnRatio = 875;      // Can only mint 7 silvers for every 8 burnt
+  uint256 internal mintBurnRatio;            // Can only mint k silvers for every N burnt, where k <= N
   uint256 internal availableSupply;          // Amount of silvers that can currently be minted
   IdRange internal silverCardsRange;         // ID space for silver cards
 
@@ -46,12 +46,18 @@ contract SilverConquestFactory is Ownable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
-   * @param _assetsAddr  The address of the ERC-1155 Assets Token contract
+   * @param _assetsAddr    The address of the ERC-1155 Assets Token contract
+   * @param _mintBurnRatio Can only mint k silvers for every N burnt
    */
-  constructor(address _assetsAddr) public {
+  constructor(address _assetsAddr, uint256 _mintBurnRatio) public {
     require(_assetsAddr != address(0), "SilverConquestFactory#constructor: INVALID_INPUT");
+    require(
+      _mintBurnRatio <= 1000,
+      "SilverConquestFactory#constructor: RATIO_IS_BIGGER_THAN_1"
+    );
     skyweaverAssets = ISkyweaverAssets(_assetsAddr);
-    emit MintBurnRatioChange(0, 875);
+    mintBurnRatio = _mintBurnRatio;
+    emit MintBurnRatioChange(0, _mintBurnRatio);
   }
 
 

@@ -92,7 +92,8 @@ contract('SilverConquestFactory', (accounts: string[]) => {
 
     // Deploy silver card factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
-      skyweaverAssetsContract.address
+      skyweaverAssetsContract.address,
+      mintBurnRatio
     ]) as SilverConquestFactory
     userFactoryContract = await factoryContract.connect(userSigner) as SilverConquestFactory
 
