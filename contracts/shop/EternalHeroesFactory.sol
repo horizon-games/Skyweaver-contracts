@@ -267,15 +267,15 @@ contract EternalHeroesFactory is Ownable {
       amounts_to_mint[i] = to_mint;
     }
 
+    // Mint tokens to recipient
+    skyweaverAssets.batchMint(_recipient, _ids, amounts_to_mint, "");
+
     // Check if enough ARC was sent and refund exceeding amount
     // .sub() will revert if insufficient amount received for purchase
     uint256 refundAmount = _arcAmount.sub(total_cost);
     if (refundAmount > 0) {
       arcadeumCoin.safeTransferFrom(address(this), _recipient, arcadeumCoinID, refundAmount, "");
     }
-
-    // Mint tokens to recipient
-    skyweaverAssets.batchMint(_recipient, _ids, amounts_to_mint, "");
 
     // Emit event
     emit AssetsPurchased(_recipient, _ids, amounts_to_mint, total_cost);
