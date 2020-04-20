@@ -1,3 +1,9 @@
-build/
+build
+artifacts
+cache
 typings/contracts/*Factory.ts
-node_modules
+
+.vscode/
+.vs_code/
+
+node_modules/

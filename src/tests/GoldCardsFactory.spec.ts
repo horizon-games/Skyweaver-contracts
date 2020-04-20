@@ -434,7 +434,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
     })
     it('should REVERT if new price is lower than refund', async () => {
       const tx = factoryContract.functions.updateGoldPrice(refund.sub(1))
-      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldPrice: PRICE_HIGHER_THAN_REFUND"))
+      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldPrice: REFUND_HIGHER_THAN_PRICE"))
     })
 
     context('When price was updated', () => {
@@ -495,7 +495,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
 
     it('should REVERT if new refund is larget than gold price', async () => {
       const tx = factoryContract.functions.updateGoldRefund(price.add(1))
-      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldRefund: PRICE_HIGHER_THAN_REFUND"))
+      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldRefund: REFUND_HIGHER_THAN_PRICE"))
     })
 
     context('When refund was updated', () => {
@@ -675,7 +675,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       await userWeaveContract.functions.safeTransferFrom(userAddress, factory, weaveID, baseTokenAmount, buyCardsData, TX_PARAM)
       let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
       let user_balance = await weaveContract.functions.balanceOf(userAddress, weaveID)
-      expect(factory_balance).to.be.eql(cost);
+      expect(factory_balance).to.be.eql(refund.mul(nGoldsBuy).add(feeAmount));
       expect(user_balance).to.be.eql(baseTokenAmount.sub(cost));
     })
 
@@ -752,7 +752,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
 
       it('should update factory weave balance', async () => {
         let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
-        expect(factory_balance).to.be.eql(cost);
+        expect(factory_balance).to.be.eql(refund.mul(nGoldsBuy).add(feeAmount));
       })
 
       it('should update user weave balance', async () => {
@@ -1397,6 +1397,32 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       await expect(tx).to.be.fulfilled
     })
 
+    it('should PASS if price was increased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(price.mul(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if price was decreased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(refund)
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if refund was increased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(price.mul(10))
+      await factoryContract.functions.updateGoldRefund(refund.mul(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if refund was decreased before order was mined', async () => {
+      await factoryContract.functions.updateGoldRefund(refund.div(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+
     context('When gold cards were minted', () => {
       let logs;
   
@@ -1409,11 +1435,11 @@ contract('GoldCardsFactory', (accounts: string[]) => {
         logs = await operatorProvider.getLogs(filter);
       })
   
-      it('should update factory weave balance with enough for refund', async () => {
+      it('should update factory weave balance with enough for refund, minus fee paid', async () => {
         let factory_balance = await weaveContract.functions.balanceOf(factory, weaveID)
-        let refund_amount = order.cardAmount.mul(refund)
-        let attempts_cost = cost.mul(n_loop-1)
-        expect(factory_balance).to.be.eql(refund_amount.add(attempts_cost));
+        let refund_amount = order.cardAmount.mul(refund).mul(n_loop)
+        let fees = feeAmount.mul(n_loop-1) // -1 because miner gets reimbursed once
+        expect(factory_balance).to.be.eql(refund_amount.add(fees));
       })
 
       it('should update operator weave balance', async () => {
