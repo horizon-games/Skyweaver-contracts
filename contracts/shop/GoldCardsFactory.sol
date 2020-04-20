@@ -158,7 +158,7 @@ contract GoldCardsFactory is Ownable {
   function updateGoldPrice(uint256 _newPrice) external onlyOwner() {
     // Sanity check to "make sure" decimals are accounted for (18 decimals)
     require(_newPrice > 100000000, "GoldCardsFactory#updateGoldPrice: INVALID_PRICE");
-    require(_newPrice >= goldRefund, "GoldCardsFactory#updateGoldPrice: PRICE_HIGHER_THAN_REFUND");
+    require(_newPrice >= goldRefund, "GoldCardsFactory#updateGoldPrice: REFUND_HIGHER_THAN_PRICE");
     emit GoldPriceChanged(goldPrice, _newPrice);
     goldPrice = _newPrice;
   }
@@ -170,7 +170,7 @@ contract GoldCardsFactory is Ownable {
    * @param _newRefund New card refund amount
    */
   function updateGoldRefund(uint256 _newRefund) external onlyOwner() {
-    require(goldPrice >= _newRefund, "GoldCardsFactory#updateGoldRefund: PRICE_HIGHER_THAN_REFUND");
+    require(goldPrice >= _newRefund, "GoldCardsFactory#updateGoldRefund: REFUND_HIGHER_THAN_PRICE");
     emit GoldRefundChanged(goldRefund, _newRefund);
     goldRefund = _newRefund;
   }

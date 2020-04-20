@@ -434,7 +434,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
     })
     it('should REVERT if new price is lower than refund', async () => {
       const tx = factoryContract.functions.updateGoldPrice(refund.sub(1))
-      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldPrice: PRICE_HIGHER_THAN_REFUND"))
+      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldPrice: REFUND_HIGHER_THAN_PRICE"))
     })
 
     context('When price was updated', () => {
@@ -495,7 +495,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
 
     it('should REVERT if new refund is larget than gold price', async () => {
       const tx = factoryContract.functions.updateGoldRefund(price.add(1))
-      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldRefund: PRICE_HIGHER_THAN_REFUND"))
+      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#updateGoldRefund: REFUND_HIGHER_THAN_PRICE"))
     })
 
     context('When refund was updated', () => {
@@ -1396,6 +1396,32 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
       await expect(tx).to.be.fulfilled
     })
+
+    it('should PASS if price was increased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(price.mul(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if price was decreased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(refund)
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if refund was increased before order was mined', async () => {
+      await factoryContract.functions.updateGoldPrice(price.mul(10))
+      await factoryContract.functions.updateGoldRefund(refund.mul(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if refund was decreased before order was mined', async () => {
+      await factoryContract.functions.updateGoldRefund(refund.div(10))
+      const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, sort_order)
+      await expect(tx).to.be.fulfilled
+    })
+
 
     context('When gold cards were minted', () => {
       let logs;
