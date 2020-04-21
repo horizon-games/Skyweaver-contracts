@@ -12,8 +12,11 @@ import {
 
 interface ISWSupplyManagerInterface extends Interface {
   functions: {
-    setMaxSupplies: TypedFunctionDescription<{
-      encode([_ids, _supplies]: [BigNumberish[], BigNumberish[]]): string;
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
     }>;
 
     addMintPermission: TypedFunctionDescription<{
@@ -66,11 +69,11 @@ interface ISWSupplyManagerInterface extends Interface {
       encode([_factory]: [string]): string;
     }>;
 
-    getMaxSupplies: TypedFunctionDescription<{
+    getMaxIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getCurrentSupplies: TypedFunctionDescription<{
+    getCurrentIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
   };
@@ -111,9 +114,9 @@ export class ISWSupplyManager extends Contract {
   interface: ISWSupplyManagerInterface;
 
   functions: {
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _supplies: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -167,14 +170,14 @@ export class ISWSupplyManager extends Contract {
       _factory: string
     ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
   };
 
-  setMaxSupplies(
+  setMaxIssuances(
     _ids: BigNumberish[],
-    _supplies: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -228,9 +231,9 @@ export class ISWSupplyManager extends Contract {
     _factory: string
   ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
 
-  getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-  getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   filters: {
     FactoryActivation(factory: string | null): EventFilter;
@@ -246,9 +249,9 @@ export class ISWSupplyManager extends Contract {
   };
 
   estimate: {
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _supplies: BigNumberish[]
+      _newMaxIssuances: BigNumberish[]
     ): Promise<BigNumber>;
 
     addMintPermission(
@@ -289,8 +292,8 @@ export class ISWSupplyManager extends Contract {
 
     getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
   };
 }

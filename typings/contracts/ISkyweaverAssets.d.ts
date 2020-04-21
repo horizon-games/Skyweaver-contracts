@@ -24,7 +24,7 @@ interface ISkyweaverAssetsInterface extends Interface {
       ]): string;
     }>;
 
-    getCurrentSupplies: TypedFunctionDescription<{
+    getCurrentIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
@@ -36,7 +36,7 @@ interface ISkyweaverAssetsInterface extends Interface {
       encode([_factory]: [string]): string;
     }>;
 
-    getMaxSupplies: TypedFunctionDescription<{
+    getMaxIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
@@ -48,8 +48,11 @@ interface ISkyweaverAssetsInterface extends Interface {
       encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
     }>;
 
-    setMaxSupplies: TypedFunctionDescription<{
-      encode([_ids, _supplies]: [BigNumberish[], BigNumberish[]]): string;
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
     }>;
 
     shutdownFactory: TypedFunctionDescription<{
@@ -161,7 +164,7 @@ export class ISkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     getFactoryAccessRanges(
       _factory: string
@@ -169,7 +172,7 @@ export class ISkyweaverAssets extends Contract {
 
     getFactoryStatus(_factory: string): Promise<boolean>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     lockRangeMintPermissions(
       _range: { minID: BigNumberish; maxID: BigNumberish },
@@ -182,9 +185,9 @@ export class ISkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _supplies: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -264,7 +267,7 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   getFactoryAccessRanges(
     _factory: string
@@ -272,7 +275,7 @@ export class ISkyweaverAssets extends Contract {
 
   getFactoryStatus(_factory: string): Promise<boolean>;
 
-  getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   lockRangeMintPermissions(
     _range: { minID: BigNumberish; maxID: BigNumberish },
@@ -285,9 +288,9 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  setMaxSupplies(
+  setMaxIssuances(
     _ids: BigNumberish[],
-    _supplies: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -376,13 +379,13 @@ export class ISkyweaverAssets extends Contract {
       _maxRange: BigNumberish
     ): Promise<BigNumber>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
 
     getFactoryStatus(_factory: string): Promise<BigNumber>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     lockRangeMintPermissions(_range: {
       minID: BigNumberish;
@@ -394,9 +397,9 @@ export class ISkyweaverAssets extends Contract {
       _rangeIndex: BigNumberish
     ): Promise<BigNumber>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _supplies: BigNumberish[]
+      _newMaxIssuances: BigNumberish[]
     ): Promise<BigNumber>;
 
     shutdownFactory(_factory: string): Promise<BigNumber>;

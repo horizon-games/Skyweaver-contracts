@@ -49,7 +49,7 @@ interface SkyweaverAssetsInterface extends Interface {
       encode([_id, _amount]: [BigNumberish, BigNumberish]): string;
     }>;
 
-    getCurrentSupplies: TypedFunctionDescription<{
+    getCurrentIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
@@ -67,7 +67,7 @@ interface SkyweaverAssetsInterface extends Interface {
 
     getLockedRanges: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    getMaxSupplies: TypedFunctionDescription<{
+    getMaxIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
@@ -173,8 +173,11 @@ interface SkyweaverAssetsInterface extends Interface {
       encode([_newBaseMetadataURI]: [string]): string;
     }>;
 
-    setMaxSupplies: TypedFunctionDescription<{
-      encode([_ids, _newMaxSupplies]: [BigNumberish[], BigNumberish[]]): string;
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
     }>;
 
     shutdownFactory: TypedFunctionDescription<{
@@ -209,8 +212,8 @@ interface SkyweaverAssetsInterface extends Interface {
       encodeTopics([factory]: [string | null]): string[];
     }>;
 
-    MaxSuppliesChanged: TypedEventDescription<{
-      encodeTopics([ids, newMaxSupplies]: [null, null]): string[];
+    MaxIssuancesChanged: TypedEventDescription<{
+      encodeTopics([ids, newMaxIssuances]: [null, null]): string[];
     }>;
 
     MintPermissionAdded: TypedEventDescription<{
@@ -318,7 +321,7 @@ export class SkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     getFactoryAccessRanges(
       _factory: string
@@ -337,7 +340,7 @@ export class SkyweaverAssets extends Contract {
 
     getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     getNonce(_signer: string): Promise<BigNumber>;
 
@@ -439,9 +442,9 @@ export class SkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _newMaxSupplies: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -496,7 +499,7 @@ export class SkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   getFactoryAccessRanges(
     _factory: string
@@ -515,7 +518,7 @@ export class SkyweaverAssets extends Contract {
 
   getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
 
-  getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   getNonce(_signer: string): Promise<BigNumber>;
 
@@ -617,9 +620,9 @@ export class SkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  setMaxSupplies(
+  setMaxIssuances(
     _ids: BigNumberish[],
-    _newMaxSupplies: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -648,7 +651,7 @@ export class SkyweaverAssets extends Contract {
 
     FactoryShutdown(factory: string | null): EventFilter;
 
-    MaxSuppliesChanged(ids: null, newMaxSupplies: null): EventFilter;
+    MaxIssuancesChanged(ids: null, newMaxIssuances: null): EventFilter;
 
     MintPermissionAdded(factory: string | null, new_range: null): EventFilter;
 
@@ -712,7 +715,7 @@ export class SkyweaverAssets extends Contract {
 
     burn(_id: BigNumberish, _amount: BigNumberish): Promise<BigNumber>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
 
@@ -722,7 +725,7 @@ export class SkyweaverAssets extends Contract {
 
     getLockedRanges(): Promise<BigNumber>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     getNonce(_signer: string): Promise<BigNumber>;
 
@@ -810,9 +813,9 @@ export class SkyweaverAssets extends Contract {
 
     setBaseMetadataURI(_newBaseMetadataURI: string): Promise<BigNumber>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _newMaxSupplies: BigNumberish[]
+      _newMaxIssuances: BigNumberish[]
     ): Promise<BigNumber>;
 
     shutdownFactory(_factory: string): Promise<BigNumber>;

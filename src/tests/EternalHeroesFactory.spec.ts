@@ -134,7 +134,7 @@ contract('EternalHeroesFactory', (accounts: string[]) => {
 
     // Set max supplies
     let max_supplies = new Array(nTokenTypes).fill('').map((i) => maxSupply)
-    await skyweaverAssetsContract.functions.setMaxSupplies(ids, max_supplies)
+    await skyweaverAssetsContract.functions.setMaxIssuances(ids, max_supplies)
   })
 
   describe('Getter functions', () => {
@@ -467,7 +467,7 @@ contract('EternalHeroesFactory', (accounts: string[]) => {
       }
 
       // Double check all assets were purchased up to max supply
-      let supplies = await skyweaverAssetsContract.functions.getCurrentSupplies(ids)
+      let supplies = await skyweaverAssetsContract.functions.getCurrentIssuances(ids)
       for (let i = 0; i < ids.length; i++){
         expect(supplies[i]).to.be.eql(maxSupply)
       }
@@ -487,14 +487,14 @@ contract('EternalHeroesFactory', (accounts: string[]) => {
         await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, full_data, TX_PARAM)
       }
 
-      let supplies = await skyweaverAssetsContract.functions.getCurrentSupplies(ids)
+      let supplies = await skyweaverAssetsContract.functions.getCurrentIssuances(ids)
       // Check if indeed max supply is reached
       for (let i =0; i < nTokenTypes; i++){
         expect(supplies[i]).to.be.eql(maxSupply)
       }
       let data = getBuyHeroesData(userAddress, [ids[0]], [new BigNumber(1)], [n_tiers.add(1)])
       let tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, data, TX_PARAM)
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_SUPPLY_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
   
     context('Using safeBatchTransferFrom', () => {
@@ -536,7 +536,7 @@ contract('EternalHeroesFactory', (accounts: string[]) => {
       })
 
       it('should update heroes supplies', async () => {
-        let supplies = await skyweaverAssetsContract.functions.getCurrentSupplies(ids)
+        let supplies = await skyweaverAssetsContract.functions.getCurrentIssuances(ids)
         for (let i = 0; i < supplies.length; i++) {
           expect(supplies[i]).to.be.eql(purchaseAmount)
         }

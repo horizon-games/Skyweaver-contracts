@@ -119,27 +119,27 @@ contract('SWSupplyManager', (accounts: string[]) => {
 
   describe('Getter functions', () => {
 
-    describe('getMaxSupplies() function', () => {
+    describe('getMaxIssuances() function', () => {
       it('should return correct value', async () => {
         const id = new BigNumber(981273918273)
-        const maxSupply = new BigNumber(100)
-        await SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
-        const value = await SWSupplyManagerContract.functions.getMaxSupplies([id])
-        expect(value[0]).to.be.eql(maxSupply)
+        const maxIssuance = new BigNumber(100)
+        await SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
+        const value = await SWSupplyManagerContract.functions.getMaxIssuances([id])
+        expect(value[0]).to.be.eql(maxIssuance)
       })
     })
 
-    describe('getCurrentSupplies() function', () => {
+    describe('getCurrentIssuances() function', () => {
       it('should return correct value', async () => {
         const id = new BigNumber(nTokenTypes - 1)
-        const maxSupply = new BigNumber(100)
-        const expected_supply = new BigNumber(3)
-        await SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
+        const maxIssuance = new BigNumber(100)
+        const expected_issuance = new BigNumber(3)
+        await SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
         await SWSupplyManagerContract.functions.activateFactory(factory)
         await SWSupplyManagerContract.functions.addMintPermission(factory, minRange, maxRange)
-        await factoryContract.functions.batchMint(userAddress, [id], [expected_supply], [])
-        const value = await SWSupplyManagerContract.functions.getCurrentSupplies([id])
-        expect(value[0]).to.be.eql(expected_supply)
+        await factoryContract.functions.batchMint(userAddress, [id], [expected_issuance], [])
+        const value = await SWSupplyManagerContract.functions.getCurrentIssuances([id])
+        expect(value[0]).to.be.eql(expected_issuance)
       })
     })
   })
@@ -580,49 +580,49 @@ contract('SWSupplyManager', (accounts: string[]) => {
     })
   })
 
-  describe('setMaxSupplies() function', () => {
+  describe('setMaxIssuances() function', () => {
     const id = new BigNumber(981273918273)
-    const maxSupply = new BigNumber(100)
+    const maxIssuance = new BigNumber(100)
 
     it('should PASS if caller is owner', async () => {
-      const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
+      const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx = userSWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
+      const tx = userSWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
       await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
     })
 
     it('should REVERT if arrays are not the same length', async () => {
-      const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply, maxSupply])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxSupply: INVALID_ARRAYS_LENGTH"))
+      const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance, maxIssuance])
+      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
     })
 
-    context('Wen max supply is already set', () => {
+    context('Wen max issuance is already set', () => {
 
       beforeEach(async () => {
-        await SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
+        await SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
       })
 
-      it('should PASS if new max supply is lower', async () => {
-        const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply.sub(1)])
+      it('should PASS if new max issuance is lower', async () => {
+        const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance.sub(1)])
         await expect(tx).to.be.fulfilled
       })
 
-      it('should REVERT if new max supply is same', async () => {
-        const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxSupply: INVALID_NEW_MAX_SUPPLY"))
+      it('should REVERT if new max issuance is same', async () => {
+        const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance])
+        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
-      it('should REVERT if new max supply is higher', async () => {
-        const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [maxSupply.add(1)])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxSupply: INVALID_NEW_MAX_SUPPLY"))
+      it('should REVERT if new max issuance is higher', async () => {
+        const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [maxIssuance.add(1)])
+        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
-      it('should REVERT if new max supply is 0', async () => {
-        const tx = SWSupplyManagerContract.functions.setMaxSupplies([id], [0])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxSupply: INVALID_NEW_MAX_SUPPLY"))
+      it('should REVERT if new max issuance is 0', async () => {
+        const tx = SWSupplyManagerContract.functions.setMaxIssuances([id], [0])
+        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
     })
   })
@@ -682,40 +682,40 @@ contract('SWSupplyManager', (accounts: string[]) => {
       await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
     })
 
-    it('should REVERT if exceeds max supply', async () => {
-      const max_supply = nTokensPerType - 1
+    it('should REVERT if exceeds max issuance', async () => {
+      const max_issuance = nTokensPerType - 1
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_SUPPLY_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
-    it('should PASS if reach exact max supply', async () => {
-      const max_supply = nTokensPerType
+    it('should PASS if reach exact max issuance', async () => {
+      const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.batchMint(userAddress, ids, amounts, [])
       await expect(tx).to.be.fulfilled
     })
 
-    it('should update current supply if max supply is set', async () => {
-      const max_supply = nTokensPerType
+    it('should update current issuance if max issuance is set', async () => {
+      const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       await factoryContract.functions.batchMint(userAddress, ids, amounts, [])
-      const current_supply = await SWSupplyManagerContract.functions.getCurrentSupplies([id])
-      const get_max_supply = await SWSupplyManagerContract.functions.getMaxSupplies([id])
-      expect(current_supply[0]).to.be.eql(new BigNumber(max_supply))
-      expect(current_supply[0]).to.be.eql(get_max_supply[0])
+      const current_issuance = await SWSupplyManagerContract.functions.getCurrentIssuances([id])
+      const get_max_issuance = await SWSupplyManagerContract.functions.getMaxIssuances([id])
+      expect(current_issuance[0]).to.be.eql(new BigNumber(max_issuance))
+      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
     })
 
-    it('should NOT update current supply if max supply is NOT set', async () => {
+    it('should NOT update current issuance if max issuance is NOT set', async () => {
       const id = nTokenTypes - 1
       await factoryContract.functions.batchMint(userAddress, ids, amounts, [])
-      const current_supply = await SWSupplyManagerContract.functions.getCurrentSupplies([id])
-      const get_max_supply = await SWSupplyManagerContract.functions.getMaxSupplies([id])
-      expect(current_supply[0]).to.be.eql(new BigNumber(0))
-      expect(current_supply[0]).to.be.eql(get_max_supply[0])
+      const current_issuance = await SWSupplyManagerContract.functions.getCurrentIssuances([id])
+      const get_max_issuance = await SWSupplyManagerContract.functions.getMaxIssuances([id])
+      expect(current_issuance[0]).to.be.eql(new BigNumber(0))
+      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
     })
 
     it('should PASS if caller is activated and authorized factory', async () => {
@@ -833,40 +833,40 @@ contract('SWSupplyManager', (accounts: string[]) => {
       await expect(tx3).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
     })
 
-    it('should REVERT if exceeds max supply', async () => {
-      const max_supply = nTokensPerType - 1
+    it('should REVERT if exceeds max issuance', async () => {
+      const max_issuance = nTokensPerType - 1
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_SUPPLY_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
-    it('should PASS if reach exact max supply', async () => {
-      const max_supply = nTokensPerType
+    it('should PASS if reach exact max issuance', async () => {
+      const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.mint(userAddress, id, amount, [])
       await expect(tx).to.be.fulfilled
     })
 
-    it('should update current supply if max supply is set', async () => {
-      const max_supply = nTokensPerType
+    it('should update current issuance if max issuance is set', async () => {
+      const max_issuance = nTokensPerType
       const id = nTokenTypes - 1
-      await SWSupplyManagerContract.functions.setMaxSupplies([id], [max_supply])
+      await SWSupplyManagerContract.functions.setMaxIssuances([id], [max_issuance])
       await factoryContract.functions.mint(userAddress, id, amount, [])
-      const current_supply = await SWSupplyManagerContract.functions.getCurrentSupplies([id])
-      const get_max_supply = await SWSupplyManagerContract.functions.getMaxSupplies([id])
-      expect(current_supply[0]).to.be.eql(new BigNumber(max_supply))
-      expect(current_supply[0]).to.be.eql(get_max_supply[0])
+      const current_issuance = await SWSupplyManagerContract.functions.getCurrentIssuances([id])
+      const get_max_issuance = await SWSupplyManagerContract.functions.getMaxIssuances([id])
+      expect(current_issuance[0]).to.be.eql(new BigNumber(max_issuance))
+      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
     })
 
-    it('should NOT update current supply if max supply is NOT set', async () => {
+    it('should NOT update current issuance if max issuance is NOT set', async () => {
       const id = nTokenTypes - 1
       await factoryContract.functions.mint(userAddress, id, amount, [])
-      const current_supply = await SWSupplyManagerContract.functions.getCurrentSupplies([id])
-      const get_max_supply = await SWSupplyManagerContract.functions.getMaxSupplies([id])
-      expect(current_supply[0]).to.be.eql(new BigNumber(0))
-      expect(current_supply[0]).to.be.eql(get_max_supply[0])
+      const current_issuance = await SWSupplyManagerContract.functions.getCurrentIssuances([id])
+      const get_max_issuance = await SWSupplyManagerContract.functions.getMaxIssuances([id])
+      expect(current_issuance[0]).to.be.eql(new BigNumber(0))
+      expect(current_issuance[0]).to.be.eql(get_max_issuance[0])
     })
 
     it('should PASS if caller is activated and authorized factory', async () => {

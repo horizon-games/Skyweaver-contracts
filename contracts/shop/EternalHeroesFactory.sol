@@ -96,15 +96,15 @@ contract EternalHeroesFactory is Ownable {
 
   /**
    * @notice Will indicate that asset ids in _ids are purchasable
-   * @dev This contract assumes that there is a supply cap, which
-   *      if present, will enable total_supply tracking. To prevent
-   *      errors, a maxSupply must be set before an ID can be registered.
+   * @dev This contract assumes that there is an issuance cap, which
+   *      if present, will enable max issuance tracking. To prevent
+   *      errors, a maxIssuance must be set before an ID can be registered.
    * @param _ids Array of asset IDs to allow for purchasing
    */
   function registerIDs(uint256[] calldata _ids) external onlyOwner() {
-    uint256[] memory maxSupplies = skyweaverAssets.getMaxSupplies(_ids);
+    uint256[] memory max_issuances = skyweaverAssets.getMaxIssuances(_ids);
     for (uint256 i = 0; i < _ids.length; i++) {
-      require(maxSupplies[i] > 0, "EternalHeroesFactory#registerIDs: UNCAPPED_SUPPLY");
+      require(max_issuances[i] > 0, "EternalHeroesFactory#registerIDs: UNCAPPED_ISSUANCE");
       isPurchasable[_ids[i]] = true;
     }
     emit IDsRegistration(_ids);
@@ -217,8 +217,8 @@ contract EternalHeroesFactory is Ownable {
     uint256 nTokens = _ids.length;
     uint256 tier_size = tierSize;
 
-    // Load tokens to purchase supplies
-    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
+    // Load current issuance of tokens to purchase
+    uint256[] memory current_issuances = skyweaverAssets.getCurrentIssuances(_ids);
 
     // Total amount of card to purchase
     uint256 total_cost = 0;
@@ -231,7 +231,7 @@ contract EternalHeroesFactory is Ownable {
     // Validate purchase and count # of cards to purchase
     for (uint256 i = 0; i < nTokens; i++) {
       uint256 id = _ids[i];
-      uint256 supply = current_supplies[i];
+      uint256 issuance = current_issuances[i];
       uint256 to_mint = 0;
       uint256 amount = _amounts[i];
 
@@ -239,13 +239,13 @@ contract EternalHeroesFactory is Ownable {
       require(isPurchasable[id], "EternalHeroesFactory#_buy: ID_NOT_PURCHASABLE");
 
       // Assumes IDs are sorted to make sure there are no duplicates.
-      // Otherwise we would have to query supplies for each loop
+      // Otherwise we would have to query issuances for each loop
       if (i > 0) {
         require(_ids[i-1] < id, "EternalHeroesFactory#_buy: UNSORTED_OR_DUPLICATE_TOKEN_IDS");
       }
 
       // Current discount step (division round down)
-      uint256 current_tier = supply.div(tier_size);
+      uint256 current_tier = issuance.div(tier_size);
 
       // Skip asset if tier is not the one expected, to not make the order fail
       if (_expectedTiers[i] != current_tier) {
@@ -257,7 +257,7 @@ contract EternalHeroesFactory is Ownable {
       uint256 current_price = floorPrice.add(current_tier.mul(priceIncrement));
 
       // How many left in current tier (remainers is what is available)
-      uint256 amount_left = tier_size.sub(supply.mod(tier_size));
+      uint256 amount_left = tier_size.sub(issuance.mod(tier_size));
 
       // Amount of assets that user will purchase
       to_mint = amount < amount_left ? amount : amount_left;
@@ -330,9 +330,9 @@ contract EternalHeroesFactory is Ownable {
    */
   function getPrices(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256[] memory current_prices = new uint256[](_ids.length);
-    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
+    uint256[] memory current_issuances = skyweaverAssets.getCurrentIssuances(_ids);
     for (uint256 i = 0;  i < _ids.length; i++) {
-      uint256 current_tier = current_supplies[i].div(tierSize);
+      uint256 current_tier = current_issuances[i].div(tierSize);
       current_prices[i] = floorPrice.add(current_tier.mul(priceIncrement));
     }
     return current_prices;
@@ -344,15 +344,18 @@ contract EternalHeroesFactory is Ownable {
    */
   function getPriceTiers(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256[] memory current_tiers = new uint256[](_ids.length);
-    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
+    uint256[] memory current_issuances = skyweaverAssets.getCurrentIssuances(_ids);
     for (uint256 i = 0;  i < _ids.length; i++) {
-      current_tiers[i] = current_supplies[i].div(tierSize);
+      current_tiers[i] = current_issuances[i].div(tierSize);
     }
     return current_tiers;
   }
 
   /**
    * @notice Returns how many tokens left are in each tiers for given _ids
+   * @dev Assumes that none of these token ids were minted before their maxIssuance
+   *      were set, otherwise the true supply could be higher. This has no impact
+   *      on the current contract but would impact market valuation of these items.
    * @param _ids Array containing the assets IDs
    * @return Supply left in current tier for each ID and tier number
    */
@@ -361,13 +364,13 @@ contract EternalHeroesFactory is Ownable {
     supplies = new uint256[](_ids.length);
 
     // Load supplies and tierSize
-    uint256[] memory current_supplies = skyweaverAssets.getCurrentSupplies(_ids);
+    uint256[] memory current_issuances = skyweaverAssets.getCurrentIssuances(_ids);
     uint256 tier_size = tierSize;
 
     // Get current tiers and asset left per tier
     for (uint256 i = 0;  i < _ids.length; i++) {
-      tiers[i] = current_supplies[i].div(tier_size);
-      supplies[i] = tier_size.sub(current_supplies[i].mod(tier_size));
+      tiers[i] = current_issuances[i].div(tier_size);
+      supplies[i] = tier_size.sub(current_issuances[i].mod(tier_size));
     }
     return (tiers, supplies);
   }
