@@ -25,6 +25,7 @@ contract GoldCardsFactory is Ownable {
   uint256 internal weaveID;                  // ID of Weave token in respective ERC-1155 contract
   uint256 internal goldPrice;                // Price per Gold Card in weave, ignoring decimals
   uint256 internal goldRefund;               // Amount of weave to receive when melting a gold card, ignoring decimals
+  uint256 internal orderSizeLimit;           // Maximum amount of gold cards that can be included in an order
   uint256 internal rngDelay;                 // Amount of blocks after commit before one can mint gold cards
 
   // OnReceive Objects
@@ -51,6 +52,7 @@ contract GoldCardsFactory is Ownable {
   event GoldPriceChanged(uint256 oldPrice, uint256 newPrice);
   event GoldRefundChanged(uint256 oldRefund, uint256 newRefund);
   event RNGDelayChanged(uint256 oldDelay, uint256 newDelay);
+  event OrderSizeLimitChanged(uint256 oldLimit, uint256 newLimit);
   event IDsRegistration(uint256[] ids);
   event IDsDeregistration(uint256[] ids);
 
@@ -60,12 +62,13 @@ contract GoldCardsFactory is Ownable {
 
   /**
    * @notice Create factory, link Skyweaver Assets contract and store initial paramters
-   * @param _assetsAddr  The address of the ERC-1155 Assets Token
-   * @param _weaveAddr   The address of the ERC-1155 Base Token
-   * @param _weaveID     The ID of the ERC-1155 Base Token
-   * @param _goldPrice   Price for each card
-   * @param _goldRefund  Amount of weave to receive when melting a gold card
-   * @param _rngDelay    Amount of blocks after commit before one can mint cards
+   * @param _assetsAddr     The address of the ERC-1155 Assets Token
+   * @param _weaveAddr      The address of the ERC-1155 Base Token
+   * @param _weaveID        The ID of the ERC-1155 Base Token
+   * @param _goldPrice      Price for each card
+   * @param _goldRefund     Amount of weave to receive when melting a gold card
+   * @param _orderSizeLimit Maximum amount of gold cards that can be included in an order
+   * @param _rngDelay       Amount of blocks after commit before one can mint cards
    */
   constructor(
     address _assetsAddr,
@@ -73,6 +76,7 @@ contract GoldCardsFactory is Ownable {
     uint256 _weaveID,
     uint256 _goldPrice,
     uint256 _goldRefund,
+    uint256 _orderSizeLimit,
     uint256 _rngDelay
   ) public {
 
@@ -92,10 +96,12 @@ contract GoldCardsFactory is Ownable {
     weaveID = _weaveID;
     goldPrice = _goldPrice;
     goldRefund = _goldRefund;
+    orderSizeLimit = _orderSizeLimit;
     rngDelay = _rngDelay;
 
     emit GoldPriceChanged(0, _goldPrice);
     emit GoldRefundChanged(0, _goldRefund);
+    emit OrderSizeLimitChanged(0, _orderSizeLimit);
     emit RNGDelayChanged(0, _rngDelay);
   }
 
@@ -183,6 +189,15 @@ contract GoldCardsFactory is Ownable {
     require(_newDelay > 0, "GoldCardsFactory#updateRNGDelay: INVALID_DELAY");
     emit RNGDelayChanged(rngDelay, _newDelay);
     rngDelay = _newDelay;
+  }
+
+  /**
+   * @notice Will update the order size limit
+   * @param _newLimit New order size limit
+   */
+  function updateOrderSizeLimit(uint256 _newLimit) external onlyOwner() {
+    emit OrderSizeLimitChanged(orderSizeLimit, _newLimit);
+    orderSizeLimit = _newLimit;
   }
 
 
@@ -279,6 +294,9 @@ contract GoldCardsFactory is Ownable {
     // Check if weave sent is sufficient for order
     uint256 order_cost = _order.cardAmount.mul(goldPrice);
     uint256 refund_amount = _weaveAmount.sub(order_cost.add(_order.feeAmount)); // Will throw if insufficient amount received
+
+    // Make sure order isn't larger than order size limit
+    require(_order.cardAmount <= orderSizeLimit, "GoldCardsFactory#_commit: CARD_AMOUNT_EXCEEDS_LIMIT");
 
     // Set RNG block
     _order.rngBlock = block.number.add(rngDelay);
@@ -507,6 +525,13 @@ contract GoldCardsFactory is Ownable {
    */
   function getGoldPrice() external view returns (uint256) {
     return goldPrice;
+  }
+
+  /**
+   * @notice Returns the current order size limit
+   */
+  function getOrderSizeLimit() external view returns (uint256) {
+    return orderSizeLimit;
   }
 
   /**
