@@ -2,6 +2,7 @@ pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
 import "../utils/Ownable.sol";
+import "../utils/ReentrancyGuard.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 
@@ -10,7 +11,7 @@ import "multi-token-standard/contracts/utils/SafeMath.sol";
  * up to k/N of the amount this contract burned. Anyone can send
  * silver cards to this contract, which will then get burned.
  */
-contract SilverConquestFactory is Ownable {
+contract SilverConquestFactory is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
 
   /***********************************|
@@ -143,7 +144,7 @@ contract SilverConquestFactory is Ownable {
     uint256[] memory _amounts,
     bytes memory // _data
   )
-    public returns(bytes4)
+    public nonReentrant() returns(bytes4)
   {
     if (msg.sender == address(skyweaverAssets)) {
       // Burn cards
