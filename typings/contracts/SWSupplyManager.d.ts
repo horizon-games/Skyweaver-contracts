@@ -80,8 +80,11 @@ interface SWSupplyManagerInterface extends Interface {
       encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
     }>;
 
-    setMaxSupplies: TypedFunctionDescription<{
-      encode([_ids, _newMaxSupplies]: [BigNumberish[], BigNumberish[]]): string;
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
     }>;
 
     batchMint: TypedFunctionDescription<{
@@ -102,11 +105,11 @@ interface SWSupplyManagerInterface extends Interface {
       ]): string;
     }>;
 
-    getMaxSupplies: TypedFunctionDescription<{
+    getMaxIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    getCurrentSupplies: TypedFunctionDescription<{
+    getCurrentIssuances: TypedFunctionDescription<{
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
@@ -154,8 +157,8 @@ interface SWSupplyManagerInterface extends Interface {
       encodeTopics([factory]: [string | null]): string[];
     }>;
 
-    MaxSuppliesChanged: TypedEventDescription<{
-      encodeTopics([ids, newMaxSupplies]: [null, null]): string[];
+    MaxIssuancesChanged: TypedEventDescription<{
+      encodeTopics([ids, newMaxIssuances]: [null, null]): string[];
     }>;
 
     MintPermissionAdded: TypedEventDescription<{
@@ -290,9 +293,9 @@ export class SWSupplyManager extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _newMaxSupplies: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -312,9 +315,9 @@ export class SWSupplyManager extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     getFactoryStatus(_factory: string): Promise<boolean>;
 
@@ -414,9 +417,9 @@ export class SWSupplyManager extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  setMaxSupplies(
+  setMaxIssuances(
     _ids: BigNumberish[],
-    _newMaxSupplies: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -436,9 +439,9 @@ export class SWSupplyManager extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
-  getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber[]>;
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   getFactoryStatus(_factory: string): Promise<boolean>;
 
@@ -481,7 +484,7 @@ export class SWSupplyManager extends Contract {
 
     FactoryShutdown(factory: string | null): EventFilter;
 
-    MaxSuppliesChanged(ids: null, newMaxSupplies: null): EventFilter;
+    MaxIssuancesChanged(ids: null, newMaxIssuances: null): EventFilter;
 
     MintPermissionAdded(factory: string | null, new_range: null): EventFilter;
 
@@ -570,9 +573,9 @@ export class SWSupplyManager extends Contract {
       maxID: BigNumberish;
     }): Promise<BigNumber>;
 
-    setMaxSupplies(
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _newMaxSupplies: BigNumberish[]
+      _newMaxIssuances: BigNumberish[]
     ): Promise<BigNumber>;
 
     batchMint(
@@ -589,9 +592,9 @@ export class SWSupplyManager extends Contract {
       _data: Arrayish
     ): Promise<BigNumber>;
 
-    getMaxSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
-    getCurrentSupplies(_ids: BigNumberish[]): Promise<BigNumber>;
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     getFactoryStatus(_factory: string): Promise<BigNumber>;
 

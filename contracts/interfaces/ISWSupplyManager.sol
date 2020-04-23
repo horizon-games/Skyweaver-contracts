@@ -28,12 +28,12 @@ interface ISWSupplyManager {
   |__________________________________*/
 
   /**
-   * @notice Set max supply for some token IDs that can't ever be increased
-   * @dev Can only decrease the max supply if already set, but can't set it *back* to 0.
-   * @param _ids Array of token IDs to set the max supply
-   * @param _supplies Array of max supplies for each corresponding ID
+   * @notice Set max issuance for some token IDs that can't ever be increased
+   * @dev Can only decrease the max issuance if already set, but can't set it *back* to 0.
+   * @param _ids Array of token IDs to set the max issuance
+   * @param _newMaxIssuances Array of max issuances for each corresponding ID
    */
-  function setMaxSupplies(uint256[] calldata _ids, uint256[] calldata _supplies) external;
+  function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external;
 
   /***********************************|
   |     Factory Management Methods    |
@@ -113,16 +113,20 @@ interface ISWSupplyManager {
   function getFactoryAccessRanges(address _factory) external view returns ( AssetRange[] memory);
 
   /**
-   * @notice Get the max supply of multiple asset ID
+   * @notice Get the max issuance of multiple asset IDs
+   * @dev The max issuance of a token does not reflect the maximum supply, only
+   *      how many tokens can be minted once the maxIssuance for a token is set.
    * @param _ids Array containing the assets IDs
-   * @return The current max supply of each asset ID in _ids
+   * @return The current max issuance of each asset ID in _ids
    */
-  function getMaxSupplies(uint256[] calldata _ids) external view returns (uint256[] memory);
+  function getMaxIssuances(uint256[] calldata _ids) external view returns (uint256[] memory);
 
   /**
-   * @notice Get the current supply of multiple asset ID
+   * @notice Get the current issuanc of multiple asset ID
+   * @dev The current issuance of a token does not reflect the current supply, only
+   *      how many tokens since a max issuance was set for a given token id.
    * @param _ids Array containing the assets IDs
-   * @return The current supply of each asset ID in _ids
+   * @return The current issuance of each asset ID in _ids
    */
-  function getCurrentSupplies(uint256[] calldata _ids) external view returns (uint256[] memory);
+  function getCurrentIssuances(uint256[] calldata _ids)external view returns (uint256[] memory);
 }

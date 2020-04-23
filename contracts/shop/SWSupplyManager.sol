@@ -30,9 +30,9 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
   mapping(address => AssetRange[]) internal mintAccessRanges; // Contains the ID ranges factories are allowed to mint
   AssetRange[] internal lockedRanges;                         // Ranges of IDs that can't be granted permission to mint
 
-  // Supply mapping variables
-  mapping (uint256 => uint256) internal currentSupply; // Current supply of token for tokens that have max supply ONLY
-  mapping (uint256 => uint256) internal maxSupply;     // Max supply for each token ID (0 indicates no predefined max supply)
+  // Issuance mapping variables
+  mapping (uint256 => uint256) internal currentIssuance; // Current Issuance of token for tokens that have max issuance ONLY
+  mapping (uint256 => uint256) internal maxIssuance;     // Issuance is counted and capped to associated maxIssuance if it's non-zero
 
   // Struct for mint ID ranges permissions
   struct AssetRange {
@@ -46,7 +46,7 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
 
   event FactoryActivation(address indexed factory);
   event FactoryShutdown(address indexed factory);
-  event MaxSuppliesChanged(uint256[] ids, uint256[] newMaxSupplies);
+  event MaxIssuancesChanged(uint256[] ids, uint256[] newMaxIssuances);
   event MintPermissionAdded(address indexed factory, AssetRange new_range);
   event MintPermissionRemoved(address indexed factory, AssetRange deleted_range);
   event RangeLocked(AssetRange locked_range);
@@ -141,27 +141,27 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
   |__________________________________*/
 
   /**
-   * @notice Set max supply for some token IDs that can't ever be increased
-   * @dev Can only decrease the max supply if already set, but can't set it *back* to 0.
-   * @param _ids Array of token IDs to set the max supply
-   * @param _newMaxSupplies Array of max supplies for each corresponding ID
+   * @notice Set max issuance for some token IDs that can't ever be increased
+   * @dev Can only decrease the max issuance if already set, but can't set it *back* to 0.
+   * @param _ids Array of token IDs to set the max issuance
+   * @param _newMaxIssuances Array of max issuances for each corresponding ID
    */
-  function setMaxSupplies(uint256[] calldata _ids, uint256[] calldata _newMaxSupplies) external onlyOwner() {
-    require(_ids.length == _newMaxSupplies.length, "SWSupplyManager#setMaxSupply: INVALID_ARRAYS_LENGTH");
+  function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external onlyOwner() {
+    require(_ids.length == _newMaxIssuances.length, "SWSupplyManager#setMaxIssuances: INVALID_ARRAYS_LENGTH");
 
-    // Can only *decrease* a max supply
-    // Can't set max supply back to 0
+    // Can only *decrease* a max issuance
+    // Can't set max issuance back to 0
     for (uint256 i = 0; i < _ids.length; i++ ) {
-      if (maxSupply[_ids[i]] > 0) {
+      if (maxIssuance[_ids[i]] > 0) {
         require(
-          0 < _newMaxSupplies[i] && _newMaxSupplies[i] < maxSupply[_ids[i]],
-          "SWSupplyManager#setMaxSupply: INVALID_NEW_MAX_SUPPLY"
+          0 < _newMaxIssuances[i] && _newMaxIssuances[i] < maxIssuance[_ids[i]],
+          "SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"
         );
       }
-      maxSupply[_ids[i]] = _newMaxSupplies[i];
+      maxIssuance[_ids[i]] = _newMaxIssuances[i];
     }
 
-    emit MaxSuppliesChanged(_ids, _newMaxSupplies);
+    emit MaxIssuancesChanged(_ids, _newMaxIssuances);
   }
 
   /***********************************|
@@ -227,6 +227,9 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
    * @dev This methods assumes ids are sorted by how the ranges are sorted in
    *      the corresponding mintAccessRanges[msg.sender] array. Call will revert
    *      if they are not.
+   * @dev When the maxIssuance of an asset is set to a non-zero value, the
+   *      supply manager contract will start keeping track of how many of that
+   *      token are minted, until the maxIssuance hit.
    * @param _ids     Array of ids to mint
    * @param _amounts Array of amount of tokens to mint per id
    */
@@ -241,11 +244,11 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
     uint256 range_index = 0;
 
     // Will make sure that factory is allowed to print all ids
-    // and that no max supply is exceeded
+    // and that no max issuance is exceeded
     for (uint256 i = 0; i < _ids.length; i++) {
       uint256 id = _ids[i];
       uint256 amount = _amounts[i];
-      uint256 max_supply = maxSupply[id];
+      uint256 max_issuance = maxIssuance[id];
 
       // If ID is out of current range, move to next range, else skip.
       // This function only moves forwards in the AssetRange array,
@@ -259,10 +262,10 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
       }
 
       // If max supply is specified for id
-      if (max_supply > 0) {
-        uint256 new_supply = currentSupply[id].add(amount);
-        require(new_supply <= max_supply, "SWSupplyManager#_validateMints: MAX_SUPPLY_EXCEEDED");
-        currentSupply[id] = new_supply;
+      if (max_issuance > 0) {
+        uint256 new_current_issuance = currentIssuance[id].add(amount);
+        require(new_current_issuance <= max_issuance, "SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED");
+        currentIssuance[id] = new_current_issuance;
       }
     }
   }
@@ -272,37 +275,41 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
   |__________________________________*/
 
   /**
-   * @notice Get the max supply of multiple asset ID
+   * @notice Get the max issuance of multiple asset IDs
+   * @dev The max issuance of a token does not reflect the maximum supply, only
+   *      how many tokens can be minted once the maxIssuance for a token is set.
    * @param _ids Array containing the assets IDs
-   * @return The current max supply of each asset ID in _ids
+   * @return The current max issuance of each asset ID in _ids
    */
-  function getMaxSupplies(uint256[] calldata _ids) external view returns (uint256[] memory) {
+  function getMaxIssuances(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256 nIds = _ids.length;
-    uint256[] memory maxSupplies = new uint256[](nIds);
+    uint256[] memory max_issuances = new uint256[](nIds);
 
     // Iterate over each owner and token ID
     for (uint256 i = 0; i < nIds; i++) {
-      maxSupplies[i] = maxSupply[_ids[i]];
+      max_issuances[i] = maxIssuance[_ids[i]];
     }
 
-    return maxSupplies;
+    return max_issuances;
   }
 
   /**
-   * @notice Get the current supply of multiple asset ID
+   * @notice Get the current issuanc of multiple asset ID
+   * @dev The current issuance of a token does not reflect the current supply, only
+   *      how many tokens since a max issuance was set for a given token id.
    * @param _ids Array containing the assets IDs
-   * @return The current supply of each asset ID in _ids
+   * @return The current issuance of each asset ID in _ids
    */
-  function getCurrentSupplies(uint256[] calldata _ids) external view returns (uint256[] memory) {
+  function getCurrentIssuances(uint256[] calldata _ids) external view returns (uint256[] memory) {
     uint256 nIds = _ids.length;
-    uint256[] memory currentSupplies = new uint256[](nIds);
+    uint256[] memory current_issuances = new uint256[](nIds);
 
     // Iterate over each owner and token ID
     for (uint256 i = 0; i < nIds; i++) {
-      currentSupplies[i] = currentSupply[_ids[i]];
+      current_issuances[i] = currentIssuance[_ids[i]];
     }
 
-    return currentSupplies;
+    return current_issuances;
   }
 
   /**
@@ -332,7 +339,7 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
 
   /**
    * @notice Burn _amount of tokens of a given id from msg.sender
-   * @dev This will not change the current supply tracked in _supplyManagerAddr.
+   * @dev This will not change the current issuance tracked in _supplyManagerAddr.
    * @param _id     Asset id to burn
    * @param _amount The amount to be burn
    */
@@ -346,7 +353,7 @@ contract SWSupplyManager is IERC1155, AbstractERC1155MintBurn, ERC1155Metadata, 
 
   /**
    * @notice Burn _amounts of tokens of given ids from msg.sender
-   * @dev This will not change the current supplies tracked in _supplyManagerAddr.
+   * @dev This will not change the current issuance tracked in _supplyManagerAddr.
    * @param _ids     Asset id to burn
    * @param _amounts The amount to be burn
    */
