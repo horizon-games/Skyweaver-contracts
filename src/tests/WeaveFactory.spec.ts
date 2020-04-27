@@ -133,6 +133,7 @@ contract('WeaveFactory', (accounts: string[]) => {
     })
 
     describe('getAvailableWeave() function', () => {
+      // This test sometimes fail for bad timming
       it('should return weave amount', async () => {
         const receipt = await factoryContract.deployTransaction.wait(1)
         let block = await ownerProvider.getBlock(receipt.blockNumber!)

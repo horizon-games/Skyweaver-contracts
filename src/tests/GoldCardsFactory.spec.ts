@@ -86,9 +86,8 @@ contract('GoldCardsFactory', (accounts: string[]) => {
   // Token Param
   const decimals = 2
   const totalNTokensTypes = 500
-  const nGoldsBuy         = new BigNumber(15)
+  const nGoldsBuy         = new BigNumber(30)
   const nTokenTypes       = 30 
-  const nTokensPerType    = 5
 
   // Range values 
   const minRange = new BigNumber(1);
@@ -99,6 +98,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
   const baseTokenAmount = new BigNumber(10000000).mul(new BigNumber(10).pow(18))
   const price = new BigNumber(500).mul(new BigNumber(10).pow(18))
   const refund = new BigNumber(250).mul(new BigNumber(10).pow(18))
+  const limit = new BigNumber(400);
   const delay = new BigNumber(15);
 
   // Arrays
@@ -145,6 +145,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       weaveID,
       price,
       refund,
+      limit,
       delay, 
       {gasLimit: 7000000}
     ]) as GoldCardsFactory
@@ -197,6 +198,13 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       it('should return correct value', async () => {
         const value = await factoryContract.functions.getGoldRefund()
         expect(value).to.be.eql(refund)
+      })
+    })
+
+    describe('getOrderSizeLimit() function', () => {
+      it('should return correct value', async () => {
+        const value = await factoryContract.functions.getOrderSizeLimit()
+        expect(value).to.be.eql(limit)
       })
     })
 
@@ -280,7 +288,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       })
 
       it('should REVERT if id is already registered', async () => {
-        const tx = factoryContract.functions.registerIDs([ids[nTokenTypes - 1]])
+        const tx = factoryContract.functions.registerIDs([ids[totalNTokensTypes - 1]])
         await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#registerIDs: ID_ALREADY_REGISTERED"))
       })
 
@@ -541,6 +549,67 @@ contract('GoldCardsFactory', (accounts: string[]) => {
     })
   })
 
+  describe('updateOrderSizeLimit() function', () => {
+    let newLimit = limit.mul(2)
+
+    it('should PASS if caller is owner', async () => {
+      const tx = factoryContract.functions.updateOrderSizeLimit(newLimit)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should PASS if new limit is zero (halt)', async () => {
+      const tx = factoryContract.functions.updateOrderSizeLimit(0)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should REVERT if caller is not owner', async () => {
+      const tx = userFactoryContract.functions.updateOrderSizeLimit(newLimit)
+      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+    })
+
+    context('When limit was updated', () => {
+      let tx;
+      beforeEach(async () => {
+        tx = await factoryContract.functions.updateOrderSizeLimit(newLimit)
+      })
+
+      it('should set limit to new limit', async () => {
+        let returned_limit = await factoryContract.functions.getOrderSizeLimit();
+        expect(returned_limit).to.be.eql(newLimit)
+      })
+
+      it('should emit OrderSizeLimitChanged event', async () => {
+        let filterFromOperatorContract: ethers.ethers.EventFilter
+
+        // Get event filter to get internal tx event
+        filterFromOperatorContract = factoryContract.filters.OrderSizeLimitChanged(null, null);
+
+        // Get logs from internal transaction event
+        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+        filterFromOperatorContract.fromBlock = 0;
+        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.OrderSizeLimitChanged.topic)
+      })
+      
+      describe('OrderSizeLimitChanged Event', () => {
+        it('should have old limit as `oldLimit` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.oldLimit).to.be.eql(limit)
+        })
+        it('should have new limit as `newLimit` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.newLimit).to.be.eql(newLimit)
+        })
+      })
+    })
+  })
+
   describe('updateRNGDelay() function', () => {
     let newDelay = delay.mul(2)
 
@@ -717,7 +786,6 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       await expect(tx).to.be.rejectedWith(RevertError("SafeMath#mul: OVERFLOW"))
     })
 
-
     it('should REVERT if order at rng_block already exists', async () => {
       // 1. Create order with 3 delay
       await factoryContract.functions.updateRNGDelay(3);
@@ -730,6 +798,40 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       let tx = userWeaveContract.functions.safeTransferFrom(userAddress, factory, weaveID, cost, buyCardsData, TX_PARAM)
       await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#_commit: ORDER_HASH_ALREADY_USED"))
     })
+
+    it('should REVERT if order size exceeds limit', async () => {
+      let n_gold_buy_excess = limit.add(1)
+      let cost_excess = n_gold_buy_excess.mul(price).add(feeAmount)
+      let order_excess: GoldOrder = {
+        cardRecipient: userAddress,
+        feeRecipient: operatorAddress,
+        cardAmount: n_gold_buy_excess,
+        feeAmount: feeAmount,
+        rngBlock: Zero,
+      }
+
+      let buy_card_data_excess = getBuyGoldCardsData(order_excess)
+      const tx = userWeaveContract.functions.safeTransferFrom(userAddress, factory, weaveID, cost_excess, buy_card_data_excess, TX_PARAM)
+      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#_commit: CARD_AMOUNT_EXCEEDS_LIMIT"))
+    })
+
+    it('should pass if order size is equal to the limit', async () => {
+      let n_gold_buy_limit = limit
+      let cost_limit = n_gold_buy_limit.mul(price).add(feeAmount)
+      let order_limit: GoldOrder = {
+        cardRecipient: userAddress,
+        feeRecipient: operatorAddress,
+        cardAmount: n_gold_buy_limit,
+        feeAmount: feeAmount,
+        rngBlock: Zero,
+      }
+
+      let buy_card_data_limit = getBuyGoldCardsData(order_limit)
+  
+      const tx = userWeaveContract.functions.safeTransferFrom(userAddress, factory, weaveID, cost_limit, buy_card_data_limit, TX_PARAM)
+      await expect(tx).to.be.fulfilled
+    })
+
 
     context('When purchase was comitted', () => {
       let logs;
@@ -1117,6 +1219,7 @@ contract('GoldCardsFactory', (accounts: string[]) => {
         sort_order = gold.sorted_indexes
 
         repeat = ids_to_mint.length < nGoldsBuy.toNumber() ? false : true
+        repeat = nGoldsBuy.toNumber() == 1 ? false : repeat
         n_loop++;
       }
     })
@@ -1359,7 +1462,11 @@ contract('GoldCardsFactory', (accounts: string[]) => {
       let last_index = bad_sort_order[bad_sort_order.length-1]
       bad_sort_order[bad_sort_order.length-1] = last_index == 0 ? last_index + 1 : last_index - 1
       const tx = operatorFactoryContract.functions.mineGolds(order, ids_to_mint, bad_sort_order)
-      await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#validateRandomCards: INVALID_ID"))
+      if (sort_order.length > 1) {
+        await expect(tx).to.be.rejectedWith(RevertError("GoldCardsFactory#validateRandomCards: INVALID_ID"))
+      } else {
+        await expect(tx).to.be.rejected
+      }
     })
 
     it('should REVERT if one of the ID is invalid', async () => {

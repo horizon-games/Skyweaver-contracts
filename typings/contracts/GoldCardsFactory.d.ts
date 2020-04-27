@@ -41,6 +41,10 @@ interface GoldCardsFactoryInterface extends Interface {
       encode([_newDelay]: [BigNumberish]): string;
     }>;
 
+    updateOrderSizeLimit: TypedFunctionDescription<{
+      encode([_newLimit]: [BigNumberish]): string;
+    }>;
+
     onERC1155Received: TypedFunctionDescription<{
       encode([_operator, _from, _id, _amount, _data]: [
         string,
@@ -117,6 +121,8 @@ interface GoldCardsFactoryInterface extends Interface {
 
     getGoldPrice: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    getOrderSizeLimit: TypedFunctionDescription<{ encode([]: []): string }>;
+
     getGoldRefund: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getRNGDelay: TypedFunctionDescription<{ encode([]: []): string }>;
@@ -165,6 +171,10 @@ interface GoldCardsFactoryInterface extends Interface {
 
     OrderRecommitted: TypedEventDescription<{
       encodeTopics([order]: [null]): string[];
+    }>;
+
+    OrderSizeLimitChanged: TypedEventDescription<{
+      encodeTopics([oldLimit, newLimit]: [null, null]): string[];
     }>;
 
     OwnershipTransferred: TypedEventDescription<{
@@ -227,6 +237,11 @@ export class GoldCardsFactory extends Contract {
 
     updateRNGDelay(
       _newDelay: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    updateOrderSizeLimit(
+      _newLimit: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -294,6 +309,8 @@ export class GoldCardsFactory extends Contract {
 
     getGoldPrice(): Promise<BigNumber>;
 
+    getOrderSizeLimit(): Promise<BigNumber>;
+
     getGoldRefund(): Promise<BigNumber>;
 
     getRNGDelay(): Promise<BigNumber>;
@@ -343,6 +360,11 @@ export class GoldCardsFactory extends Contract {
 
   updateRNGDelay(
     _newDelay: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  updateOrderSizeLimit(
+    _newLimit: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -410,6 +432,8 @@ export class GoldCardsFactory extends Contract {
 
   getGoldPrice(): Promise<BigNumber>;
 
+  getOrderSizeLimit(): Promise<BigNumber>;
+
   getGoldRefund(): Promise<BigNumber>;
 
   getRNGDelay(): Promise<BigNumber>;
@@ -440,6 +464,8 @@ export class GoldCardsFactory extends Contract {
 
     OrderRecommitted(order: null): EventFilter;
 
+    OrderSizeLimitChanged(oldLimit: null, newLimit: null): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -465,6 +491,8 @@ export class GoldCardsFactory extends Contract {
     updateGoldRefund(_newRefund: BigNumberish): Promise<BigNumber>;
 
     updateRNGDelay(_newDelay: BigNumberish): Promise<BigNumber>;
+
+    updateOrderSizeLimit(_newLimit: BigNumberish): Promise<BigNumber>;
 
     onERC1155Received(
       _operator: string,
@@ -523,6 +551,8 @@ export class GoldCardsFactory extends Contract {
     getWeaveID(): Promise<BigNumber>;
 
     getGoldPrice(): Promise<BigNumber>;
+
+    getOrderSizeLimit(): Promise<BigNumber>;
 
     getGoldRefund(): Promise<BigNumber>;
 
