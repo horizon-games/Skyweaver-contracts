@@ -2,6 +2,7 @@ pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
 import "../utils/Ownable.sol";
+import "../utils/ReentrancyGuard.sol";
 import "../interfaces/ISWSupplyManager.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
@@ -10,7 +11,7 @@ import "multi-token-standard/contracts/utils/SafeMath.sol";
  * This is a contract allowing users to mint Skyweaver's silver card
  * at a common price.
  */
-contract SilverCardsFactory is Ownable {
+contract SilverCardsFactory is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
 
   /***********************************|
@@ -210,7 +211,7 @@ contract SilverCardsFactory is Ownable {
     uint256[] memory _amounts,
     uint256 _arcAmount,
     address _recipient)
-    internal
+    internal nonReentrant()
   {
     // Input validation
     uint256 nTokens = _ids.length;

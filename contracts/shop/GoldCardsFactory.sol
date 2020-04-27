@@ -2,6 +2,7 @@ pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
 import "../utils/Ownable.sol";
+import "../utils/ReentrancyGuard.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 
@@ -9,7 +10,7 @@ import "multi-token-standard/contracts/utils/SafeMath.sol";
  * This is a contract allowing users to mint random Skyweaver's
  * gold cards for a given weave amount using a future block hash commit scheme.
  */
-contract GoldCardsFactory is Ownable {
+contract GoldCardsFactory is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
 
   /***********************************|
@@ -289,7 +290,7 @@ contract GoldCardsFactory is Ownable {
    *
    */
   function _commit(uint256 _weaveAmount, GoldOrder memory _order)
-    internal
+    internal nonReentrant()
   {
     // Check if weave sent is sufficient for order
     uint256 order_cost = _order.cardAmount.mul(goldPrice);
@@ -364,7 +365,7 @@ contract GoldCardsFactory is Ownable {
    *                  sequence in which they appear in the rng function.
    */
   function mineGolds(GoldOrder calldata _order, uint256[] calldata _ids, uint256[] calldata _indexes)
-    external
+    external nonReentrant()
   {
     // Check if the total amount of token to mint correspond to array provided
     require(_order.cardAmount == _indexes.length, "GoldCardsFactory#mineGolds: INVALID_INDEXES_ARRAY_LENGTH");
@@ -422,7 +423,7 @@ contract GoldCardsFactory is Ownable {
    * todo ; check if tokens received are gold cards and not silvers!
    */
   function _melt(uint256[] memory _ids, uint256[] memory _amounts, address _recipient)
-    internal
+    internal nonReentrant()
   {
     // Amount to refund
     uint256 n_burns = 0;
