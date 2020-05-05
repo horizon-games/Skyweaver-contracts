@@ -173,11 +173,15 @@ contract GoldCardsFactory is Ownable, ReentrancyGuard {
   /**
    * @notice Will update the card refund amount
    * @dev Don't forget to account for the currency's decimals
-   @ @dev Should ignore card's decimals
+   * @dev Ignores card's decimals
+   * @dev Does not permit increasing the refund amount to ensure sufficient weave
+   *      available for refund. Weave will be stuck in this contract if refund is
+   *      decreased, which is acceptable.
    * @param _newRefund New card refund amount
    */
   function updateGoldRefund(uint256 _newRefund) external onlyOwner() {
     require(goldPrice >= _newRefund, "GoldCardsFactory#updateGoldRefund: REFUND_HIGHER_THAN_PRICE");
+    require(_newRefund < goldRefund, "GoldCardsFactory#updateGoldRefund: REFUND_EXCEEDS_OLD_REFUND");
     emit GoldRefundChanged(goldRefund, _newRefund);
     goldRefund = _newRefund;
   }
