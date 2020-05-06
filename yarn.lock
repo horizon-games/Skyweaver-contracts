@@ -2215,13 +2215,6 @@ eol@^0.9.1:
   resolved "https://registry.yarnpkg.com/eol/-/eol-0.9.1.tgz#f701912f504074be35c6117a5c4ade49cd547acd"
   integrity sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==
 
-erc20-meta-token@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/erc20-meta-token/-/erc20-meta-token-0.3.0.tgz#ce8252b576c1e5d743e69cf225f767ba401d07cd"
-  integrity sha512-PLfi/IH35SBHmPzYqaRmiUmKd++/YiwaLnOyuu6aYDYMzteuue1VtgzdVA2Ck55C+pJSU7quGoPTa723mlASig==
-  dependencies:
-    multi-token-standard "^0.9.3"
-
 errno@~0.1.1:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/errno/-/errno-0.1.7.tgz#4684d71779ad39af177e3f007996f7c67c852618"
@@ -4556,7 +4549,7 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-multi-token-standard@0.9.3, multi-token-standard@^0.9.3:
+multi-token-standard@0.9.3:
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-0.9.3.tgz#2921fae4af9e7addbd6f2aac01a5e63c29a93a6a"
   integrity sha512-ycQv7RMB1UK+0KE+vGvzOCIjysbB6zj11QRIVmFEykyQ1lTiOtMz115Ed+WZmFGomXEkJ/w2CHbSx+cgRH6kwQ==
@@ -4606,13 +4599,6 @@ next-tick@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
-
-niftyswap@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/niftyswap/-/niftyswap-0.3.0.tgz#b0d50572b8c52f5eff3134d62322d487af3197f7"
-  integrity sha512-5p9RnsCMV3L1wZ66b6kMZ/2a0/mQuYMiI6+TA7BWTaSBAyGbCLEL5kW3ImWwdsFFk0evHqM29cESWI0z2Sz5Dw==
-  dependencies:
-    multi-token-standard "^0.9.3"
 
 node-fetch@2.1.2:
   version "2.1.2"
