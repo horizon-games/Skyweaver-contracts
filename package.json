@@ -11,7 +11,6 @@
   "scripts": {
     "build": "truffle compile --all && yarn gen:contract-typings && tsc -b",
     "clean": "rm -rf build && rm -rf typings/contracts",
-    "prepare": "yarn build",
     "test": "tsc -b && truffle test --network ganache build/*.spec.js",
     "gen:contract-typings": "rm -f typings/contracts/* && typechain --target ethers --outDir typings/contracts './build/contracts/*.json'",
     "lint": "yarn lint:ts && yarn lint:sol",
