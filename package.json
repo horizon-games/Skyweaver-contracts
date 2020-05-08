@@ -1,8 +1,7 @@
 {
-  "name": "@skyweaver/chain",
-  "version": "0.2.0",
-  "private": true,
-  "license": "none",
+  "name": "@horizongames/skyweaver-contracts",
+  "version": "1.0.0",
+  "license": "MIT",
   "files": [
     "build",
     "contracts",
