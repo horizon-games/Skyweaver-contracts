@@ -32,6 +32,10 @@ interface MockDAIInterface extends Interface {
       encode([spender, addedValue]: [string, BigNumberish]): string;
     }>;
 
+    mockMint: TypedFunctionDescription<{
+      encode([_address, _amount]: [string, BigNumberish]): string;
+    }>;
+
     totalSupply: TypedFunctionDescription<{ encode([]: []): string }>;
 
     transfer: TypedFunctionDescription<{
@@ -44,10 +48,6 @@ interface MockDAIInterface extends Interface {
 
     transferOwnership: TypedFunctionDescription<{
       encode([_newOwner]: [string]): string;
-    }>;
-
-    mockMint: TypedFunctionDescription<{
-      encode([_address, _amount]: [string, BigNumberish]): string;
     }>;
   };
 
@@ -115,6 +115,12 @@ export class MockDAI extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    mockMint(
+      _address: string,
+      _amount: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     totalSupply(): Promise<BigNumber>;
 
     transfer(
@@ -132,12 +138,6 @@ export class MockDAI extends Contract {
 
     transferOwnership(
       _newOwner: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    mockMint(
-      _address: string,
-      _amount: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
   };
@@ -166,6 +166,12 @@ export class MockDAI extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  mockMint(
+    _address: string,
+    _amount: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
   totalSupply(): Promise<BigNumber>;
 
   transfer(
@@ -183,12 +189,6 @@ export class MockDAI extends Contract {
 
   transferOwnership(
     _newOwner: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  mockMint(
-    _address: string,
-    _amount: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -226,6 +226,8 @@ export class MockDAI extends Contract {
       addedValue: BigNumberish
     ): Promise<BigNumber>;
 
+    mockMint(_address: string, _amount: BigNumberish): Promise<BigNumber>;
+
     totalSupply(): Promise<BigNumber>;
 
     transfer(to: string, value: BigNumberish): Promise<BigNumber>;
@@ -237,7 +239,5 @@ export class MockDAI extends Contract {
     ): Promise<BigNumber>;
 
     transferOwnership(_newOwner: string): Promise<BigNumber>;
-
-    mockMint(_address: string, _amount: BigNumberish): Promise<BigNumber>;
   };
 }

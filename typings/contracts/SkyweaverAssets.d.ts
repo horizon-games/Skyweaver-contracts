@@ -12,18 +12,6 @@ import {
 
 interface SkyweaverAssetsInterface extends Interface {
   functions: {
-    activateFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    addMintPermission: TypedFunctionDescription<{
-      encode([_factory, _minRange, _maxRange]: [
-        string,
-        BigNumberish,
-        BigNumberish
-      ]): string;
-    }>;
-
     balanceOf: TypedFunctionDescription<{
       encode([_owner, _id]: [string, BigNumberish]): string;
     }>;
@@ -32,46 +20,9 @@ interface SkyweaverAssetsInterface extends Interface {
       encode([_owners, _ids]: [string[], BigNumberish[]]): string;
     }>;
 
-    batchBurn: TypedFunctionDescription<{
-      encode([_ids, _amounts]: [BigNumberish[], BigNumberish[]]): string;
-    }>;
-
-    batchMint: TypedFunctionDescription<{
-      encode([_to, _ids, _amounts, _data]: [
-        string,
-        BigNumberish[],
-        BigNumberish[],
-        Arrayish
-      ]): string;
-    }>;
-
-    burn: TypedFunctionDescription<{
-      encode([_id, _amount]: [BigNumberish, BigNumberish]): string;
-    }>;
-
-    getCurrentIssuances: TypedFunctionDescription<{
-      encode([_ids]: [BigNumberish[]]): string;
-    }>;
-
-    getFactoryAccessRanges: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    getFactoryStatus: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
     getIDBinIndex: TypedFunctionDescription<{
       encode([_id]: [BigNumberish]): string;
     }>;
-
-    getLockedRanges: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    getMaxIssuances: TypedFunctionDescription<{
-      encode([_ids]: [BigNumberish[]]): string;
-    }>;
-
-    getNonce: TypedFunctionDescription<{ encode([_signer]: [string]): string }>;
 
     getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -81,68 +32,6 @@ interface SkyweaverAssetsInterface extends Interface {
 
     isApprovedForAll: TypedFunctionDescription<{
       encode([_owner, _operator]: [string, string]): string;
-    }>;
-
-    isValidSignature: TypedFunctionDescription<{
-      encode([_signerAddress, _hash, _data, _sig]: [
-        string,
-        Arrayish,
-        Arrayish,
-        Arrayish
-      ]): string;
-    }>;
-
-    lockRangeMintPermissions: TypedFunctionDescription<{
-      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
-    }>;
-
-    logURIs: TypedFunctionDescription<{
-      encode([_tokenIDs]: [BigNumberish[]]): string;
-    }>;
-
-    metaSafeBatchTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _ids, _amounts, _isGasFee, _data]: [
-        string,
-        string,
-        BigNumberish[],
-        BigNumberish[],
-        boolean,
-        Arrayish
-      ]): string;
-    }>;
-
-    metaSafeTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _id, _amount, _isGasFee, _data]: [
-        string,
-        string,
-        BigNumberish,
-        BigNumberish,
-        boolean,
-        Arrayish
-      ]): string;
-    }>;
-
-    metaSetApprovalForAll: TypedFunctionDescription<{
-      encode([_owner, _operator, _approved, _isGasFee, _data]: [
-        string,
-        string,
-        boolean,
-        boolean,
-        Arrayish
-      ]): string;
-    }>;
-
-    mint: TypedFunctionDescription<{
-      encode([_to, _id, _amount, _data]: [
-        string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
-      ]): string;
-    }>;
-
-    removeMintPermission: TypedFunctionDescription<{
-      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
     }>;
 
     safeBatchTransferFrom: TypedFunctionDescription<{
@@ -169,21 +58,6 @@ interface SkyweaverAssetsInterface extends Interface {
       encode([_operator, _approved]: [string, boolean]): string;
     }>;
 
-    setBaseMetadataURI: TypedFunctionDescription<{
-      encode([_newBaseMetadataURI]: [string]): string;
-    }>;
-
-    setMaxIssuances: TypedFunctionDescription<{
-      encode([_ids, _newMaxIssuances]: [
-        BigNumberish[],
-        BigNumberish[]
-      ]): string;
-    }>;
-
-    shutdownFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
     supportsInterface: TypedFunctionDescription<{
       encode([_interfaceID]: [Arrayish]): string;
     }>;
@@ -204,39 +78,11 @@ interface SkyweaverAssetsInterface extends Interface {
       ]): string[];
     }>;
 
-    FactoryActivation: TypedEventDescription<{
-      encodeTopics([factory]: [string | null]): string[];
-    }>;
-
-    FactoryShutdown: TypedEventDescription<{
-      encodeTopics([factory]: [string | null]): string[];
-    }>;
-
-    MaxIssuancesChanged: TypedEventDescription<{
-      encodeTopics([ids, newMaxIssuances]: [null, null]): string[];
-    }>;
-
-    MintPermissionAdded: TypedEventDescription<{
-      encodeTopics([factory, new_range]: [string | null, null]): string[];
-    }>;
-
-    MintPermissionRemoved: TypedEventDescription<{
-      encodeTopics([factory, deleted_range]: [string | null, null]): string[];
-    }>;
-
-    NonceChange: TypedEventDescription<{
-      encodeTopics([signer, newNonce]: [string | null, null]): string[];
-    }>;
-
     OwnershipTransferred: TypedEventDescription<{
       encodeTopics([previousOwner, newOwner]: [
         string | null,
         string | null
       ]): string[];
-    }>;
-
-    RangeLocked: TypedEventDescription<{
-      encodeTopics([locked_range]: [null]): string[];
     }>;
 
     TransferBatch: TypedEventDescription<{
@@ -282,52 +128,12 @@ export class SkyweaverAssets extends Contract {
   interface: SkyweaverAssetsInterface;
 
   functions: {
-    activateFactory(
-      _factory: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    addMintPermission(
-      _factory: string,
-      _minRange: BigNumberish,
-      _maxRange: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
     balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
 
     balanceOfBatch(
       _owners: string[],
       _ids: BigNumberish[]
     ): Promise<BigNumber[]>;
-
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    burn(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    getFactoryAccessRanges(
-      _factory: string
-    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-    getFactoryStatus(_factory: string): Promise<boolean>;
 
     getIDBinIndex(
       _id: BigNumberish
@@ -338,12 +144,6 @@ export class SkyweaverAssets extends Contract {
       1: BigNumber;
     }>;
 
-    getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    getNonce(_signer: string): Promise<BigNumber>;
-
     getOwner(): Promise<string>;
 
     getValueInBin(
@@ -352,66 +152,6 @@ export class SkyweaverAssets extends Contract {
     ): Promise<BigNumber>;
 
     isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
-
-    isValidSignature(
-      _signerAddress: string,
-      _hash: Arrayish,
-      _data: Arrayish,
-      _sig: Arrayish
-    ): Promise<boolean>;
-
-    lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    metaSafeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    metaSafeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    metaSetApprovalForAll(
-      _owner: string,
-      _operator: string,
-      _approved: boolean,
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    removeMintPermission(
-      _factory: string,
-      _rangeIndex: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
 
     safeBatchTransferFrom(
       _from: string,
@@ -437,22 +177,6 @@ export class SkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    shutdownFactory(
-      _factory: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
     supportsInterface(_interfaceID: Arrayish): Promise<boolean>;
 
     transferOwnership(
@@ -463,49 +187,9 @@ export class SkyweaverAssets extends Contract {
     uri(_id: BigNumberish): Promise<string>;
   };
 
-  activateFactory(
-    _factory: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  addMintPermission(
-    _factory: string,
-    _minRange: BigNumberish,
-    _maxRange: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
 
   balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  batchBurn(
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  batchMint(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  burn(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  getFactoryAccessRanges(
-    _factory: string
-  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-  getFactoryStatus(_factory: string): Promise<boolean>;
 
   getIDBinIndex(
     _id: BigNumberish
@@ -516,12 +200,6 @@ export class SkyweaverAssets extends Contract {
     1: BigNumber;
   }>;
 
-  getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  getNonce(_signer: string): Promise<BigNumber>;
-
   getOwner(): Promise<string>;
 
   getValueInBin(
@@ -530,66 +208,6 @@ export class SkyweaverAssets extends Contract {
   ): Promise<BigNumber>;
 
   isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
-
-  isValidSignature(
-    _signerAddress: string,
-    _hash: Arrayish,
-    _data: Arrayish,
-    _sig: Arrayish
-  ): Promise<boolean>;
-
-  lockRangeMintPermissions(
-    _range: { minID: BigNumberish; maxID: BigNumberish },
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  logURIs(
-    _tokenIDs: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  metaSafeBatchTransferFrom(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  metaSafeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  metaSetApprovalForAll(
-    _owner: string,
-    _operator: string,
-    _approved: boolean,
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  mint(
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  removeMintPermission(
-    _factory: string,
-    _rangeIndex: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
 
   safeBatchTransferFrom(
     _from: string,
@@ -615,22 +233,6 @@ export class SkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  setBaseMetadataURI(
-    _newBaseMetadataURI: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  setMaxIssuances(
-    _ids: BigNumberish[],
-    _newMaxIssuances: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  shutdownFactory(
-    _factory: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   supportsInterface(_interfaceID: Arrayish): Promise<boolean>;
 
   transferOwnership(
@@ -647,27 +249,10 @@ export class SkyweaverAssets extends Contract {
       _approved: null
     ): EventFilter;
 
-    FactoryActivation(factory: string | null): EventFilter;
-
-    FactoryShutdown(factory: string | null): EventFilter;
-
-    MaxIssuancesChanged(ids: null, newMaxIssuances: null): EventFilter;
-
-    MintPermissionAdded(factory: string | null, new_range: null): EventFilter;
-
-    MintPermissionRemoved(
-      factory: string | null,
-      deleted_range: null
-    ): EventFilter;
-
-    NonceChange(signer: string | null, newNonce: null): EventFilter;
-
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
-
-    RangeLocked(locked_range: null): EventFilter;
 
     TransferBatch(
       _operator: string | null,
@@ -689,45 +274,11 @@ export class SkyweaverAssets extends Contract {
   };
 
   estimate: {
-    activateFactory(_factory: string): Promise<BigNumber>;
-
-    addMintPermission(
-      _factory: string,
-      _minRange: BigNumberish,
-      _maxRange: BigNumberish
-    ): Promise<BigNumber>;
-
     balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
 
     balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber>;
 
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
-    ): Promise<BigNumber>;
-
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    burn(_id: BigNumberish, _amount: BigNumberish): Promise<BigNumber>;
-
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
-
-    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
-
-    getFactoryStatus(_factory: string): Promise<BigNumber>;
-
     getIDBinIndex(_id: BigNumberish): Promise<BigNumber>;
-
-    getLockedRanges(): Promise<BigNumber>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
-
-    getNonce(_signer: string): Promise<BigNumber>;
 
     getOwner(): Promise<BigNumber>;
 
@@ -737,58 +288,6 @@ export class SkyweaverAssets extends Contract {
     ): Promise<BigNumber>;
 
     isApprovedForAll(_owner: string, _operator: string): Promise<BigNumber>;
-
-    isValidSignature(
-      _signerAddress: string,
-      _hash: Arrayish,
-      _data: Arrayish,
-      _sig: Arrayish
-    ): Promise<BigNumber>;
-
-    lockRangeMintPermissions(_range: {
-      minID: BigNumberish;
-      maxID: BigNumberish;
-    }): Promise<BigNumber>;
-
-    logURIs(_tokenIDs: BigNumberish[]): Promise<BigNumber>;
-
-    metaSafeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    metaSafeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    metaSetApprovalForAll(
-      _owner: string,
-      _operator: string,
-      _approved: boolean,
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    removeMintPermission(
-      _factory: string,
-      _rangeIndex: BigNumberish
-    ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       _from: string,
@@ -810,15 +309,6 @@ export class SkyweaverAssets extends Contract {
       _operator: string,
       _approved: boolean
     ): Promise<BigNumber>;
-
-    setBaseMetadataURI(_newBaseMetadataURI: string): Promise<BigNumber>;
-
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[]
-    ): Promise<BigNumber>;
-
-    shutdownFactory(_factory: string): Promise<BigNumber>;
 
     supportsInterface(_interfaceID: Arrayish): Promise<BigNumber>;
 
