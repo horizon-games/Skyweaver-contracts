@@ -1,13 +1,12 @@
-pragma solidity ^0.5.16;
-import "../interfaces/ISWSupplyManager.sol";
-
+pragma solidity ^0.6.8;
+import "../interfaces/ISkyweaverAssets.sol";
 
 contract FactoryMock {
 
-  ISWSupplyManager internal factoryManager; //SkyWeaver Curencies Factory Manager Contract
+  ISkyweaverAssets internal skyweaverAssets; //SkyWeaver Curencies Factory Manager Contract
 
   constructor(address _factoryManagerAddr) public {
-    factoryManager = ISWSupplyManager(_factoryManagerAddr);
+    skyweaverAssets = ISkyweaverAssets(_factoryManagerAddr);
   }
 
   function batchMint(
@@ -16,7 +15,7 @@ contract FactoryMock {
     uint256[] memory _amounts,
     bytes memory _data) public
   {
-    factoryManager.batchMint(_to, _ids, _amounts, _data);
+    skyweaverAssets.batchMint(_to, _ids, _amounts, _data);
   }
 
   function mint(
@@ -25,7 +24,7 @@ contract FactoryMock {
     uint256 _amount,
     bytes memory _data) public
   {
-    factoryManager.mint(_to, _id, _amount, _data);
+    skyweaverAssets.mint(_to, _id, _amount, _data);
   }
 
 }

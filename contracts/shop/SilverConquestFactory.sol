@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "../utils/Ownable.sol";
@@ -104,7 +104,7 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
   /**
    * @notice Prevents receiving Ether or calls to unsuported methods
    */
-  function () external {
+  fallback () external {
     revert("SilverConquestFactory#_: UNSUPPORTED_METHOD");
   }
 

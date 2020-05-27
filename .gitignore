@@ -1,7 +1,7 @@
 build
 artifacts
 cache
-typings/contracts/*Factory.ts
+typings/contracts/
 
 .vscode/
 .vs_code/

@@ -3,8 +3,7 @@ import * as ethers from 'ethers'
 import { 
   AbstractContract, 
   expect,
-  RevertError,
-  getBuyCardsData
+  RevertError
 } from './utils'
 
 import * as utils from './utils'

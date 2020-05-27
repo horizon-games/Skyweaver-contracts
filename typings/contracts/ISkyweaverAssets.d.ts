@@ -12,8 +12,11 @@ import {
 
 interface ISkyweaverAssetsInterface extends Interface {
   functions: {
-    activateFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
     }>;
 
     addMintPermission: TypedFunctionDescription<{
@@ -24,15 +27,27 @@ interface ISkyweaverAssetsInterface extends Interface {
       ]): string;
     }>;
 
-    getCurrentIssuances: TypedFunctionDescription<{
-      encode([_ids]: [BigNumberish[]]): string;
+    removeMintPermission: TypedFunctionDescription<{
+      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
     }>;
 
-    getFactoryAccessRanges: TypedFunctionDescription<{
+    activateFactory: TypedFunctionDescription<{
       encode([_factory]: [string]): string;
     }>;
 
+    shutdownFactory: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    lockRangeMintPermissions: TypedFunctionDescription<{
+      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
+    }>;
+
     getFactoryStatus: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    getFactoryAccessRanges: TypedFunctionDescription<{
       encode([_factory]: [string]): string;
     }>;
 
@@ -40,23 +55,8 @@ interface ISkyweaverAssetsInterface extends Interface {
       encode([_ids]: [BigNumberish[]]): string;
     }>;
 
-    lockRangeMintPermissions: TypedFunctionDescription<{
-      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
-    }>;
-
-    removeMintPermission: TypedFunctionDescription<{
-      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
-    }>;
-
-    setMaxIssuances: TypedFunctionDescription<{
-      encode([_ids, _newMaxIssuances]: [
-        BigNumberish[],
-        BigNumberish[]
-      ]): string;
-    }>;
-
-    shutdownFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
+    getCurrentIssuances: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
     }>;
 
     mint: TypedFunctionDescription<{
@@ -83,36 +83,6 @@ interface ISkyweaverAssetsInterface extends Interface {
 
     batchBurn: TypedFunctionDescription<{
       encode([_ids, _amounts]: [BigNumberish[], BigNumberish[]]): string;
-    }>;
-
-    uri: TypedFunctionDescription<{ encode([_id]: [BigNumberish]): string }>;
-
-    setBaseMetadataURI: TypedFunctionDescription<{
-      encode([_newBaseMetadataURI]: [string]): string;
-    }>;
-
-    logURIs: TypedFunctionDescription<{
-      encode([_tokenIDs]: [BigNumberish[]]): string;
-    }>;
-
-    safeBatchTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _ids, _amounts, _data]: [
-        string,
-        string,
-        BigNumberish[],
-        BigNumberish[],
-        Arrayish
-      ]): string;
-    }>;
-
-    safeTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _id, _amount, _data]: [
-        string,
-        string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
-      ]): string;
     }>;
   };
 
@@ -152,8 +122,9 @@ export class ISkyweaverAssets extends Contract {
   interface: ISkyweaverAssetsInterface;
 
   functions: {
-    activateFactory(
-      _factory: string,
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -164,30 +135,14 @@ export class ISkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    getFactoryAccessRanges(
-      _factory: string
-    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-    getFactoryStatus(_factory: string): Promise<boolean>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
     removeMintPermission(
       _factory: string,
       _rangeIndex: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[],
+    activateFactory(
+      _factory: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -195,6 +150,21 @@ export class ISkyweaverAssets extends Contract {
       _factory: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
+
+    lockRangeMintPermissions(
+      _range: { minID: BigNumberish; maxID: BigNumberish },
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    getFactoryStatus(_factory: string): Promise<boolean>;
+
+    getFactoryAccessRanges(
+      _factory: string
+    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
     mint(
       _to: string,
@@ -223,40 +193,11 @@ export class ISkyweaverAssets extends Contract {
       _amounts: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
-
-    uri(_id: BigNumberish): Promise<string>;
-
-    setBaseMetadataURI(
-      _newBaseMetadataURI: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    logURIs(
-      _tokenIDs: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
   };
 
-  activateFactory(
-    _factory: string,
+  setMaxIssuances(
+    _ids: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -267,30 +208,14 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  getFactoryAccessRanges(
-    _factory: string
-  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-  getFactoryStatus(_factory: string): Promise<boolean>;
-
-  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  lockRangeMintPermissions(
-    _range: { minID: BigNumberish; maxID: BigNumberish },
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   removeMintPermission(
     _factory: string,
     _rangeIndex: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  setMaxIssuances(
-    _ids: BigNumberish[],
-    _newMaxIssuances: BigNumberish[],
+  activateFactory(
+    _factory: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -298,6 +223,21 @@ export class ISkyweaverAssets extends Contract {
     _factory: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
+
+  lockRangeMintPermissions(
+    _range: { minID: BigNumberish; maxID: BigNumberish },
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  getFactoryStatus(_factory: string): Promise<boolean>;
+
+  getFactoryAccessRanges(
+    _factory: string
+  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
 
   mint(
     _to: string,
@@ -327,36 +267,6 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  uri(_id: BigNumberish): Promise<string>;
-
-  setBaseMetadataURI(
-    _newBaseMetadataURI: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  logURIs(
-    _tokenIDs: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  safeBatchTransferFrom(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  safeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   filters: {
     FactoryActivation(factory: string | null): EventFilter;
 
@@ -371,7 +281,10 @@ export class ISkyweaverAssets extends Contract {
   };
 
   estimate: {
-    activateFactory(_factory: string): Promise<BigNumber>;
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[]
+    ): Promise<BigNumber>;
 
     addMintPermission(
       _factory: string,
@@ -379,30 +292,27 @@ export class ISkyweaverAssets extends Contract {
       _maxRange: BigNumberish
     ): Promise<BigNumber>;
 
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish
+    ): Promise<BigNumber>;
 
-    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
+    activateFactory(_factory: string): Promise<BigNumber>;
 
-    getFactoryStatus(_factory: string): Promise<BigNumber>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+    shutdownFactory(_factory: string): Promise<BigNumber>;
 
     lockRangeMintPermissions(_range: {
       minID: BigNumberish;
       maxID: BigNumberish;
     }): Promise<BigNumber>;
 
-    removeMintPermission(
-      _factory: string,
-      _rangeIndex: BigNumberish
-    ): Promise<BigNumber>;
+    getFactoryStatus(_factory: string): Promise<BigNumber>;
 
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[]
-    ): Promise<BigNumber>;
+    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
 
-    shutdownFactory(_factory: string): Promise<BigNumber>;
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
 
     mint(
       _to: string,
@@ -423,28 +333,6 @@ export class ISkyweaverAssets extends Contract {
     batchBurn(
       _ids: BigNumberish[],
       _amounts: BigNumberish[]
-    ): Promise<BigNumber>;
-
-    uri(_id: BigNumberish): Promise<BigNumber>;
-
-    setBaseMetadataURI(_newBaseMetadataURI: string): Promise<BigNumber>;
-
-    logURIs(_tokenIDs: BigNumberish[]): Promise<BigNumber>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
     ): Promise<BigNumber>;
   };
 }
