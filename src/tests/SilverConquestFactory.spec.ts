@@ -3,11 +3,13 @@ import * as ethers from 'ethers'
 import { 
   AbstractContract, 
   expect,
-  RevertError
+  RevertError,
+  ZERO_ADDRESS
 } from './utils'
 
 import * as utils from './utils'
 import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
+import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
 import { SilverConquestFactory } from 'typings/contracts/SilverConquestFactory'
 import { BigNumber } from 'ethers/utils';
 import { Zero } from 'ethers/constants'
@@ -45,12 +47,17 @@ contract('SilverConquestFactory', (accounts: string[]) => {
   let ownerAddress: string
   let userAddress: string
   let skyweaverAssetsAbstract: AbstractContract
+  let arcadeumCoinAbstract: AbstractContract
   let factoryAbstract: AbstractContract
 
   // Skyweaver Assets
   let skyweaverAssetsContract: SkyweaverAssets
   let userSkyweaverAssetContract: SkyweaverAssets
   let factoryContract: SilverConquestFactory
+
+  // Arcadeum Coins
+  let arcadeumCoinContract: ERC1155Mock
+  let userArcadeumCoinContract: ERC1155Mock
 
   // Factory manager
   let userFactoryContract: SilverConquestFactory
@@ -62,12 +69,17 @@ contract('SilverConquestFactory', (accounts: string[]) => {
   const nTokenTypes    = new BigNumber(30) 
   const nTokensPerType = new BigNumber(500)
 
+  // Arcadeum Coin Param
+  const arcID = new BigNumber(2);
+  const baseTokenAmount = new BigNumber(1000000000).mul(new BigNumber(10).pow(16))
+  const price = new BigNumber(100).mul(new BigNumber(10).pow(16))
+
   // Range values 
   const minRange = new BigNumber(1);
   const maxRange = new BigNumber(500);
 
   // Base Token Param
-  const mintBurnRatio = new BigNumber(875)
+  const mintEntryRatio = new BigNumber(875)
 
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
@@ -80,11 +92,16 @@ contract('SilverConquestFactory', (accounts: string[]) => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
+    arcadeumCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('SilverConquestFactory')
   })
 
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
+    // Deploy Arcadeum Coins
+    arcadeumCoinContract = await arcadeumCoinAbstract.deploy(ownerWallet) as ERC1155Mock
+    userArcadeumCoinContract = await arcadeumCoinContract.connect(userSigner) as ERC1155Mock
+
     // Deploy Skyweaver Assets Contract
     skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
     userSkyweaverAssetContract = await skyweaverAssetsContract.connect(userSigner)
@@ -92,7 +109,10 @@ contract('SilverConquestFactory', (accounts: string[]) => {
     // Deploy silver card factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
       skyweaverAssetsContract.address,
-      mintBurnRatio
+      mintEntryRatio,
+      arcadeumCoinContract.address,
+      arcID,
+      price
     ]) as SilverConquestFactory
     userFactoryContract = await factoryContract.connect(userSigner) as SilverConquestFactory
 
@@ -112,6 +132,10 @@ contract('SilverConquestFactory', (accounts: string[]) => {
 
     // Mint silver cards to user
     await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
+
+    // Mint Arcadeum coins to owner and user
+    await arcadeumCoinContract.functions.mintMock(ownerAddress, arcID, baseTokenAmount, [])
+    await arcadeumCoinContract.functions.mintMock(userAddress, arcID, baseTokenAmount, [])
   })
 
   describe('Getter functions', () => {
@@ -122,10 +146,17 @@ contract('SilverConquestFactory', (accounts: string[]) => {
       })
     })
 
-    describe('getMintBurnRatio() function', () => {
-      it('should return the mint burn ratio', async () => {
-        const ratio = await factoryContract.functions.getMintBurnRatio()
-        expect(ratio).to.be.eql(mintBurnRatio)
+    describe('getMintEntryRatio() function', () => {
+      it('should return the mint entry ratio', async () => {
+        const ratio = await factoryContract.functions.getMintEntryRatio()
+        expect(ratio).to.be.eql(mintEntryRatio)
+      })
+    })
+
+    describe('getArcPrice() function', () => {
+      it('should return the enry price in arc', async () => {
+        const arc_price = await factoryContract.functions.getArcPrice()
+        expect(arc_price).to.be.eql(price)
       })
     })
 
@@ -156,55 +187,55 @@ contract('SilverConquestFactory', (accounts: string[]) => {
     })
   })
 
-  describe('updateMintBurnRatio() function', () => {
-    let newRatio = mintBurnRatio.div(2)
+  describe('updateMintEntryRatio() function', () => {
+    let newRatio = mintEntryRatio.div(2)
 
     it('should PASS if caller is owner', async () => {
-      const tx = factoryContract.functions.updateMintBurnRatio(newRatio)
+      const tx = factoryContract.functions.updateMintEntryRatio(newRatio)
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx = userFactoryContract.functions.updateMintBurnRatio(newRatio)
+      const tx = userFactoryContract.functions.updateMintEntryRatio(newRatio)
       await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
     })
 
-    it('should REVERT if new ratio is above 1000', async () => {
-      const tx = factoryContract.functions.updateMintBurnRatio(1001)
-      await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#updateMintBurnRatio: RATIO_IS_BIGGER_THAN_1"))
+    it('should REVERT if new price is below or qual to 100000000', async () => {
+      const tx = factoryContract.functions.updateArcPrice(new BigNumber(100000000))
+      await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#updateArcPrice: INVALID_PRICE"))
     })
 
     context('When ratio was updated', () => {
       let tx;
       beforeEach(async () => {
-        tx = await factoryContract.functions.updateMintBurnRatio(newRatio)
+        tx = await factoryContract.functions.updateMintEntryRatio(newRatio)
       })
 
       it('should set ratio to new ratio', async () => {
-        let returned_ratio = await factoryContract.functions.getMintBurnRatio();
+        let returned_ratio = await factoryContract.functions.getMintEntryRatio();
         expect(returned_ratio).to.be.eql(newRatio)
       })
 
-      it('should emit MintBurnRatioChange event', async () => {
+      it('should emit MintEntryRatioChange event', async () => {
         let filterFromOperatorContract: ethers.ethers.EventFilter
 
         // Get event filter to get internal tx event
-        filterFromOperatorContract = factoryContract.filters.MintBurnRatioChange(null, null);
+        filterFromOperatorContract = factoryContract.filters.MintEntryRatioChange(null, null);
 
         // Get logs from internal transaction event
         // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
         filterFromOperatorContract.fromBlock = 0;
         let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.MintBurnRatioChange.topic)
+        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.MintEntryRatioChange.topic)
       })
       
-      describe('MintBurnRatioChange Event', () => {
+      describe('MintEntryRatioChange Event', () => {
         it('should have old ratio as `oldratio` field', async () => {  
           const receipt = await tx.wait(1)
           const ev = receipt.events!.pop()!
 
           const args = ev.args! as any
-          expect(args.oldRatio).to.be.eql(mintBurnRatio)
+          expect(args.oldRatio).to.be.eql(mintEntryRatio)
         })
         it('should have old ratio as `newRatio` field', async () => {  
           const receipt = await tx.wait(1)
@@ -212,6 +243,67 @@ contract('SilverConquestFactory', (accounts: string[]) => {
 
           const args = ev.args! as any
           expect(args.newRatio).to.be.eql(newRatio)
+        })
+      })
+    })
+  })
+
+  describe('updateArcPrice() function', () => {
+    let newPrice = price.mul(2)
+
+    it('should PASS if caller is owner', async () => {
+      const tx = factoryContract.functions.updateArcPrice(newPrice)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should REVERT if caller is not owner', async () => {
+      const tx = userFactoryContract.functions.updateArcPrice(newPrice)
+      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+    })
+
+    it('should REVERT if new price is below or qual to 100000000', async () => {
+      const tx = factoryContract.functions.updateArcPrice(new BigNumber(100000000))
+      await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#updateArcPrice: INVALID_PRICE"))
+    })
+
+    context('When price was updated', () => {
+      let tx;
+      beforeEach(async () => {
+        tx = await factoryContract.functions.updateArcPrice(newPrice)
+      })
+
+      it('should set price to new price', async () => {
+        let returned_price = await factoryContract.functions.getArcPrice();
+        expect(returned_price).to.be.eql(newPrice)
+      })
+
+      it('should emit MintEntryRatioChange event', async () => {
+        let filterFromOperatorContract: ethers.ethers.EventFilter
+
+        // Get event filter to get internal tx event
+        filterFromOperatorContract = factoryContract.filters.MintEntryRatioChange(null, null);
+
+        // Get logs from internal transaction event
+        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+        filterFromOperatorContract.fromBlock = 0;
+        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.MintEntryRatioChange.topic)
+      })
+      
+      describe('ArcPriceChange Event', () => {
+        it('should have old price as `oldPrice` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.oldPrice).to.be.eql(price)
+        })
+        it('should have new price as `newPrice` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.newPrice).to.be.eql(newPrice)
         })
       })
     })
@@ -282,113 +374,238 @@ contract('SilverConquestFactory', (accounts: string[]) => {
     let id = ids[0]
     let amount = 1
 
-    context('Using safeTransferFrom', () => {
-      it('should PASS if caller sends cards', async () => {
-        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, id, amount, [], TX_PARAM)
-        await expect(tx).to.be.fulfilled
+    context('Using Silver Cards', () => {
+      context('Using safeTransferFrom', () => {
+        it('should PASS if caller sends cards', async () => {
+          const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, id, amount, [], TX_PARAM)
+          await expect(tx).to.be.fulfilled
+        })
+  
+        it('should REVERT if ID is out of range', async () => {
+          let invalid_id = 666
+          await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
+  
+          // Under min
+          const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, 0, 1, [], TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+  
+          // Above max
+          const tx2 = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, invalid_id, 1, [], TX_PARAM)
+          await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+        })
       })
-
-      it('should REVERT if ID is out of range', async () => {
-        let invalid_id = 666
-        await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
-
-        // Under min
-        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, 0, 1, [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
-
-        // Above max
-        const tx2 = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, invalid_id, 1, [], TX_PARAM)
-        await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+  
+      context('Using safeBatchTransferFrom', () => {
+        it('should PASS if caller sends silver cards', async () => {
+          const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
+          await expect(tx).to.be.fulfilled
+        })
+  
+        it('should REVERT if ID is out of range', async () => {
+          let invalid_id = 666
+          await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
+  
+          // Under min
+          const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [0], [1], [], TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+  
+          // Above max
+          const tx2 = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [1], [], TX_PARAM)
+          await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+        })
+  
+        it('should REVERT if one ID is out of range', async () => {
+          let invalid_id = 666
+          await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
+  
+          // Under min
+          const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [0, 1, 2], [1, 1, 1], [], TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+  
+          // Above max
+          const tx2 = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [1, 2, invalid_id], [1, 1, 1], [], TX_PARAM)
+          await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
+        })
+  
       })
-    })
-
-    context('Using safeBatchTransferFrom', () => {
-      it('should PASS if caller sends silver cards', async () => {
-        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
-        await expect(tx).to.be.fulfilled
-      })
-
-      it('should REVERT if ID is out of range', async () => {
-        let invalid_id = 666
-        await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
-
-        // Under min
-        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [0], [1], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
-
-        // Above max
-        const tx2 = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [1], [], TX_PARAM)
-        await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
-      })
-
-      it('should REVERT if one ID is out of range', async () => {
-        let invalid_id = 666
-        await skyweaverAssetsContract.functions.batchMint(userAddress, [0, invalid_id], [1, 1], [])
-
-        // Under min
-        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [0, 1, 2], [1, 1, 1], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
-
-        // Above max
-        const tx2 = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [1, 2, invalid_id], [1, 1, 1], [], TX_PARAM)
-        await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155BatchReceived: ID_OUT_OF_RANGE"))
-      })
-
-    })
-
-    context('When cards were sent to tribute', () => {
-      let logs;
-      beforeEach(async () => {
-        await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
-        let filter = factoryContract.filters.NewTribute(null, null);
-        // Get logs from internal transaction event
-        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-        filter.fromBlock = 0;
-        logs = await operatorProvider.getLogs(filter);
-      })
-
-      it('should leave factory silver cards balance to 0', async () => {
-        let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
-        let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
-        for (let i = 0; i < ids.length; i++) {
-          expect(factory_balances[i]).to.be.eql(Zero)
-        }
-      })
-
-      it('should update user silver cards balance', async () => {
-        let user_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => userAddress)
-        let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, ids)
-        for (let i = 0; i < ids.length; i++) {
-          expect(userBalances[i]).to.be.eql(Zero)
-        }
-      })
-
-      it('should update user availableSupply', async () => {
-        let expected_supply = nTokenTypes.mul(nTokensPerType).mul(mintBurnRatio).div(1000)
-        let supply = await factoryContract.functions.getAvailableSupply()
-        expect(supply).to.be.eql(expected_supply)
-      })
-
-      it('should emit NewTribute event', async () => {
-        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.NewTribute.topic)
-      })
-      
-      describe('NewTribute Event', () => {
-        let args;
-
+  
+      context('When cards were sent to tribute', () => {
+        let logs;
         beforeEach(async () => {
-          args = factoryContract.interface.events.NewTribute.decode(logs[0].data, logs[0].topics)
+          await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
+          let filter = factoryContract.filters.NewTribute(null, null);
+          // Get logs from internal transaction event
+          // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+          filter.fromBlock = 0;
+          logs = await operatorProvider.getLogs(filter);
         })
-
-        it('should have user address as `user` field', async () => {  
-          expect(args.user).to.be.eql(userAddress)
+  
+        it('should leave factory silver cards balance to 0', async () => {
+          let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
+          let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
+          for (let i = 0; i < ids.length; i++) {
+            expect(factory_balances[i]).to.be.eql(Zero)
+          }
         })
-
-        it('should have amount burned as `nBurned` field', async () => {  
-          expect(args.nBurned).to.be.eql(nTokenTypes.mul(nTokensPerType))
+  
+        it('should update user silver cards balance', async () => {
+          let user_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => userAddress)
+          let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, ids)
+          for (let i = 0; i < ids.length; i++) {
+            expect(userBalances[i]).to.be.eql(Zero)
+          }
+        })
+  
+        it('should update availableSupply', async () => {
+          let expected_supply = nTokenTypes.mul(nTokensPerType).mul(mintEntryRatio).div(1000)
+          let supply = await factoryContract.functions.getAvailableSupply()
+          expect(supply).to.be.eql(expected_supply)
+        })
+  
+        it('should emit NewTribute event', async () => {
+          expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.NewTribute.topic)
+        })
+        
+        describe('NewTribute Event', () => {
+          let args;
+  
+          beforeEach(async () => {
+            args = factoryContract.interface.events.NewTribute.decode(logs[0].data, logs[0].topics)
+          })
+  
+          it('should have user address as `user` field', async () => {  
+            expect(args.user).to.be.eql(userAddress)
+          })
+  
+          it('should have amount burned as `nEntries` field', async () => {  
+            expect(args.nEntries).to.be.eql(nTokenTypes.mul(nTokensPerType))
+          })
         })
       })
     })
+
+    context('Using ARC', () => {
+      let amount = nTokenTypes
+      let cost = price.mul(amount)
+
+      context('Using safeBatchTransferFrom', () => {
+        it('should PASS if caller sends arcs', async () => {
+          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], [], TX_PARAM)
+          await expect(tx).to.be.fulfilled
+        })
+  
+        it('should REVERT if ID is not arc', async () => {
+          let invalid_id = 123456
+          await userArcadeumCoinContract.functions.mintMock(userAddress, invalid_id, cost, [])
+
+          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [cost], [], TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155Received: INVALID_ARC_ID"))
+
+          const tx2 = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID, invalid_id], [cost, cost], [], TX_PARAM)
+          await expect(tx2).to.be.rejectedWith(RevertError("SilverConquestFactory#onERC1155Received: INVALID_ARRAY_LENGTH"))
+        })
+      })
+  
+      context('Using safeTransferFrom', () => {
+        it('should PASS if caller send arcs', async () => {
+          const tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
+          await expect(tx).to.be.fulfilled
+        })
+      })
+  
+      context('When arc was sent to tribute', () => {
+        let logs;
+        beforeEach(async () => {
+          await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
+          let filter = factoryContract.filters.NewTribute(null, null);
+          // Get logs from internal transaction event
+          // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+          filter.fromBlock = 0;
+          logs = await operatorProvider.getLogs(filter);
+        })
+  
+        it('should leave factory silver cards balance to 0', async () => {
+          let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
+          let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
+          for (let i = 0; i < ids.length; i++) {
+            expect(factory_balances[i]).to.be.eql(Zero)
+          }
+        })
+
+        it('should update factory ARC balance', async () => {
+          let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
+          expect(factory_balance).to.be.eql(cost)
+        })
+  
+        it('should update user ARC balance', async () => {
+          let user_balance = await arcadeumCoinContract.functions.balanceOf(userAddress, arcID)
+          expect(user_balance).to.be.eql(baseTokenAmount.sub(cost))
+        })
+  
+        it('should update availableSupply', async () => {
+          let expected_supply = cost.div(price).mul(mintEntryRatio).div(1000)
+          let supply = await factoryContract.functions.getAvailableSupply()
+          expect(supply).to.be.eql(expected_supply)
+        })
+  
+        it('should emit NewTribute event', async () => {
+          expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.NewTribute.topic)
+        })
+        
+        describe('NewTribute Event', () => {
+          let args;
+  
+          beforeEach(async () => {
+            args = factoryContract.interface.events.NewTribute.decode(logs[0].data, logs[0].topics)
+          })
+  
+          it('should have user address as `user` field', async () => {  
+            expect(args.user).to.be.eql(userAddress)
+          })
+  
+          it('should have of entries paid as `nEntries` field', async () => {  
+            expect(args.nEntries).to.be.eql(cost.div(price))
+          })
+        })
+
+        describe('withdraw() function', () => {
+
+          let recipient = randomWallet.address
+
+          it('should PASS if caller is owner', async () => {
+            const tx = factoryContract.functions.withdraw(recipient)
+            await expect(tx).to.be.fulfilled
+          })
+      
+          it('should REVERT if caller is not owner', async () => {
+            const tx = userFactoryContract.functions.withdraw(recipient)
+            await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+          })
+      
+          it('should REVERT if recipient is 0x0', async () => {
+            const tx = factoryContract.functions.withdraw(ZERO_ADDRESS)
+            await expect(tx).to.be.rejectedWith(RevertError("SilverConquestFactory#withdraw: INVALID_RECIPIENT"))
+          })
+
+          context('When ARC is withdrawn', () => {
+            beforeEach(async () => {
+              await factoryContract.functions.withdraw(recipient)
+            })
+
+            it('should update factory ARC balance', async () => {
+              let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
+              expect(factory_balance).to.be.eql(Zero)
+            })
+      
+            it('should update recipient ARC balance', async () => {
+              let recipient_balance = await arcadeumCoinContract.functions.balanceOf(recipient, arcID)
+              expect(recipient_balance).to.be.eql(cost)
+            })
+          })
+        })
+      })
+    })
+    
   })
 
   describe('batchMint()', () => {

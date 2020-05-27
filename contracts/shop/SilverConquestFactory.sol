@@ -5,11 +5,14 @@ import "../utils/Ownable.sol";
 import "../utils/ReentrancyGuard.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
+import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 
 /**
  * This is a contract allowing contract owner to mint silver cards
- * up to k/N of the amount this contract burned. Anyone can send
- * silver cards to this contract, which will then get burned.
+ * up to k/N, where k is the number of entries paid for either by
+ * burning a silver card or by paying the entry in ARC. Anyone can
+ * send silver cards or ARC to this contract, which will then get
+ * burned for the former and reserved for Horizon for the latter.
  */
 contract SilverConquestFactory is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
@@ -23,9 +26,13 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
 
   // Initiate Variables
   ISkyweaverAssets internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
-  uint256 internal mintBurnRatio;            // Can only mint k silvers for every N burnt, where k <= N
-  uint256 internal availableSupply;          // Amount of silvers that can currently be minted
-  IdRange internal silverCardsRange;         // ID space for silver cards
+  IERC1155 internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
+  uint256 internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
+
+  uint256 internal arcPrice;         // How much an entry cost when paying with ARC
+  uint256 internal mintEntryRatio;   // Can only mint k silvers for every N entries, where k <= N
+  uint256 internal availableSupply;  // Amount of silvers that can currently be minted
+  IdRange internal silverCardsRange; // ID space for silver cards
 
   // Struct for mint ID ranges permissions
   struct IdRange {
@@ -37,8 +44,9 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
   |              Events               |
   |__________________________________*/
 
-  event NewTribute(address user, uint256 nBurned); // When new cards are burned for Tribute
-  event MintBurnRatioChange(uint256 oldRatio, uint256 newRatio);
+  event NewTribute(address user, uint256 nEntries);
+  event MintEntryRatioChange(uint256 oldRatio, uint256 newRatio);
+  event ArcPriceChange(uint256 oldPrice, uint256 newPrice);
   event IdRangeUpdated(IdRange newRange);
 
   /***********************************|
@@ -47,18 +55,40 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
-   * @param _assetsAddr    The address of the ERC-1155 Assets Token contract
-   * @param _mintBurnRatio Can only mint k silvers for every N burnt
+   * @param _assetsAddr       The address of the ERC-1155 Assets Token contract
+   * @param _mintEntryRatio   Can only mint k silvers for every N burnt
+   * @param _arcadeumCoinAddr The address of the ERC-1155 Base Token
+   * @param _arcadeumCoinID   The ID of the ERC-1155 Base Token
+   * @param _arcPrice         Amount of arc required for a Conquest entry
    */
-  constructor(address _assetsAddr, uint256 _mintBurnRatio) public {
-    require(_assetsAddr != address(0), "SilverConquestFactory#constructor: INVALID_INPUT");
+  constructor(
+    address _assetsAddr,
+    uint256 _mintEntryRatio,
+    address _arcadeumCoinAddr,
+    uint256 _arcadeumCoinID,
+    uint256 _arcPrice
+  ) public {
     require(
-      _mintBurnRatio <= 1000,
+      _assetsAddr != address(0) &&
+      _arcadeumCoinAddr != address(0) &&
+      _arcPrice > 100000000, //Sanity check to "make sure" decimals are accounted for
+      "SilverConquestFactory#constructor: INVALID_INPUT"
+    );
+    require(
+      _mintEntryRatio <= 1000,
       "SilverConquestFactory#constructor: RATIO_IS_BIGGER_THAN_1"
     );
+
+    // Assets
     skyweaverAssets = ISkyweaverAssets(_assetsAddr);
-    mintBurnRatio = _mintBurnRatio;
-    emit MintBurnRatioChange(0, _mintBurnRatio);
+    arcadeumCoin = IERC1155(_arcadeumCoinAddr);
+    arcadeumCoinID = _arcadeumCoinID;
+
+    // Conquest parameters
+    mintEntryRatio = _mintEntryRatio;
+    arcPrice = _arcPrice;
+    emit MintEntryRatioChange(0, _mintEntryRatio);
+    emit ArcPriceChange(0, _arcPrice);
   }
 
 
@@ -68,15 +98,27 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
 
   /**
    * @notice Will update the mint to burn ratio
-   * @param _newMintBurnRatio New mint/burn ratio, over 1000
+   * @param _newMintEntryRatio New entry/mint ratio, over 1000
    */
-  function updateMintBurnRatio(uint256 _newMintBurnRatio) external onlyOwner() {
+  function updateMintEntryRatio(uint256 _newMintEntryRatio) external onlyOwner() {
     require(
-      _newMintBurnRatio <= 1000,
-      "SilverConquestFactory#updateMintBurnRatio: RATIO_IS_BIGGER_THAN_1"
+      _newMintEntryRatio <= 1000,
+      "SilverConquestFactory#updateMintEntryRatio: RATIO_IS_BIGGER_THAN_1"
     );
-    emit MintBurnRatioChange(mintBurnRatio, _newMintBurnRatio);
-    mintBurnRatio = _newMintBurnRatio;
+    emit MintEntryRatioChange(mintEntryRatio, _newMintEntryRatio);
+    mintEntryRatio = _newMintEntryRatio;
+  }
+
+  /**
+   * @notice Will update the arc price of a conquest entry
+   * @dev Don't forget to account for the decimals
+   * @param _newPrice New price in arc
+   */
+  function updateArcPrice(uint256 _newPrice) external onlyOwner() {
+    // Sanity check to "make sure" decimals are accounted for (18 decimals)
+    require(_newPrice > 100000000, "SilverConquestFactory#updateArcPrice: INVALID_PRICE");
+    emit ArcPriceChange(arcPrice, _newPrice);
+    arcPrice = _newPrice;
   }
 
   /**
@@ -90,6 +132,16 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
 
     silverCardsRange = IdRange(_minRange, _maxRange);
     emit IdRangeUpdated(silverCardsRange);
+  }
+
+  /**
+   * @notice Send current ARC balance of conquest contract to recipient
+   * @param _recipient Address where the currency will be sent to
+   */
+  function withdraw(address _recipient) external onlyOwner() {
+    require(_recipient != address(0x0), "SilverConquestFactory#withdraw: INVALID_RECIPIENT");
+    uint256 thisBalance = arcadeumCoin.balanceOf(address(this), arcadeumCoinID);
+    arcadeumCoin.safeTransferFrom(address(this), _recipient, arcadeumCoinID, thisBalance, "");
   }
 
 
@@ -146,6 +198,7 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
   )
     public nonReentrant() returns(bytes4)
   {
+    // Silver card tribute
     if (msg.sender == address(skyweaverAssets)) {
       // Burn cards
       skyweaverAssets.batchBurn(_ids, _amounts);
@@ -164,8 +217,18 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
       }
 
       // Increase avaiable supply that can be minted
-      availableSupply = availableSupply.add(n_burned.mul(mintBurnRatio).div(1000));
+      availableSupply = availableSupply.add(n_burned.mul(mintEntryRatio).div(1000));
       emit NewTribute(_from, n_burned);
+
+    // Arc tribute
+    } else if (msg.sender == address(arcadeumCoin)) {
+      require(_ids[0] == arcadeumCoinID, "SilverConquestFactory#onERC1155Received: INVALID_ARC_ID");
+      require(_ids.length == 1, "SilverConquestFactory#onERC1155Received: INVALID_ARRAY_LENGTH");
+      uint256 n_entries = _amounts[0].div(arcPrice); // Will ignore exceeding amount
+
+      // Increase available supply with mint to entry ratio
+      availableSupply = availableSupply.add(n_entries.mul(mintEntryRatio).div(1000));
+      emit NewTribute(_from,  n_entries);
 
     } else {
       revert("SilverConquestFactory#onERC1155BatchReceived: INVALID_TOKEN");
@@ -216,10 +279,17 @@ contract SilverConquestFactory is Ownable, ReentrancyGuard {
   }
 
   /**
-   * @notice Returns the ratio of how many cards can be minted for 1000 cards burnt
+   * @notice Returns the ratio of how many cards can be minted for 1000 entries paid for
    */
-  function getMintBurnRatio() external view returns (uint256) {
-    return mintBurnRatio;
+  function getMintEntryRatio() external view returns (uint256) {
+    return mintEntryRatio;
+  }
+
+  /**
+   * @notice Returns the amount of ARC a single entry costs
+   */
+  function getArcPrice() external view returns (uint256) {
+    return arcPrice;
   }
 
   /**

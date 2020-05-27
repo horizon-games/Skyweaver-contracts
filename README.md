@@ -31,7 +31,7 @@ Factories are contracts that will submit minting request to the Asset Supply Man
 
 [GoldCardsFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/GoldCardsFactory.sol): Allows players to convert weave into a random gold card. Players first have to commit their weave (deposit) and have to mint the gold card in a subsequent transaction, after N blocks have passed. Anyone can execute the second transaction on behalf of a user.
 
-
+[SilverConquestFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows players to burn silver cards or send ARC to Horizon in exchange for off-chain conquest entries. Horizon can only mint silver cards up to the amount of silver cards burnt and ARC recived. Since the value of these assets is low, the RNG is handled off-chain.
 
 
 
