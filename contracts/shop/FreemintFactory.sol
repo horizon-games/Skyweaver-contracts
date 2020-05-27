@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.6.8;
 
 import "../utils/Ownable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
@@ -63,7 +63,7 @@ contract FreemintFactory is Ownable {
   /**
    * @notice Prevents receiving Ether, ERC-1155 or calls to unsuported methods
    */
-  function () external {
+  fallback () external {
     revert("SilverConquestFactory#_: UNSUPPORTED_METHOD");
   }
 
