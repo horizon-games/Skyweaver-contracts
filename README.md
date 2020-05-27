@@ -33,6 +33,6 @@ Factories are contracts that will submit minting request to the Asset Supply Man
 
 [SilverConquestFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows players to burn silver cards or send ARC to Horizon in exchange for off-chain conquest entries. Horizon can only mint silver cards up to the amount of silver cards burnt and ARC recived. Since the value of these assets is low, the RNG is handled off-chain.
 
-
-
+[FreemintFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows owner to mint any tokens within a given range. This factory will be 
+used to mint communiy related assets, special even assets that are meant to be given away.
 
