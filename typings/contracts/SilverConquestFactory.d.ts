@@ -17,9 +17,69 @@ interface SilverConquestFactoryInterface extends Interface {
     transferOwnership: TypedFunctionDescription<{
       encode([_newOwner]: [string]): string;
     }>;
+
+    updateMintBurnRatio: TypedFunctionDescription<{
+      encode([_newMintBurnRatio]: [BigNumberish]): string;
+    }>;
+
+    updateSilverCardsRange: TypedFunctionDescription<{
+      encode([_minRange, _maxRange]: [BigNumberish, BigNumberish]): string;
+    }>;
+
+    onERC1155Received: TypedFunctionDescription<{
+      encode([_operator, _from, _id, _amount, _data]: [
+        string,
+        string,
+        BigNumberish,
+        BigNumberish,
+        Arrayish
+      ]): string;
+    }>;
+
+    onERC1155BatchReceived: TypedFunctionDescription<{
+      encode([, _from, _ids, _amounts]: [
+        string,
+        string,
+        BigNumberish[],
+        BigNumberish[],
+        Arrayish
+      ]): string;
+    }>;
+
+    batchMint: TypedFunctionDescription<{
+      encode([_to, _ids, _amounts]: [
+        string,
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
+    }>;
+
+    getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    getMintBurnRatio: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    getAvailableSupply: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    getSilverCardsRange: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    supportsInterface: TypedFunctionDescription<{
+      encode([interfaceID]: [Arrayish]): string;
+    }>;
   };
 
   events: {
+    IdRangeUpdated: TypedEventDescription<{
+      encodeTopics([newRange]: [null]): string[];
+    }>;
+
+    MintBurnRatioChange: TypedEventDescription<{
+      encodeTopics([oldRatio, newRatio]: [null, null]): string[];
+    }>;
+
+    NewTribute: TypedEventDescription<{
+      encodeTopics([user, nBurned]: [null, null]): string[];
+    }>;
+
     OwnershipTransferred: TypedEventDescription<{
       encodeTopics([previousOwner, newOwner]: [
         string | null,
@@ -52,6 +112,52 @@ export class SilverConquestFactory extends Contract {
       _newOwner: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
+
+    updateMintBurnRatio(
+      _newMintBurnRatio: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    updateSilverCardsRange(
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    onERC1155Received(
+      _operator: string,
+      _from: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    onERC1155BatchReceived(
+      arg0: string,
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      arg4: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    batchMint(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    getSkyweaverAssets(): Promise<string>;
+
+    getMintBurnRatio(): Promise<BigNumber>;
+
+    getAvailableSupply(): Promise<BigNumber>;
+
+    getSilverCardsRange(): Promise<{ minID: BigNumber; maxID: BigNumber }>;
+
+    supportsInterface(interfaceID: Arrayish): Promise<boolean>;
   };
 
   getOwner(): Promise<string>;
@@ -61,7 +167,59 @@ export class SilverConquestFactory extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  updateMintBurnRatio(
+    _newMintBurnRatio: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  updateSilverCardsRange(
+    _minRange: BigNumberish,
+    _maxRange: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  onERC1155Received(
+    _operator: string,
+    _from: string,
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  onERC1155BatchReceived(
+    arg0: string,
+    _from: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    arg4: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  batchMint(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  getSkyweaverAssets(): Promise<string>;
+
+  getMintBurnRatio(): Promise<BigNumber>;
+
+  getAvailableSupply(): Promise<BigNumber>;
+
+  getSilverCardsRange(): Promise<{ minID: BigNumber; maxID: BigNumber }>;
+
+  supportsInterface(interfaceID: Arrayish): Promise<boolean>;
+
   filters: {
+    IdRangeUpdated(newRange: null): EventFilter;
+
+    MintBurnRatioChange(oldRatio: null, newRatio: null): EventFilter;
+
+    NewTribute(user: null, nBurned: null): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -72,5 +230,44 @@ export class SilverConquestFactory extends Contract {
     getOwner(): Promise<BigNumber>;
 
     transferOwnership(_newOwner: string): Promise<BigNumber>;
+
+    updateMintBurnRatio(_newMintBurnRatio: BigNumberish): Promise<BigNumber>;
+
+    updateSilverCardsRange(
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish
+    ): Promise<BigNumber>;
+
+    onERC1155Received(
+      _operator: string,
+      _from: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
+    ): Promise<BigNumber>;
+
+    onERC1155BatchReceived(
+      arg0: string,
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      arg4: Arrayish
+    ): Promise<BigNumber>;
+
+    batchMint(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
+    ): Promise<BigNumber>;
+
+    getSkyweaverAssets(): Promise<BigNumber>;
+
+    getMintBurnRatio(): Promise<BigNumber>;
+
+    getAvailableSupply(): Promise<BigNumber>;
+
+    getSilverCardsRange(): Promise<BigNumber>;
+
+    supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
   };
 }

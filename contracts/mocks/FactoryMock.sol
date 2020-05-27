@@ -1,7 +1,6 @@
 pragma solidity ^0.6.8;
 import "../interfaces/ISkyweaverAssets.sol";
 
-
 contract FactoryMock {
 
   ISkyweaverAssets internal skyweaverAssets; //SkyWeaver Curencies Factory Manager Contract

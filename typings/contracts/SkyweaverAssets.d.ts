@@ -67,6 +67,89 @@ interface SkyweaverAssetsInterface extends Interface {
     }>;
 
     uri: TypedFunctionDescription<{ encode([_id]: [BigNumberish]): string }>;
+
+    activateFactory: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    shutdownFactory: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    addMintPermission: TypedFunctionDescription<{
+      encode([_factory, _minRange, _maxRange]: [
+        string,
+        BigNumberish,
+        BigNumberish
+      ]): string;
+    }>;
+
+    removeMintPermission: TypedFunctionDescription<{
+      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
+    }>;
+
+    lockRangeMintPermissions: TypedFunctionDescription<{
+      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
+    }>;
+
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
+    }>;
+
+    batchMint: TypedFunctionDescription<{
+      encode([_to, _ids, _amounts, _data]: [
+        string,
+        BigNumberish[],
+        BigNumberish[],
+        Arrayish
+      ]): string;
+    }>;
+
+    mint: TypedFunctionDescription<{
+      encode([_to, _id, _amount, _data]: [
+        string,
+        BigNumberish,
+        BigNumberish,
+        Arrayish
+      ]): string;
+    }>;
+
+    getMaxIssuances: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
+    }>;
+
+    getCurrentIssuances: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
+    }>;
+
+    getFactoryStatus: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    getFactoryAccessRanges: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    getLockedRanges: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    burn: TypedFunctionDescription<{
+      encode([_id, _amount]: [BigNumberish, BigNumberish]): string;
+    }>;
+
+    batchBurn: TypedFunctionDescription<{
+      encode([_ids, _amounts]: [BigNumberish[], BigNumberish[]]): string;
+    }>;
+
+    setBaseMetadataURI: TypedFunctionDescription<{
+      encode([_newBaseMetadataURI]: [string]): string;
+    }>;
+
+    logURIs: TypedFunctionDescription<{
+      encode([_tokenIDs]: [BigNumberish[]]): string;
+    }>;
   };
 
   events: {
@@ -78,11 +161,35 @@ interface SkyweaverAssetsInterface extends Interface {
       ]): string[];
     }>;
 
+    FactoryActivation: TypedEventDescription<{
+      encodeTopics([factory]: [string | null]): string[];
+    }>;
+
+    FactoryShutdown: TypedEventDescription<{
+      encodeTopics([factory]: [string | null]): string[];
+    }>;
+
+    MaxIssuancesChanged: TypedEventDescription<{
+      encodeTopics([ids, newMaxIssuances]: [null, null]): string[];
+    }>;
+
+    MintPermissionAdded: TypedEventDescription<{
+      encodeTopics([factory, new_range]: [string | null, null]): string[];
+    }>;
+
+    MintPermissionRemoved: TypedEventDescription<{
+      encodeTopics([factory, deleted_range]: [string | null, null]): string[];
+    }>;
+
     OwnershipTransferred: TypedEventDescription<{
       encodeTopics([previousOwner, newOwner]: [
         string | null,
         string | null
       ]): string[];
+    }>;
+
+    RangeLocked: TypedEventDescription<{
+      encodeTopics([locked_range]: [null]): string[];
     }>;
 
     TransferBatch: TypedEventDescription<{
@@ -185,6 +292,90 @@ export class SkyweaverAssets extends Contract {
     ): Promise<ContractTransaction>;
 
     uri(_id: BigNumberish): Promise<string>;
+
+    activateFactory(
+      _factory: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    shutdownFactory(
+      _factory: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    lockRangeMintPermissions(
+      _range: { minID: BigNumberish; maxID: BigNumberish },
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    batchMint(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+    getFactoryStatus(_factory: string): Promise<boolean>;
+
+    getFactoryAccessRanges(
+      _factory: string
+    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+    getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+    burn(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    batchBurn(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    setBaseMetadataURI(
+      _newBaseMetadataURI: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    logURIs(
+      _tokenIDs: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
   };
 
   balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
@@ -242,6 +433,90 @@ export class SkyweaverAssets extends Contract {
 
   uri(_id: BigNumberish): Promise<string>;
 
+  activateFactory(
+    _factory: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  shutdownFactory(
+    _factory: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  addMintPermission(
+    _factory: string,
+    _minRange: BigNumberish,
+    _maxRange: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  removeMintPermission(
+    _factory: string,
+    _rangeIndex: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  lockRangeMintPermissions(
+    _range: { minID: BigNumberish; maxID: BigNumberish },
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  setMaxIssuances(
+    _ids: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  batchMint(
+    _to: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  mint(
+    _to: string,
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  getFactoryStatus(_factory: string): Promise<boolean>;
+
+  getFactoryAccessRanges(
+    _factory: string
+  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+  getLockedRanges(): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+  burn(
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  batchBurn(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  setBaseMetadataURI(
+    _newBaseMetadataURI: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  logURIs(
+    _tokenIDs: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
   filters: {
     ApprovalForAll(
       _owner: string | null,
@@ -249,10 +524,25 @@ export class SkyweaverAssets extends Contract {
       _approved: null
     ): EventFilter;
 
+    FactoryActivation(factory: string | null): EventFilter;
+
+    FactoryShutdown(factory: string | null): EventFilter;
+
+    MaxIssuancesChanged(ids: null, newMaxIssuances: null): EventFilter;
+
+    MintPermissionAdded(factory: string | null, new_range: null): EventFilter;
+
+    MintPermissionRemoved(
+      factory: string | null,
+      deleted_range: null
+    ): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
+
+    RangeLocked(locked_range: null): EventFilter;
 
     TransferBatch(
       _operator: string | null,
@@ -315,5 +605,65 @@ export class SkyweaverAssets extends Contract {
     transferOwnership(_newOwner: string): Promise<BigNumber>;
 
     uri(_id: BigNumberish): Promise<BigNumber>;
+
+    activateFactory(_factory: string): Promise<BigNumber>;
+
+    shutdownFactory(_factory: string): Promise<BigNumber>;
+
+    addMintPermission(
+      _factory: string,
+      _minRange: BigNumberish,
+      _maxRange: BigNumberish
+    ): Promise<BigNumber>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish
+    ): Promise<BigNumber>;
+
+    lockRangeMintPermissions(_range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+    }): Promise<BigNumber>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[]
+    ): Promise<BigNumber>;
+
+    batchMint(
+      _to: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      _data: Arrayish
+    ): Promise<BigNumber>;
+
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
+    ): Promise<BigNumber>;
+
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    getFactoryStatus(_factory: string): Promise<BigNumber>;
+
+    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
+
+    getLockedRanges(): Promise<BigNumber>;
+
+    burn(_id: BigNumberish, _amount: BigNumberish): Promise<BigNumber>;
+
+    batchBurn(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
+    ): Promise<BigNumber>;
+
+    setBaseMetadataURI(_newBaseMetadataURI: string): Promise<BigNumber>;
+
+    logURIs(_tokenIDs: BigNumberish[]): Promise<BigNumber>;
   };
 }
