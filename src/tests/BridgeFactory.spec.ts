@@ -395,7 +395,7 @@ contract('BridgeFactory', (accounts: string[]) => {
     })
   })
 
-  describe('batchMint()', () => {
+  describe.only('batchMint()', () => {
     let mintIds = [33, 66, 99, 133]
     let mintAmounts = [100, 200, 500, 100]
 
@@ -473,7 +473,7 @@ contract('BridgeFactory', (accounts: string[]) => {
         // Get new supply for current period
         let new_period = await factoryContract.functions.livePeriod()
         supply = await factoryContract.functions.getAvailableSupply()
-        expect(new_period).to.be.eql(current_period.add(1))
+        expect(new_period).to.be.eql(current_period + 1)
         expect(supply).to.be.eql(periodMintLimit)
 
         // Try mint during new period

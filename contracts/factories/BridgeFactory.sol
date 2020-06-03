@@ -2,6 +2,7 @@ pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
+import "../utils/SafeMathUint112.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
@@ -17,23 +18,26 @@ import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
  */
 contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
+  using SafeMathUint112 for uint112;
 
   /***********************************|
   |             Variables             |
   |__________________________________*/
-
-  // Constants
-  uint256 constant internal decimals = 2; // Number of decimals
 
   // Token information
   ISkyweaverAssets internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
   IERC1155 internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
   uint256 internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
 
+  // Bridge state
+  struct State {
+    uint32 period;
+    uint112 availableSupply;
+    uint112 periodMintLimit;
+  }
+
   // Bridge variables
-  uint256 internal period;          // Current period
-  uint256 internal availableSupply; // Amount of silvers that can currently be minted
-  uint256 internal periodMintLimit; // Amount that can be minted within 24h
+  State internal state;
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
@@ -53,7 +57,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     address _assetsAddr,
     address _arcadeumCoinAddr,
     uint256 _arcadeumCoinID,
-    uint256 _periodMintLimit
+    uint112 _periodMintLimit
   ) public {
     require(
       _assetsAddr != address(0) &&
@@ -68,11 +72,11 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     arcadeumCoinID = _arcadeumCoinID;
 
     // Set current period
-    period = livePeriod();
-    availableSupply = _periodMintLimit;
+    state.period = livePeriod();
+    state.availableSupply = _periodMintLimit;
 
     // Rewards parameters
-    periodMintLimit = _periodMintLimit;
+    state.periodMintLimit = _periodMintLimit;
     emit PeriodMintLimitChanged(0, _periodMintLimit);
   }
 
@@ -86,14 +90,14 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @dev This change will take effect immediatly once executed
    * @param _newPeriodMintLimit Amount of assets that can be minted within 24h
    */
-  function updatePeriodMintLimit(uint256 _newPeriodMintLimit) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
+  function updatePeriodMintLimit(uint112 _newPeriodMintLimit) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
     // Immediately update supply instead of waiting for next period
-    if (availableSupply > _newPeriodMintLimit) {
-      availableSupply = _newPeriodMintLimit;
+    if (state.availableSupply > _newPeriodMintLimit) {
+      state.availableSupply = _newPeriodMintLimit;
     }
 
-    emit PeriodMintLimitChanged(periodMintLimit, _newPeriodMintLimit);
-    periodMintLimit = _newPeriodMintLimit;
+    emit PeriodMintLimitChanged(state.periodMintLimit, _newPeriodMintLimit);
+    state.periodMintLimit = _newPeriodMintLimit;
   }
 
   /**
@@ -204,15 +208,18 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       n_mint = n_mint.add(_amounts[i]);
     }
 
+    // Convert to uint112
+    uint112 n_mint112 = abi.decode(abi.encodePacked(n_mint), (uint112));
+
     // Check if new period and reset supply if it is.
     // Blocks' timestamps must always increase, so period
     // can never go backward.
-    uint256 live_period = livePeriod();
-    if (live_period == period) {
-      availableSupply = availableSupply.sub(n_mint);
+    uint32 live_period = livePeriod();
+    if (live_period == state.period) {
+      state.availableSupply = state.availableSupply.sub(n_mint112);
     } else {
-      availableSupply = periodMintLimit.sub(n_mint);
-      period = live_period;
+      state.availableSupply = state.periodMintLimit.sub(n_mint112);
+      state.period = live_period; 
     }
 
     // Mint assets
@@ -234,15 +241,15 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   /**
    * @notice Returns the daily minting limit
    */
-  function getPeriodMintLimit() external view returns (uint256) {
-    return periodMintLimit;
+  function getPeriodMintLimit() external view returns (uint112) {
+    return state.periodMintLimit;
   }
 
   /**
    * @notice Returns how many cards can currently be minted by this factory
    */
-  function getAvailableSupply() external view returns (uint256) {
-    return livePeriod() == period ? availableSupply : periodMintLimit;
+  function getAvailableSupply() external view returns (uint112) {
+    return livePeriod() == state.period ? state.availableSupply : state.periodMintLimit;
   }
 
   /***********************************|
@@ -252,8 +259,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   /**
    * @notice Calculate the current period
    */
-  function livePeriod() public view returns (uint256) {
-    return now / PERIOD_LENGTH;
+  function livePeriod() public view returns (uint32) {
+    return abi.decode(abi.encode(now / PERIOD_LENGTH), (uint32));
   }
 
   /**
