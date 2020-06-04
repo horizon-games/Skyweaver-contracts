@@ -202,6 +202,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256 live_period = livePeriod();
     uint256 available_supply;
 
+    // Get the available supply based on period
     if (live_period == period) {
       available_supply = availableSupply;
     } else {
@@ -209,12 +210,13 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       period = live_period;
     }
 
-    // Count total amount to mint
+    // Reduce supply based on amount being minted
+    // Will revert if available supply is insufficient
     for (uint256 i = 0; i < _ids.length; i++) {
       available_supply = available_supply.sub(_amounts[i]);
     }
 
-    // Store state
+    // Store available supply
     availableSupply = available_supply;
     
     // Mint assets

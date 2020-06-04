@@ -54,6 +54,7 @@ contract('BridgeFactory', (accounts: string[]) => {
   let ownerAddress: string
   let subOwnerAddress: string
   let userAddress: string
+  let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract
   let arcadeumCoinAbstract: AbstractContract
   let factoryAbstract: AbstractContract
@@ -100,6 +101,7 @@ contract('BridgeFactory', (accounts: string[]) => {
     ownerAddress = await ownerWallet.getAddress()
     subOwnerAddress = await subOwnerWallet.getAddress()
     userAddress = await userWallet.getAddress()
+    randomAddress = await randomWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     arcadeumCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('BridgeFactory')
@@ -395,7 +397,7 @@ contract('BridgeFactory', (accounts: string[]) => {
     })
   })
 
-  describe.only('batchMint()', () => {
+  describe('batchMint()', () => {
     let mintIds = [33, 66, 99, 133]
     let mintAmounts = [100, 200, 500, 100]
 
@@ -445,6 +447,16 @@ contract('BridgeFactory', (accounts: string[]) => {
         expect(supply).to.be.eql(expected_supply)
       })
 
+      it('should be able to mint more assets in the same period', async () => {
+        let tx = factoryContract.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)])
+        await expect(tx).to.be.fulfilled
+      })
+
+      it('should not be able to exceed minting limit for this period with second mint tx', async () => {
+        let tx = factoryContract.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)])
+        await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+      })
+
       it('should update user silver cards balance', async () => {
         let n_ids = mintIds.length
         let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
@@ -456,13 +468,13 @@ contract('BridgeFactory', (accounts: string[]) => {
 
       it('should refresh user availableSupply with new period', async () => {
         // Check current supply
-        // let current_period = await factoryContract.functions.livePeriod()
-        // let supply = await factoryContract.functions.getAvailableSupply()
-        // expect(supply).to.be.eql(expected_supply)
+        let current_period = await factoryContract.functions.livePeriod()
+        let supply = await factoryContract.functions.getAvailableSupply()
+        expect(supply).to.be.eql(expected_supply)
         
         // Try to mint current period
-        // const tx1 = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
-        // await expect(tx1).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+        const tx1 = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
+        await expect(tx1).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
 
         // Move forward by 6 hours
         let sixHours = new BigNumber(60).mul(60).mul(6)
@@ -471,17 +483,17 @@ contract('BridgeFactory', (accounts: string[]) => {
         await ownerProvider.send("evm_mine", [])
 
         // Get new supply for current period
-        // let new_period = await factoryContract.functions.livePeriod()
-        // supply = await factoryContract.functions.getAvailableSupply()
-        // expect(new_period).to.be.eql(current_period.add(1))
-        // expect(supply).to.be.eql(periodMintLimit)
+        let new_period = await factoryContract.functions.livePeriod()
+        supply = await factoryContract.functions.getAvailableSupply()
+        expect(new_period).to.be.eql(current_period.add(1))
+        expect(supply).to.be.eql(periodMintLimit)
 
         // Try mint during new period
         const tx2 = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
         await expect(tx2).to.be.fulfilled
 
         // Revert time to expected timestamp
-        // await ownerProvider.send("evm_revert", [snapshot])
+        await ownerProvider.send("evm_revert", [snapshot])
       })
 
     })
