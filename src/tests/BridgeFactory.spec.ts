@@ -481,7 +481,7 @@ contract('BridgeFactory', (accounts: string[]) => {
         await expect(tx2).to.be.fulfilled
 
         // Revert time to expected timestamp
-        await ownerProvider.send("evm_revert", [snapshot])
+        //await ownerProvider.send("evm_revert", [snapshot])
       })
 
     })
