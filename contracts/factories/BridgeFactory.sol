@@ -2,7 +2,6 @@ pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
-import "../utils/SafeMathUint112.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
@@ -18,7 +17,6 @@ import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
  */
 contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
-  using SafeMathUint112 for uint112;
 
   /***********************************|
   |             Variables             |
@@ -202,25 +200,27 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts)
     external onlyOwnerTier(1)
   {
+    // New supply after minting
+    uint256 new_supply;
+
     // Count total amount to mint
     uint256 n_mint;
     for (uint256 i = 0; i < _ids.length; i++) {
       n_mint = n_mint.add(_amounts[i]);
     }
 
-    // Convert to uint112
-    uint112 n_mint112 = abi.decode(abi.encodePacked(n_mint), (uint112));
-
     // Check if new period and reset supply if it is.
     // Blocks' timestamps must always increase, so period
     // can never go backward.
     uint32 live_period = livePeriod();
+
     if (live_period == state.period) {
-      state.availableSupply = state.availableSupply.sub(n_mint112);
+      new_supply = uint256(state.availableSupply).sub(n_mint);
     } else {
-      state.availableSupply = state.periodMintLimit.sub(n_mint112);
+      new_supply = uint256(state.periodMintLimit).sub(n_mint);
       state.period = live_period; 
     }
+    state.availableSupply = uint112(new_supply);
 
     // Mint assets
     skyweaverAssets.batchMint(_to, _ids, _amounts, "");
@@ -260,7 +260,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Calculate the current period
    */
   function livePeriod() public view returns (uint32) {
-    return abi.decode(abi.encode(now / PERIOD_LENGTH), (uint32));
+    return uint32(now / PERIOD_LENGTH);
   }
 
   /**
