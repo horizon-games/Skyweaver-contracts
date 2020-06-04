@@ -198,23 +198,25 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts)
     external onlyOwnerTier(1)
   {
-    // Count total amount to mint
-    uint256 n_mint;
-    for (uint256 i = 0; i < _ids.length; i++) {
-      n_mint = n_mint.add(_amounts[i]);
-    }
-
-    // Check if new period and reset supply if it is.
-    // Blocks' timestamps must always increase, so period
-    // can never go backward.
+    // Get current period and current available supply
     uint256 live_period = livePeriod();
+    uint256 available_supply;
+
     if (live_period == period) {
-      availableSupply = availableSupply.sub(n_mint);
+      available_supply = availableSupply;
     } else {
-      availableSupply = periodMintLimit.sub(n_mint);
+      available_supply = periodMintLimit;
       period = live_period;
     }
 
+    // Count total amount to mint
+    for (uint256 i = 0; i < _ids.length; i++) {
+      available_supply = available_supply.sub(_amounts[i]);
+    }
+
+    // Store state
+    availableSupply = available_supply;
+    
     // Mint assets
     skyweaverAssets.batchMint(_to, _ids, _amounts, "");
   }
