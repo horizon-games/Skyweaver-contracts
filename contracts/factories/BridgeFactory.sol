@@ -141,7 +141,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
 
     } else if (msg.sender == address(skyweaverAssets)) {
       // Burn asset received
-      skyweaverAssets.burn(_id, _amount);
+      ISkyweaverAssets(msg.sender).burn(_id, _amount);
 
     } else {
       revert("BridgeFactory#onERC1155Received: INVALID_TOKEN");
@@ -168,7 +168,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   {
     if (msg.sender == address(skyweaverAssets)) {
       // Burn assets received
-      skyweaverAssets.batchBurn(_ids, _amounts);
+      ISkyweaverAssets(msg.sender).batchBurn(_ids, _amounts);
 
     // Arc tribute
     } else if (msg.sender == address(arcadeumCoin)) {
