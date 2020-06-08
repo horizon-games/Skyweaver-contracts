@@ -26,14 +26,14 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 constant internal decimals = 2; // Number of decimals
 
   // Token information
-  ISkyweaverAssets internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
-  IERC1155 internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
-  uint256 internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
+  ISkyweaverAssets immutable internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
+  IERC1155 immutable internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
+  uint256 immutable internal arcadeumCoinID;           // ID of ARC token in respective ERC-1155 contract
 
   // Bridge variables
-  uint256 internal period;          // Current period
-  uint256 internal availableSupply; // Amount of silvers that can currently be minted
-  uint256 internal periodMintLimit; // Amount that can be minted within 24h
+  uint256 internal period;                           // Current period
+  uint256 internal availableSupply;                  // Amount of silvers that can currently be minted
+  uint256 internal periodMintLimit;                  // Amount that can be minted within 24h
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
