@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "files": [
-    "build",
+    "artifacts",
     "contracts",
     "typings"
   ],
@@ -11,7 +11,7 @@
     "build": "truffle compile --all && yarn gen:contract-typings && tsc -b",
     "clean": "rm -rf build && rm -rf typings/contracts",
     "test": "tsc -b && truffle test --network ganache build/*.spec.js",
-    "gen:contract-typings": "rm -f typings/contracts/* && typechain --target ethers --outDir typings/contracts './build/contracts/*.json'",
+    "gen:contract-typings": "rm -f typings/contracts/* && typechain --target ethers --outDir typings/contracts './artifacts/*.json'",
     "lint": "yarn lint:ts && yarn lint:sol",
     "lint:fix": "yarn lint:ts:fix && yarn lint:sol:fix",
     "lint:sol": "solium -d .",

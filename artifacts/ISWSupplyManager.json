@@ -1,0 +1,3416 @@
+{
+  "contractName": "ISWSupplyManager",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "factory",
+          "type": "address"
+        }
+      ],
+      "name": "FactoryActivation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "factory",
+          "type": "address"
+        }
+      ],
+      "name": "FactoryShutdown",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "factory",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "minID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxID",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ISWSupplyManager.AssetRange",
+          "name": "new_range",
+          "type": "tuple"
+        }
+      ],
+      "name": "MintPermissionAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "factory",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "minID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxID",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ISWSupplyManager.AssetRange",
+          "name": "deleted_range",
+          "type": "tuple"
+        }
+      ],
+      "name": "MintPermissionRemoved",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_supplies",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "setMaxSupplies",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minRange",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxRange",
+          "type": "uint256"
+        }
+      ],
+      "name": "addMintPermission",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rangeIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "removeMintPermission",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        }
+      ],
+      "name": "activateFactory",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        }
+      ],
+      "name": "shutdownFactory",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "minID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxID",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ISWSupplyManager.AssetRange",
+          "name": "_range",
+          "type": "tuple"
+        }
+      ],
+      "name": "lockRangeMintPermissions",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_amounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "batchMint",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        }
+      ],
+      "name": "getFactoryStatus",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        }
+      ],
+      "name": "getFactoryAccessRanges",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "minID",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxID",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ISWSupplyManager.AssetRange[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getMaxSupplies",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getCurrentSupplies",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"factory\",\"type\":\"address\"}],\"name\":\"FactoryActivation\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"factory\",\"type\":\"address\"}],\"name\":\"FactoryShutdown\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"factory\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"minID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxID\",\"type\":\"uint256\"}],\"indexed\":false,\"internalType\":\"struct ISWSupplyManager.AssetRange\",\"name\":\"new_range\",\"type\":\"tuple\"}],\"name\":\"MintPermissionAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"factory\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"minID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxID\",\"type\":\"uint256\"}],\"indexed\":false,\"internalType\":\"struct ISWSupplyManager.AssetRange\",\"name\":\"deleted_range\",\"type\":\"tuple\"}],\"name\":\"MintPermissionRemoved\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"activateFactory\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_minRange\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_maxRange\",\"type\":\"uint256\"}],\"name\":\"addMintPermission\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_amounts\",\"type\":\"uint256[]\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"batchMint\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"}],\"name\":\"getCurrentSupplies\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getFactoryAccessRanges\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"minID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxID\",\"type\":\"uint256\"}],\"internalType\":\"struct ISWSupplyManager.AssetRange[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"getFactoryStatus\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"}],\"name\":\"getMaxSupplies\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"minID\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxID\",\"type\":\"uint256\"}],\"internalType\":\"struct ISWSupplyManager.AssetRange\",\"name\":\"_range\",\"type\":\"tuple\"}],\"name\":\"lockRangeMintPermissions\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"mint\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_rangeIndex\",\"type\":\"uint256\"}],\"name\":\"removeMintPermission\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_supplies\",\"type\":\"uint256[]\"}],\"name\":\"setMaxSupplies\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factory\",\"type\":\"address\"}],\"name\":\"shutdownFactory\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"activateFactory(address)\":{\"params\":{\"_factory\":\"Address of the factory to activate\"}},\"addMintPermission(address,uint256,uint256)\":{\"params\":{\"_factory\":\"Address of the factory to update permission\",\"_maxRange\":\"Maximum ID (inclusive) in id range that factory will be able to mint\",\"_minRange\":\"Minimum ID (inclusive) in id range that factory will be able to mint\"}},\"batchMint(address,uint256[],uint256[],bytes)\":{\"details\":\"This methods assumes ids are sorted by how the ranges are sorted in     the corresponding mintAccessRanges[msg.sender] array. Call might throw     if they are not.\",\"params\":{\"_amounts\":\"Array of amount of tokens to mint per id\",\"_data\":\"Byte array of data to pass to recipient if it's a contract\",\"_ids\":\"Array of ids to mint\",\"_to\":\"The address to mint tokens to.\"}},\"getCurrentSupplies(uint256[])\":{\"params\":{\"_ids\":\"Array containing the assets IDs\"},\"return\":\"The current supply of each asset ID in _ids\"},\"getFactoryAccessRanges(address)\":{\"return\":\"Returns whether the sale has ended or not\"},\"getFactoryStatus(address)\":{\"return\":\"Returns whether a factory is active or not\"},\"getMaxSupplies(uint256[])\":{\"params\":{\"_ids\":\"Array containing the assets IDs\"},\"return\":\"The current max supply of each asset ID in _ids\"},\"lockRangeMintPermissions((uint256,uint256))\":{\"params\":{\"_range\":\"AssetRange struct for range of asset that can't be granted              new mint permission to\"}},\"mint(address,uint256,uint256,bytes)\":{\"params\":{\"_amount\":\"The amount to be minted\",\"_data\":\"Data to pass if receiver is contract\",\"_id\":\"Token id to mint\",\"_to\":\"The address to mint tokens to\"}},\"removeMintPermission(address,uint256)\":{\"params\":{\"_factory\":\"Address of the factory to update permission\",\"_rangeIndex\":\"Array's index where the range to delete is located for _factory\"}},\"setMaxSupplies(uint256[],uint256[])\":{\"details\":\"Can only decrease the max supply if already set, but can't set it *back* to 0.\",\"params\":{\"_ids\":\"Array of token IDs to set the max supply\",\"_supplies\":\"Array of max supplies for each corresponding ID\"}},\"shutdownFactory(address)\":{\"params\":{\"_factory\":\"Address of the factory to shutdown\"}}}},\"userdoc\":{\"methods\":{\"activateFactory(address)\":{\"notice\":\"Will ALLOW factory to print some assets specified in `canPrint` mapping\"},\"addMintPermission(address,uint256,uint256)\":{\"notice\":\"Will allow a factory to mint some token ids\"},\"batchMint(address,uint256[],uint256[],bytes)\":{\"notice\":\"Mint tokens for each ids in _ids\"},\"getCurrentSupplies(uint256[])\":{\"notice\":\"Get the current supply of multiple asset ID\"},\"getMaxSupplies(uint256[])\":{\"notice\":\"Get the max supply of multiple asset ID\"},\"lockRangeMintPermissions((uint256,uint256))\":{\"notice\":\"Will forever prevent new mint permissions for provided ids\"},\"mint(address,uint256,uint256,bytes)\":{\"notice\":\"Mint _amount of tokens of a given id, if allowed.\"},\"removeMintPermission(address,uint256)\":{\"notice\":\"Will remove the permission a factory has to mint some token ids\"},\"setMaxSupplies(uint256[],uint256[])\":{\"notice\":\"Set max supply for some token IDs that can't ever be increased\"},\"shutdownFactory(address)\":{\"notice\":\"Will DISALLOW factory to print any asset\"}},\"notice\":\"This is a contract manages the various SW asset factories and ensures that each factory has constraint access in terms of the id space they are allowed to mint.\"}},\"settings\":{\"compilationTarget\":{\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol\":\"ISWSupplyManager\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol\":{\"keccak256\":\"0x56efef464d8c4a6de9a0a82ba0ab11765ea0fe49b78d19c61732b2149bb9f3cb\",\"urls\":[\"bzz-raw://325a3ec0d28afcd346ca8466abe8b8b2f334277faf325e7a2dc4c4b2ee8e8bb2\",\"dweb:/ipfs/QmTdwA3DmerqN9fHdYNq1GibUzegjWHfsvKfd7TZaXBkj6\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.16;\npragma experimental ABIEncoderV2;\n\n/**\n * This is a contract manages the various SW asset factories\n * and ensures that each factory has constraint access in\n * terms of the id space they are allowed to mint.\n */\ninterface ISWSupplyManager {\n\n  /***********************************|\n  |               Events              |\n  |__________________________________*/\n\n  event FactoryActivation(address indexed factory);\n  event FactoryShutdown(address indexed factory);\n  event MintPermissionAdded(address indexed factory, AssetRange new_range);\n  event MintPermissionRemoved(address indexed factory, AssetRange deleted_range);\n\n  // Struct for mint ID ranges permissions\n  struct AssetRange {\n    uint256 minID;\n    uint256 maxID;\n  }\n\n  /***********************************|\n  |    Supplies Management Methods    |\n  |__________________________________*/\n\n  /**\n   * @notice Set max supply for some token IDs that can't ever be increased\n   * @dev Can only decrease the max supply if already set, but can't set it *back* to 0.\n   * @param _ids Array of token IDs to set the max supply\n   * @param _supplies Array of max supplies for each corresponding ID\n   */\n  function setMaxSupplies(uint256[] calldata _ids, uint256[] calldata _supplies) external;\n\n  /***********************************|\n  |     Factory Management Methods    |\n  |__________________________________*/\n\n  /**\n   * @notice Will allow a factory to mint some token ids\n   * @param _factory  Address of the factory to update permission\n   * @param _minRange Minimum ID (inclusive) in id range that factory will be able to mint\n   * @param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint\n   */\n  function addMintPermission(address _factory, uint256 _minRange, uint256 _maxRange) external;\n\n  /**\n   * @notice Will remove the permission a factory has to mint some token ids\n   * @param _factory    Address of the factory to update permission\n   * @param _rangeIndex Array's index where the range to delete is located for _factory\n   */\n  function removeMintPermission(address _factory, uint256 _rangeIndex) external;\n\n  /**\n   * @notice Will ALLOW factory to print some assets specified in `canPrint` mapping\n   * @param _factory Address of the factory to activate\n   */\n  function activateFactory(address _factory) external;\n\n  /**\n   * @notice Will DISALLOW factory to print any asset\n   * @param _factory Address of the factory to shutdown\n   */\n  function shutdownFactory(address _factory) external;\n\n  /**\n   * @notice Will forever prevent new mint permissions for provided ids\n   * @param _range AssetRange struct for range of asset that can't be granted\n   *               new mint permission to\n   */\n  function lockRangeMintPermissions(AssetRange calldata _range) external;\n\n  /***********************************|\n  |          Minting Function         |\n  |__________________________________*/\n\n  /**\n   * @notice Mint tokens for each ids in _ids\n   * @dev This methods assumes ids are sorted by how the ranges are sorted in\n   *      the corresponding mintAccessRanges[msg.sender] array. Call might throw\n   *      if they are not.\n   * @param _to      The address to mint tokens to.\n   * @param _ids     Array of ids to mint\n   * @param _amounts Array of amount of tokens to mint per id\n   * @param _data    Byte array of data to pass to recipient if it's a contract\n   */\n  function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data) external;\n\n  /**\n   * @notice Mint _amount of tokens of a given id, if allowed.\n   * @param _to      The address to mint tokens to\n   * @param _id      Token id to mint\n   * @param _amount  The amount to be minted\n   * @param _data    Data to pass if receiver is contract\n   */\n  function mint(address _to, uint256 _id, uint256 _amount, bytes calldata _data) external;\n\n  /***********************************|\n  |         Getter Functions          |\n  |__________________________________*/\n\n  /**\n   * @return Returns whether a factory is active or not\n   */\n  function getFactoryStatus(address _factory) external view returns (bool);\n\n  /**\n   * @return Returns whether the sale has ended or not\n   */\n  function getFactoryAccessRanges(address _factory) external view returns ( AssetRange[] memory);\n\n  /**\n   * @notice Get the max supply of multiple asset ID\n   * @param _ids Array containing the assets IDs\n   * @return The current max supply of each asset ID in _ids\n   */\n  function getMaxSupplies(uint256[] calldata _ids) external view returns (uint256[] memory);\n\n  /**\n   * @notice Get the current supply of multiple asset ID\n   * @param _ids Array containing the assets IDs\n   * @return The current supply of each asset ID in _ids\n   */\n  function getCurrentSupplies(uint256[] calldata _ids) external view returns (uint256[] memory);\n}\n",
+  "sourcePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol",
+  "ast": {
+    "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol",
+    "exportedSymbols": {
+      "ISWSupplyManager": [
+        172
+      ]
+    },
+    "id": 173,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 48,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "id": 49,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "25:33:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "This is a contract manages the various SW asset factories\nand ensures that each factory has constraint access in\nterms of the id space they are allowed to mint.",
+        "fullyImplemented": false,
+        "id": 172,
+        "linearizedBaseContracts": [
+          172
+        ],
+        "name": "ISWSupplyManager",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 53,
+            "name": "FactoryActivation",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 52,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 51,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 53,
+                  "src": "415:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 50,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "415:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "414:25:1"
+            },
+            "src": "391:49:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 57,
+            "name": "FactoryShutdown",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 56,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 55,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 57,
+                  "src": "465:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 54,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "465:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "464:25:1"
+            },
+            "src": "443:47:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 63,
+            "name": "MintPermissionAdded",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 62,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 59,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 63,
+                  "src": "519:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 58,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "519:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 61,
+                  "indexed": false,
+                  "name": "new_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 63,
+                  "src": "544:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 60,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "544:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "518:47:1"
+            },
+            "src": "493:73:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 69,
+            "name": "MintPermissionRemoved",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 68,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 65,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 69,
+                  "src": "597:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 64,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "597:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 67,
+                  "indexed": false,
+                  "name": "deleted_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 69,
+                  "src": "622:24:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 66,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "622:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "596:51:1"
+            },
+            "src": "569:79:1"
+          },
+          {
+            "canonicalName": "ISWSupplyManager.AssetRange",
+            "id": 74,
+            "members": [
+              {
+                "constant": false,
+                "id": 71,
+                "name": "minID",
+                "nodeType": "VariableDeclaration",
+                "scope": 74,
+                "src": "719:13:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 70,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "719:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 73,
+                "name": "maxID",
+                "nodeType": "VariableDeclaration",
+                "scope": 74,
+                "src": "738:13:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 72,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "738:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "AssetRange",
+            "nodeType": "StructDefinition",
+            "scope": 172,
+            "src": "695:61:1",
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Set max supply for some token IDs that can't ever be increased\n@dev Can only decrease the max supply if already set, but can't set it *back* to 0.\n@param _ids Array of token IDs to set the max supply\n@param _supplies Array of max supplies for each corresponding ID",
+            "id": 83,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setMaxSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 81,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 77,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 83,
+                  "src": "1210:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 75,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1210:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 76,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1210:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 80,
+                  "name": "_supplies",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 83,
+                  "src": "1235:28:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 78,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1235:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 79,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1235:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1209:55:1"
+            },
+            "returnParameters": {
+              "id": 82,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1273:0:1"
+            },
+            "scope": 172,
+            "src": "1186:88:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will allow a factory to mint some token ids\n@param _factory  Address of the factory to update permission\n@param _minRange Minimum ID (inclusive) in id range that factory will be able to mint\n@param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint",
+            "id": 92,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addMintPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 90,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 85,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1743:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 84,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1743:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 87,
+                  "name": "_minRange",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1761:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 86,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1761:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 89,
+                  "name": "_maxRange",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1780:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 88,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1780:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1742:56:1"
+            },
+            "returnParameters": {
+              "id": 91,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1807:0:1"
+            },
+            "scope": 172,
+            "src": "1716:92:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will remove the permission a factory has to mint some token ids\n@param _factory    Address of the factory to update permission\n@param _rangeIndex Array's index where the range to delete is located for _factory",
+            "id": 99,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "removeMintPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 97,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 94,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 99,
+                  "src": "2087:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 93,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2087:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 96,
+                  "name": "_rangeIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 99,
+                  "src": "2105:19:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 95,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2105:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2086:39:1"
+            },
+            "returnParameters": {
+              "id": 98,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2134:0:1"
+            },
+            "scope": 172,
+            "src": "2057:78:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will ALLOW factory to print some assets specified in `canPrint` mapping\n@param _factory Address of the factory to activate",
+            "id": 104,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "activateFactory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 101,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 104,
+                  "src": "2317:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 100,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2317:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2316:18:1"
+            },
+            "returnParameters": {
+              "id": 103,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2343:0:1"
+            },
+            "scope": 172,
+            "src": "2292:52:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will DISALLOW factory to print any asset\n@param _factory Address of the factory to shutdown",
+            "id": 109,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "shutdownFactory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 107,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 106,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 109,
+                  "src": "2495:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 105,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2495:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2494:18:1"
+            },
+            "returnParameters": {
+              "id": 108,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2521:0:1"
+            },
+            "scope": 172,
+            "src": "2470:52:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will forever prevent new mint permissions for provided ids\n@param _range AssetRange struct for range of asset that can't be granted\n              new mint permission to",
+            "id": 114,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "lockRangeMintPermissions",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 112,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 111,
+                  "name": "_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 114,
+                  "src": "2764:26:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_calldata_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 110,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "2764:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2763:28:1"
+            },
+            "returnParameters": {
+              "id": 113,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2800:0:1"
+            },
+            "scope": 172,
+            "src": "2730:71:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Mint tokens for each ids in _ids\n@dev This methods assumes ids are sorted by how the ranges are sorted in\n     the corresponding mintAccessRanges[msg.sender] array. Call might throw\n     if they are not.\n@param _to      The address to mint tokens to.\n@param _ids     Array of ids to mint\n@param _amounts Array of amount of tokens to mint per id\n@param _data    Byte array of data to pass to recipient if it's a contract",
+            "id": 127,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "batchMint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 125,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 116,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3425:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 115,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3425:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 119,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3438:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 117,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "3438:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 118,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "3438:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 122,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3463:27:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 120,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "3463:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 121,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "3463:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 124,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3492:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 123,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3492:5:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3424:89:1"
+            },
+            "returnParameters": {
+              "id": 126,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3522:0:1"
+            },
+            "scope": 172,
+            "src": "3406:117:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Mint _amount of tokens of a given id, if allowed.\n@param _to      The address to mint tokens to\n@param _id      Token id to mint\n@param _amount  The amount to be minted\n@param _data    Data to pass if receiver is contract",
+            "id": 138,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 136,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 129,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3808:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 128,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3808:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 131,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3821:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 130,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3821:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 133,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3834:15:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 132,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3834:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 135,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3851:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 134,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3851:5:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3807:65:1"
+            },
+            "returnParameters": {
+              "id": 137,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3881:0:1"
+            },
+            "scope": 172,
+            "src": "3794:88:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Returns whether a factory is active or not",
+            "id": 145,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryStatus",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 141,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 140,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 145,
+                  "src": "4101:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 139,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4101:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4100:18:1"
+            },
+            "returnParameters": {
+              "id": 144,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 143,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 145,
+                  "src": "4142:4:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 142,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4142:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4141:6:1"
+            },
+            "scope": 172,
+            "src": "4075:73:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Returns whether the sale has ended or not",
+            "id": 153,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryAccessRanges",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 148,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 147,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 153,
+                  "src": "4251:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 146,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4251:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4250:18:1"
+            },
+            "returnParameters": {
+              "id": 152,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 151,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 153,
+                  "src": "4293:19:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_AssetRange_$74_memory_$dyn_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "contractScope": null,
+                      "id": 149,
+                      "name": "AssetRange",
+                      "nodeType": "UserDefinedTypeName",
+                      "referencedDeclaration": 74,
+                      "src": "4293:10:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                        "typeString": "struct ISWSupplyManager.AssetRange"
+                      }
+                    },
+                    "id": 150,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4293:12:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_AssetRange_$74_storage_$dyn_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4291:22:1"
+            },
+            "scope": 172,
+            "src": "4219:95:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the max supply of multiple asset ID\n@param _ids Array containing the assets IDs\n@return The current max supply of each asset ID in _ids",
+            "id": 162,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getMaxSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 157,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 156,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 162,
+                  "src": "4517:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 154,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4517:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 155,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4517:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4516:25:1"
+            },
+            "returnParameters": {
+              "id": 161,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 160,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 162,
+                  "src": "4565:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 158,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4565:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 159,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4565:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4564:18:1"
+            },
+            "scope": 172,
+            "src": "4493:90:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the current supply of multiple asset ID\n@param _ids Array containing the assets IDs\n@return The current supply of each asset ID in _ids",
+            "id": 171,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrentSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 166,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 165,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 171,
+                  "src": "4790:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 163,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4790:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 164,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4790:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4789:25:1"
+            },
+            "returnParameters": {
+              "id": 170,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 169,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 171,
+                  "src": "4838:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 167,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4838:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 168,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4838:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4837:18:1"
+            },
+            "scope": 172,
+            "src": "4762:94:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 173,
+        "src": "238:4620:1"
+      }
+    ],
+    "src": "0:4859:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol",
+    "exportedSymbols": {
+      "ISWSupplyManager": [
+        172
+      ]
+    },
+    "id": 173,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 48,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "id": 49,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "25:33:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "This is a contract manages the various SW asset factories\nand ensures that each factory has constraint access in\nterms of the id space they are allowed to mint.",
+        "fullyImplemented": false,
+        "id": 172,
+        "linearizedBaseContracts": [
+          172
+        ],
+        "name": "ISWSupplyManager",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 53,
+            "name": "FactoryActivation",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 52,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 51,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 53,
+                  "src": "415:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 50,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "415:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "414:25:1"
+            },
+            "src": "391:49:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 57,
+            "name": "FactoryShutdown",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 56,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 55,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 57,
+                  "src": "465:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 54,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "465:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "464:25:1"
+            },
+            "src": "443:47:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 63,
+            "name": "MintPermissionAdded",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 62,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 59,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 63,
+                  "src": "519:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 58,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "519:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 61,
+                  "indexed": false,
+                  "name": "new_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 63,
+                  "src": "544:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 60,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "544:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "518:47:1"
+            },
+            "src": "493:73:1"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 69,
+            "name": "MintPermissionRemoved",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 68,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 65,
+                  "indexed": true,
+                  "name": "factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 69,
+                  "src": "597:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 64,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "597:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 67,
+                  "indexed": false,
+                  "name": "deleted_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 69,
+                  "src": "622:24:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 66,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "622:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "596:51:1"
+            },
+            "src": "569:79:1"
+          },
+          {
+            "canonicalName": "ISWSupplyManager.AssetRange",
+            "id": 74,
+            "members": [
+              {
+                "constant": false,
+                "id": 71,
+                "name": "minID",
+                "nodeType": "VariableDeclaration",
+                "scope": 74,
+                "src": "719:13:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 70,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "719:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 73,
+                "name": "maxID",
+                "nodeType": "VariableDeclaration",
+                "scope": 74,
+                "src": "738:13:1",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 72,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "738:7:1",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "AssetRange",
+            "nodeType": "StructDefinition",
+            "scope": 172,
+            "src": "695:61:1",
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Set max supply for some token IDs that can't ever be increased\n@dev Can only decrease the max supply if already set, but can't set it *back* to 0.\n@param _ids Array of token IDs to set the max supply\n@param _supplies Array of max supplies for each corresponding ID",
+            "id": 83,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setMaxSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 81,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 77,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 83,
+                  "src": "1210:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 75,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1210:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 76,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1210:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 80,
+                  "name": "_supplies",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 83,
+                  "src": "1235:28:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 78,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1235:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 79,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1235:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1209:55:1"
+            },
+            "returnParameters": {
+              "id": 82,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1273:0:1"
+            },
+            "scope": 172,
+            "src": "1186:88:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will allow a factory to mint some token ids\n@param _factory  Address of the factory to update permission\n@param _minRange Minimum ID (inclusive) in id range that factory will be able to mint\n@param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint",
+            "id": 92,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addMintPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 90,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 85,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1743:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 84,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1743:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 87,
+                  "name": "_minRange",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1761:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 86,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1761:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 89,
+                  "name": "_maxRange",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 92,
+                  "src": "1780:17:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 88,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1780:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1742:56:1"
+            },
+            "returnParameters": {
+              "id": 91,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1807:0:1"
+            },
+            "scope": 172,
+            "src": "1716:92:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will remove the permission a factory has to mint some token ids\n@param _factory    Address of the factory to update permission\n@param _rangeIndex Array's index where the range to delete is located for _factory",
+            "id": 99,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "removeMintPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 97,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 94,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 99,
+                  "src": "2087:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 93,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2087:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 96,
+                  "name": "_rangeIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 99,
+                  "src": "2105:19:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 95,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2105:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2086:39:1"
+            },
+            "returnParameters": {
+              "id": 98,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2134:0:1"
+            },
+            "scope": 172,
+            "src": "2057:78:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will ALLOW factory to print some assets specified in `canPrint` mapping\n@param _factory Address of the factory to activate",
+            "id": 104,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "activateFactory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 101,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 104,
+                  "src": "2317:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 100,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2317:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2316:18:1"
+            },
+            "returnParameters": {
+              "id": 103,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2343:0:1"
+            },
+            "scope": 172,
+            "src": "2292:52:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will DISALLOW factory to print any asset\n@param _factory Address of the factory to shutdown",
+            "id": 109,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "shutdownFactory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 107,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 106,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 109,
+                  "src": "2495:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 105,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2495:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2494:18:1"
+            },
+            "returnParameters": {
+              "id": 108,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2521:0:1"
+            },
+            "scope": 172,
+            "src": "2470:52:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Will forever prevent new mint permissions for provided ids\n@param _range AssetRange struct for range of asset that can't be granted\n              new mint permission to",
+            "id": 114,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "lockRangeMintPermissions",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 112,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 111,
+                  "name": "_range",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 114,
+                  "src": "2764:26:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_AssetRange_$74_calldata_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 110,
+                    "name": "AssetRange",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 74,
+                    "src": "2764:10:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2763:28:1"
+            },
+            "returnParameters": {
+              "id": 113,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2800:0:1"
+            },
+            "scope": 172,
+            "src": "2730:71:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Mint tokens for each ids in _ids\n@dev This methods assumes ids are sorted by how the ranges are sorted in\n     the corresponding mintAccessRanges[msg.sender] array. Call might throw\n     if they are not.\n@param _to      The address to mint tokens to.\n@param _ids     Array of ids to mint\n@param _amounts Array of amount of tokens to mint per id\n@param _data    Byte array of data to pass to recipient if it's a contract",
+            "id": 127,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "batchMint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 125,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 116,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3425:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 115,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3425:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 119,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3438:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 117,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "3438:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 118,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "3438:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 122,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3463:27:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 120,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "3463:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 121,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "3463:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 124,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 127,
+                  "src": "3492:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 123,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3492:5:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3424:89:1"
+            },
+            "returnParameters": {
+              "id": 126,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3522:0:1"
+            },
+            "scope": 172,
+            "src": "3406:117:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Mint _amount of tokens of a given id, if allowed.\n@param _to      The address to mint tokens to\n@param _id      Token id to mint\n@param _amount  The amount to be minted\n@param _data    Data to pass if receiver is contract",
+            "id": 138,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 136,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 129,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3808:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 128,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3808:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 131,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3821:11:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 130,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3821:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 133,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3834:15:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 132,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3834:7:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 135,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 138,
+                  "src": "3851:20:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 134,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3851:5:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3807:65:1"
+            },
+            "returnParameters": {
+              "id": 137,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3881:0:1"
+            },
+            "scope": 172,
+            "src": "3794:88:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Returns whether a factory is active or not",
+            "id": 145,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryStatus",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 141,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 140,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 145,
+                  "src": "4101:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 139,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4101:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4100:18:1"
+            },
+            "returnParameters": {
+              "id": 144,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 143,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 145,
+                  "src": "4142:4:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 142,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4142:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4141:6:1"
+            },
+            "scope": 172,
+            "src": "4075:73:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Returns whether the sale has ended or not",
+            "id": 153,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryAccessRanges",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 148,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 147,
+                  "name": "_factory",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 153,
+                  "src": "4251:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 146,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "4251:7:1",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4250:18:1"
+            },
+            "returnParameters": {
+              "id": 152,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 151,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 153,
+                  "src": "4293:19:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_AssetRange_$74_memory_$dyn_memory_ptr",
+                    "typeString": "struct ISWSupplyManager.AssetRange[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "contractScope": null,
+                      "id": 149,
+                      "name": "AssetRange",
+                      "nodeType": "UserDefinedTypeName",
+                      "referencedDeclaration": 74,
+                      "src": "4293:10:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_AssetRange_$74_storage_ptr",
+                        "typeString": "struct ISWSupplyManager.AssetRange"
+                      }
+                    },
+                    "id": 150,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4293:12:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_AssetRange_$74_storage_$dyn_storage_ptr",
+                      "typeString": "struct ISWSupplyManager.AssetRange[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4291:22:1"
+            },
+            "scope": 172,
+            "src": "4219:95:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the max supply of multiple asset ID\n@param _ids Array containing the assets IDs\n@return The current max supply of each asset ID in _ids",
+            "id": 162,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getMaxSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 157,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 156,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 162,
+                  "src": "4517:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 154,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4517:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 155,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4517:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4516:25:1"
+            },
+            "returnParameters": {
+              "id": 161,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 160,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 162,
+                  "src": "4565:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 158,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4565:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 159,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4565:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4564:18:1"
+            },
+            "scope": 172,
+            "src": "4493:90:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the current supply of multiple asset ID\n@param _ids Array containing the assets IDs\n@return The current supply of each asset ID in _ids",
+            "id": 171,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrentSupplies",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 166,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 165,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 171,
+                  "src": "4790:23:1",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 163,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4790:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 164,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4790:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4789:25:1"
+            },
+            "returnParameters": {
+              "id": 170,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 169,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 171,
+                  "src": "4838:16:1",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 167,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4838:7:1",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 168,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4838:9:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4837:18:1"
+            },
+            "scope": 172,
+            "src": "4762:94:1",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 173,
+        "src": "238:4620:1"
+      }
+    ],
+    "src": "0:4859:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-06-26T16:37:42.937Z",
+  "devdoc": {
+    "methods": {
+      "activateFactory(address)": {
+        "params": {
+          "_factory": "Address of the factory to activate"
+        }
+      },
+      "addMintPermission(address,uint256,uint256)": {
+        "params": {
+          "_factory": "Address of the factory to update permission",
+          "_maxRange": "Maximum ID (inclusive) in id range that factory will be able to mint",
+          "_minRange": "Minimum ID (inclusive) in id range that factory will be able to mint"
+        }
+      },
+      "batchMint(address,uint256[],uint256[],bytes)": {
+        "details": "This methods assumes ids are sorted by how the ranges are sorted in     the corresponding mintAccessRanges[msg.sender] array. Call might throw     if they are not.",
+        "params": {
+          "_amounts": "Array of amount of tokens to mint per id",
+          "_data": "Byte array of data to pass to recipient if it's a contract",
+          "_ids": "Array of ids to mint",
+          "_to": "The address to mint tokens to."
+        }
+      },
+      "getCurrentSupplies(uint256[])": {
+        "params": {
+          "_ids": "Array containing the assets IDs"
+        },
+        "return": "The current supply of each asset ID in _ids"
+      },
+      "getFactoryAccessRanges(address)": {
+        "return": "Returns whether the sale has ended or not"
+      },
+      "getFactoryStatus(address)": {
+        "return": "Returns whether a factory is active or not"
+      },
+      "getMaxSupplies(uint256[])": {
+        "params": {
+          "_ids": "Array containing the assets IDs"
+        },
+        "return": "The current max supply of each asset ID in _ids"
+      },
+      "lockRangeMintPermissions((uint256,uint256))": {
+        "params": {
+          "_range": "AssetRange struct for range of asset that can't be granted              new mint permission to"
+        }
+      },
+      "mint(address,uint256,uint256,bytes)": {
+        "params": {
+          "_amount": "The amount to be minted",
+          "_data": "Data to pass if receiver is contract",
+          "_id": "Token id to mint",
+          "_to": "The address to mint tokens to"
+        }
+      },
+      "removeMintPermission(address,uint256)": {
+        "params": {
+          "_factory": "Address of the factory to update permission",
+          "_rangeIndex": "Array's index where the range to delete is located for _factory"
+        }
+      },
+      "setMaxSupplies(uint256[],uint256[])": {
+        "details": "Can only decrease the max supply if already set, but can't set it *back* to 0.",
+        "params": {
+          "_ids": "Array of token IDs to set the max supply",
+          "_supplies": "Array of max supplies for each corresponding ID"
+        }
+      },
+      "shutdownFactory(address)": {
+        "params": {
+          "_factory": "Address of the factory to shutdown"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "activateFactory(address)": {
+        "notice": "Will ALLOW factory to print some assets specified in `canPrint` mapping"
+      },
+      "addMintPermission(address,uint256,uint256)": {
+        "notice": "Will allow a factory to mint some token ids"
+      },
+      "batchMint(address,uint256[],uint256[],bytes)": {
+        "notice": "Mint tokens for each ids in _ids"
+      },
+      "getCurrentSupplies(uint256[])": {
+        "notice": "Get the current supply of multiple asset ID"
+      },
+      "getMaxSupplies(uint256[])": {
+        "notice": "Get the max supply of multiple asset ID"
+      },
+      "lockRangeMintPermissions((uint256,uint256))": {
+        "notice": "Will forever prevent new mint permissions for provided ids"
+      },
+      "mint(address,uint256,uint256,bytes)": {
+        "notice": "Mint _amount of tokens of a given id, if allowed."
+      },
+      "removeMintPermission(address,uint256)": {
+        "notice": "Will remove the permission a factory has to mint some token ids"
+      },
+      "setMaxSupplies(uint256[],uint256[])": {
+        "notice": "Set max supply for some token IDs that can't ever be increased"
+      },
+      "shutdownFactory(address)": {
+        "notice": "Will DISALLOW factory to print any asset"
+      }
+    },
+    "notice": "This is a contract manages the various SW asset factories and ensures that each factory has constraint access in terms of the id space they are allowed to mint."
+  }
+}

@@ -1,0 +1,4331 @@
+{
+  "contractName": "WeaveFactory",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factoryManagerAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_weavePerSecond",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_weaveID",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "WeaveHarvested",
+      "type": "event"
+    },
+    {
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "fallback"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "harvestWeave",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getFactoryManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getWeaveID",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getWeavePerSecond",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getLastHarvest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getAvailableWeave",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_factoryManagerAddr\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_weavePerSecond\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_weaveID\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"WeaveHarvested\",\"type\":\"event\"},{\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"fallback\"},{\"constant\":true,\"inputs\":[],\"name\":\"getAvailableWeave\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getFactoryManager\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getLastHarvest\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getWeaveID\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getWeavePerSecond\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_recipient\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"harvestWeave\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"constructor\":{\"params\":{\"_factoryManagerAddr\":\"The address of the Skyweaver Factory Manager contract\",\"_weaveID\":\"Weave's token ID\",\"_weavePerSecond\":\"Amount of weave that is created per second\"}},\"harvestWeave(address,bytes)\":{\"params\":{\"_data\":\"Byte array that is passed if _recipient is a contract\",\"_recipient\":\"Address where the weave will be sent to\"}},\"transferOwnership(address)\":{\"params\":{\"_newOwner\":\"Address of the new owner\"}}}},\"userdoc\":{\"methods\":{\"constructor\":\"Create weave factory, link SW factory manager and set weekly weave limit\",\"getAvailableWeave()\":{\"notice\":\"Returns the last time weave was harvested\"},\"getFactoryManager()\":{\"notice\":\"Returns the address of the factory manager contract\"},\"getLastHarvest()\":{\"notice\":\"Returns the last time weave was harvested\"},\"getOwner()\":{\"notice\":\"Returns the address of the owner.\"},\"getWeaveID()\":{\"notice\":\"Returns Weave's token ID\"},\"getWeavePerSecond()\":{\"notice\":\"Returns the amount of weave that can be created per second\"},\"harvestWeave(address,bytes)\":{\"notice\":\"Will mint weave and send it to _recipient\"},\"transferOwnership(address)\":{\"notice\":\"Transfers the ownership of the contract to new address\"}},\"notice\":\"This is a contract allowing owner to harvest weave based on time elapsed\"}},\"settings\":{\"compilationTarget\":{\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/shop/WeaveFactory.sol\":\"WeaveFactory\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol\":{\"keccak256\":\"0x56efef464d8c4a6de9a0a82ba0ab11765ea0fe49b78d19c61732b2149bb9f3cb\",\"urls\":[\"bzz-raw://325a3ec0d28afcd346ca8466abe8b8b2f334277faf325e7a2dc4c4b2ee8e8bb2\",\"dweb:/ipfs/QmTdwA3DmerqN9fHdYNq1GibUzegjWHfsvKfd7TZaXBkj6\"]},\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/shop/WeaveFactory.sol\":{\"keccak256\":\"0x6bd4f3d1d30e1e88a6d2350ae6a91d310e155727bb3ac3b043513081e0204804\",\"urls\":[\"bzz-raw://62caa53dfe629676c7b9dec0dc220757576f38da7ffebcd6e5c5271de6ce6cfe\",\"dweb:/ipfs/Qme3dUrNGw8xES9JLVmQzkSsesGrJeQPuPdf6P9LRTCLnk\"]},\"/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/utils/Ownable.sol\":{\"keccak256\":\"0x0d7d3772c52a571b48f35ae6941af76b384250708224b81ac4874e9c352436b2\",\"urls\":[\"bzz-raw://ae045f1c50d852929b6b6896b749138d855c7c2db5dc752e646ba2f460cc3bbe\",\"dweb:/ipfs/QmbPzF9GkTmiBfRHffx8VdfE2212DgufZzoug6y5DeVTTs\"]},\"multi-token-standard/contracts/interfaces/IERC1155.sol\":{\"keccak256\":\"0x9632273d1c5272823807d1d0b1630af9e2dad7f1e41a65bfdbc66bda702c53a1\",\"urls\":[\"bzz-raw://6deb9bdff007e4b367d4561699f45f0f8521a4412a770a9292c109844f739f58\",\"dweb:/ipfs/QmTXrB3rTHHrNcHAa3PYoq2BRJiT4nMmMrPmA6AjDsk7HB\"]},\"multi-token-standard/contracts/utils/SafeMath.sol\":{\"keccak256\":\"0x0a904266aa9620d2f126588f1a964ec47bd8e777f3b2281a6e8f6897bc1d9fbd\",\"urls\":[\"bzz-raw://c4fcd436cda8c33574b2146bb9098f560095e4b2d63084563c176c2d402a9554\",\"dweb:/ipfs/QmW3Jo5Lt6LUf8pp6r7vE5kfpMpknJNoFEqTH9FbK7eFiU\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161092038038061092083398101604081905261002f916100f3565b600080546001600160a01b03191633178082556040516001600160a01b039190911691907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a36001600160a01b0383166100a75760405162461bcd60e51b815260040161009e90610189565b60405180910390fd5b600180546001600160a01b0319166001600160a01b039490941693909317909255600255426003556004556101d6565b80516100e2816101b6565b92915050565b80516100e2816101cd565b60008060006060848603121561010857600080fd5b600061011486866100d7565b9350506020610125868287016100e8565b9250506040610136868287016100e8565b9150509250925092565b600061014d602783610199565b7f5765617665466163746f727923636f6e7374727563746f723a20494e56414c498152661117d25394155560ca1b602082015260400192915050565b602080825281016100e281610140565b90815260200190565b60006001600160a01b0382166100e2565b90565b6101bf816101a2565b81146101ca57600080fd5b50565b6101bf816101b3565b61073b806101e56000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c8063893d20e81161005b578063893d20e8146100f95780639abc5b6314610101578063affd80b014610109578063f2fde38b1461011157610088565b80631aab6842146100a95780635212f166146100c75780636fbba568146100dc5780637ece8d9c146100f1575b60405162461bcd60e51b81526004016100a090610650565b60405180910390fd5b6100b1610124565b6040516100be91906105e1565b60405180910390f35b6100da6100d536600461041a565b610133565b005b6100e461023e565b6040516100be91906106a0565b6100e4610244565b6100b1610279565b6100e4610288565b6100e461028e565b6100da61011f3660046103f4565b610294565b6001546001600160a01b031690565b6000546001600160a01b0316331461015d5760405162461bcd60e51b81526004016100a090610690565b60006101746003544261033290919063ffffffff16565b9050600061018d6002548361035f90919063ffffffff16565b426003556001546004805460405163731133e960e01b81529394506001600160a01b039092169263731133e9926101cc928a9287918b918b910161060a565b600060405180830381600087803b1580156101e657600080fd5b505af11580156101fa573d6000803e3d6000fd5b505050507ff281116199c41caf8e0368c2f3d186df9ff2d9bdd8e9bcaf145f3e8f35a7638a858260405161022f9291906105ef565b60405180910390a15050505050565b60025490565b60008061025c6003544261033290919063ffffffff16565b90506102736002548261035f90919063ffffffff16565b91505090565b6000546001600160a01b031690565b60045490565b60035490565b6000546001600160a01b031633146102be5760405162461bcd60e51b81526004016100a090610690565b6001600160a01b0381166102e45760405162461bcd60e51b81526004016100a090610670565b600080546001600160a01b0319166001600160a01b0383811691821780845560405192939116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a350565b6000828211156103545760405162461bcd60e51b81526004016100a090610660565b508082035b92915050565b60008261036e57506000610359565b8282028284828161037b57fe5b04146103995760405162461bcd60e51b81526004016100a090610680565b9392505050565b8035610359816106e1565b60008083601f8401126103bd57600080fd5b50813567ffffffffffffffff8111156103d557600080fd5b6020830191508360018202830111156103ed57600080fd5b9250929050565b60006020828403121561040657600080fd5b600061041284846103a0565b949350505050565b60008060006040848603121561042f57600080fd5b600061043b86866103a0565b935050602084013567ffffffffffffffff81111561045857600080fd5b610464868287016103ab565b92509250509250925092565b610479816106b7565b82525050565b600061048b83856106ae565b93506104988385846106cb565b6104a1836106d7565b9093019392505050565b60006104b86012836106ae565b71155394d5541413d495115117d351551213d160721b815260200192915050565b60006104e66017836106ae565b7f536166654d617468237375623a20554e444552464c4f57000000000000000000815260200192915050565b600061051f602a836106ae565b7f4f776e61626c65237472616e736665724f776e6572736869703a20494e56414c81526949445f4144445245535360b01b602082015260400192915050565b600061056b6016836106ae565b75536166654d617468236d756c3a204f564552464c4f5760501b815260200192915050565b600061059d6026836106ae565b7f4f776e61626c65236f6e6c794f776e65723a2053454e4445525f49535f4e4f548152652fa7aba722a960d11b602082015260400192915050565b610479816106c8565b602081016103598284610470565b604081016105fd8285610470565b61039960208301846105d8565b608081016106188288610470565b61062560208301876105d8565b61063260408301866105d8565b818103606083015261064581848661047f565b979650505050505050565b60208082528101610359816104ab565b60208082528101610359816104d9565b6020808252810161035981610512565b602080825281016103598161055e565b6020808252810161035981610590565b6020810161035982846105d8565b90815260200190565b60006001600160a01b038216610359565b90565b82818337506000910152565b601f01601f191690565b6106ea816106b7565b81146106f557600080fd5b5056fea365627a7a72315820d447076459e199581292c687cb8a1ba0a5cbc2775d7426ea96f3cada62ec462b6c6578706572696d656e74616cf564736f6c63430005100040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100885760003560e01c8063893d20e81161005b578063893d20e8146100f95780639abc5b6314610101578063affd80b014610109578063f2fde38b1461011157610088565b80631aab6842146100a95780635212f166146100c75780636fbba568146100dc5780637ece8d9c146100f1575b60405162461bcd60e51b81526004016100a090610650565b60405180910390fd5b6100b1610124565b6040516100be91906105e1565b60405180910390f35b6100da6100d536600461041a565b610133565b005b6100e461023e565b6040516100be91906106a0565b6100e4610244565b6100b1610279565b6100e4610288565b6100e461028e565b6100da61011f3660046103f4565b610294565b6001546001600160a01b031690565b6000546001600160a01b0316331461015d5760405162461bcd60e51b81526004016100a090610690565b60006101746003544261033290919063ffffffff16565b9050600061018d6002548361035f90919063ffffffff16565b426003556001546004805460405163731133e960e01b81529394506001600160a01b039092169263731133e9926101cc928a9287918b918b910161060a565b600060405180830381600087803b1580156101e657600080fd5b505af11580156101fa573d6000803e3d6000fd5b505050507ff281116199c41caf8e0368c2f3d186df9ff2d9bdd8e9bcaf145f3e8f35a7638a858260405161022f9291906105ef565b60405180910390a15050505050565b60025490565b60008061025c6003544261033290919063ffffffff16565b90506102736002548261035f90919063ffffffff16565b91505090565b6000546001600160a01b031690565b60045490565b60035490565b6000546001600160a01b031633146102be5760405162461bcd60e51b81526004016100a090610690565b6001600160a01b0381166102e45760405162461bcd60e51b81526004016100a090610670565b600080546001600160a01b0319166001600160a01b0383811691821780845560405192939116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a350565b6000828211156103545760405162461bcd60e51b81526004016100a090610660565b508082035b92915050565b60008261036e57506000610359565b8282028284828161037b57fe5b04146103995760405162461bcd60e51b81526004016100a090610680565b9392505050565b8035610359816106e1565b60008083601f8401126103bd57600080fd5b50813567ffffffffffffffff8111156103d557600080fd5b6020830191508360018202830111156103ed57600080fd5b9250929050565b60006020828403121561040657600080fd5b600061041284846103a0565b949350505050565b60008060006040848603121561042f57600080fd5b600061043b86866103a0565b935050602084013567ffffffffffffffff81111561045857600080fd5b610464868287016103ab565b92509250509250925092565b610479816106b7565b82525050565b600061048b83856106ae565b93506104988385846106cb565b6104a1836106d7565b9093019392505050565b60006104b86012836106ae565b71155394d5541413d495115117d351551213d160721b815260200192915050565b60006104e66017836106ae565b7f536166654d617468237375623a20554e444552464c4f57000000000000000000815260200192915050565b600061051f602a836106ae565b7f4f776e61626c65237472616e736665724f776e6572736869703a20494e56414c81526949445f4144445245535360b01b602082015260400192915050565b600061056b6016836106ae565b75536166654d617468236d756c3a204f564552464c4f5760501b815260200192915050565b600061059d6026836106ae565b7f4f776e61626c65236f6e6c794f776e65723a2053454e4445525f49535f4e4f548152652fa7aba722a960d11b602082015260400192915050565b610479816106c8565b602081016103598284610470565b604081016105fd8285610470565b61039960208301846105d8565b608081016106188288610470565b61062560208301876105d8565b61063260408301866105d8565b818103606083015261064581848661047f565b979650505050505050565b60208082528101610359816104ab565b60208082528101610359816104d9565b6020808252810161035981610512565b602080825281016103598161055e565b6020808252810161035981610590565b6020810161035982846105d8565b90815260200190565b60006001600160a01b038216610359565b90565b82818337506000910152565b601f01601f191690565b6106ea816106b7565b81146106f557600080fd5b5056fea365627a7a72315820d447076459e199581292c687cb8a1ba0a5cbc2775d7426ea96f3cada62ec462b6c6578706572696d656e74616cf564736f6c63430005100040",
+  "sourceMap": "346:3663:13:-;;;1527:410;8:9:-1;5:2;;;30:1;27;20:12;5:2;1527:410:13;;;;;;;;;;;;;;;;;;;;;532:5:16;:18;;-1:-1:-1;;;;;;532:18:16;540:10;532:18;;;;561:39;;-1:-1:-1;;;;;594:5:16;;;;;532;561:39;;532:5;;561:39;-1:-1:-1;;;;;1663:33:13;;1648:103;;;;-1:-1:-1;;;1648:103:13;;;;;;;;;;;;;;;;;1793:14;:54;;-1:-1:-1;;;;;;1793:54:13;-1:-1:-1;;;;;1793:54:13;;;;;;;;;;;1853:14;:32;1905:3;1891:11;:17;1914:7;:18;346:3663;;5:134:-1;83:13;;101:33;83:13;101:33;;;68:71;;;;;146:134;224:13;;242:33;224:13;242:33;;287:535;;;;436:2;424:9;415:7;411:23;407:32;404:2;;;452:1;449;442:12;404:2;487:1;504:64;560:7;540:9;504:64;;;494:74;;466:108;605:2;623:64;679:7;670:6;659:9;655:22;623:64;;;613:74;;584:109;724:2;742:64;798:7;789:6;778:9;774:22;742:64;;;732:74;;703:109;398:424;;;;;;830:376;;990:67;1054:2;1049:3;990:67;;;1090:34;1070:55;;-1:-1;;;1154:2;1145:12;;1138:31;1197:2;1188:12;;976:230;-1:-1;;976:230;1214:407;1405:2;1419:47;;;1390:18;;1480:131;1390:18;1480:131;;1629:163;1732:19;;;1781:4;1772:14;;1725:67;1800:91;;-1:-1;;;;;1960:54;;1862:24;1943:76;2026:72;2088:5;2071:27;2105:117;2174:24;2192:5;2174:24;;;2167:5;2164:35;2154:2;;2213:1;2210;2203:12;2154:2;2148:74;;2229:117;2298:24;2316:5;2298:24;;2272:74;346:3663:13;;;;;;",
+  "deployedSourceMap": "346:3663:13:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;346:3663:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2944:28;;-1:-1:-1;;;2944:28:13;;;;;;;;;;;;;;;;3179:102;;;:::i;:::-;;;;;;;;;;;;;;;;2270:471;;;;;;;;;:::i;:::-;;3502:93;;;:::i;:::-;;;;;;;;3824:182;;;:::i;1219:73:16:-;;;:::i;3335:79:13:-;;;:::i;3666:87::-;;;:::i;932:224:16:-;;;;;;;;;:::i;3179:102:13:-;3261:14;;-1:-1:-1;;;;;3261:14:13;3179:102;:::o;2270:471::-;741:5:16;;-1:-1:-1;;;;;741:5:16;727:10;:19;719:70;;;;-1:-1:-1;;;719:70:16;;;;;;;;;2410:31:13;2444:20;2452:11;;2444:3;:7;;:20;;;;:::i;:::-;2410:54;;2470:24;2497:43;2525:14;;2497:23;:27;;:43;;;;:::i;:::-;2588:3;2574:11;:17;2616:14;;2648:7;;;2616:65;;-1:-1:-1;;;2616:65:13;;2470:70;;-1:-1:-1;;;;;;2616:14:13;;;;:19;;:65;;2636:10;;2470:70;;2675:5;;;;2616:65;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2616:65:13;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2616:65:13;;;;2692:44;2707:10;2719:16;2692:44;;;;;;;;;;;;;;;;795:1:16;;2270:471:13;;;:::o;3502:93::-;3576:14;;3502:93;:::o;3824:182::-;3876:7;3891:31;3925:20;3933:11;;3925:3;:7;;:20;;;;:::i;:::-;3891:54;;3958:43;3986:14;;3958:23;:27;;:43;;;;:::i;:::-;3951:50;;;3824:182;:::o;1219:73:16:-;1260:7;1282:5;-1:-1:-1;;;;;1282:5:16;1219:73;:::o;3335:79:13:-;3402:7;;3335:79;:::o;3666:87::-;3737:11;;3666:87;:::o;932:224:16:-;741:5;;-1:-1:-1;;;;;741:5:16;727:10;:19;719:70;;;;-1:-1:-1;;;719:70:16;;;;;;;;;-1:-1:-1;;;;;1009:23:16;;1001:78;;;;-1:-1:-1;;;1001:78:16;;;;;;;;;1085:5;:17;;-1:-1:-1;;;;;;1085:17:16;-1:-1:-1;;;;;1085:17:16;;;;;;;;;1113:38;;1085:17;;1134:5;;;1113:38;;1085:5;1113:38;932:224;:::o;1188:158:37:-;1246:7;1274:1;1269;:6;;1261:42;;;;-1:-1:-1;;;1261:42:37;;;;;;;;;-1:-1:-1;1321:5:37;;;1188:158;;;;;:::o;226:407::-;284:7;508:6;504:35;;-1:-1:-1;531:1:37;524:8;;504:35;557:5;;;561:1;557;:5;:1;576:5;;;;;:10;568:45;;;;-1:-1:-1;;;568:45:37;;;;;;;;;627:1;226:407;-1:-1:-1;;;226:407:37:o;5:130:-1:-;72:20;;97:33;72:20;97:33;;156:336;;;270:3;263:4;255:6;251:17;247:27;237:2;;288:1;285;278:12;237:2;-1:-1;308:20;;348:18;337:30;;334:2;;;380:1;377;370:12;334:2;414:4;406:6;402:17;390:29;;465:3;457:4;449:6;445:17;435:8;431:32;428:41;425:2;;;482:1;479;472:12;425:2;230:262;;;;;;500:241;;604:2;592:9;583:7;579:23;575:32;572:2;;;620:1;617;610:12;572:2;655:1;672:53;717:7;697:9;672:53;;;662:63;566:175;-1:-1;;;;566:175;748:490;;;;888:2;876:9;867:7;863:23;859:32;856:2;;;904:1;901;894:12;856:2;939:1;956:53;1001:7;981:9;956:53;;;946:63;;918:97;1074:2;1063:9;1059:18;1046:32;1098:18;1090:6;1087:30;1084:2;;;1130:1;1127;1120:12;1084:2;1158:64;1214:7;1205:6;1194:9;1190:22;1158:64;;;1148:74;;;;1025:203;850:388;;;;;;1245:113;1328:24;1346:5;1328:24;;;1323:3;1316:37;1310:48;;;1388:297;;1502:70;1565:6;1560:3;1502:70;;;1495:77;;1584:43;1620:6;1615:3;1608:5;1584:43;;;1649:29;1671:6;1649:29;;;1640:39;;;;1488:197;-1:-1;;;1488:197;1694:318;;1854:67;1918:2;1913:3;1854:67;;;-1:-1;;;1934:41;;2003:2;1994:12;;1840:172;-1:-1;;1840:172;2021:323;;2181:67;2245:2;2240:3;2181:67;;;2281:25;2261:46;;2335:2;2326:12;;2167:177;-1:-1;;2167:177;2353:379;;2513:67;2577:2;2572:3;2513:67;;;2613:34;2593:55;;-1:-1;;;2677:2;2668:12;;2661:34;2723:2;2714:12;;2499:233;-1:-1;;2499:233;2741:322;;2901:67;2965:2;2960:3;2901:67;;;-1:-1;;;2981:45;;3054:2;3045:12;;2887:176;-1:-1;;2887:176;3072:375;;3232:67;3296:2;3291:3;3232:67;;;3332:34;3312:55;;-1:-1;;;3396:2;3387:12;;3380:30;3438:2;3429:12;;3218:229;-1:-1;;3218:229;3455:113;3538:24;3556:5;3538:24;;3575:213;3693:2;3678:18;;3707:71;3682:9;3751:6;3707:71;;3795:324;3941:2;3926:18;;3955:71;3930:9;3999:6;3955:71;;;4037:72;4105:2;4094:9;4090:18;4081:6;4037:72;;4126:651;4356:3;4341:19;;4371:71;4345:9;4415:6;4371:71;;;4453:72;4521:2;4510:9;4506:18;4497:6;4453:72;;;4536;4604:2;4593:9;4589:18;4580:6;4536:72;;;4656:9;4650:4;4646:20;4641:2;4630:9;4626:18;4619:48;4681:86;4762:4;4753:6;4745;4681:86;;;4673:94;4327:450;-1:-1;;;;;;;4327:450;4784:407;4975:2;4989:47;;;4960:18;;5050:131;4960:18;5050:131;;5198:407;5389:2;5403:47;;;5374:18;;5464:131;5374:18;5464:131;;5612:407;5803:2;5817:47;;;5788:18;;5878:131;5788:18;5878:131;;6026:407;6217:2;6231:47;;;6202:18;;6292:131;6202:18;6292:131;;6440:407;6631:2;6645:47;;;6616:18;;6706:131;6616:18;6706:131;;6854:213;6972:2;6957:18;;6986:71;6961:9;7030:6;6986:71;;7075:162;7177:19;;;7226:4;7217:14;;7170:67;7417:91;;-1:-1;;;;;7577:54;;7479:24;7560:76;7643:72;7705:5;7688:27;7723:145;7804:6;7799:3;7794;7781:30;-1:-1;7860:1;7842:16;;7835:27;7774:94;7876:97;7964:2;7944:14;-1:-1;;7940:28;;7924:49;7981:117;8050:24;8068:5;8050:24;;;8043:5;8040:35;8030:2;;8089:1;8086;8079:12;8030:2;8024:74;",
+  "source": "pragma solidity ^0.5.16;\npragma experimental ABIEncoderV2;\n\nimport \"../utils/Ownable.sol\";\nimport \"../interfaces/ISWSupplyManager.sol\";\nimport \"multi-token-standard/contracts/interfaces/IERC1155.sol\";\nimport \"multi-token-standard/contracts/utils/SafeMath.sol\";\n\n/**\n * This is a contract allowing owner to harvest weave based on time elapsed\n */\ncontract WeaveFactory is Ownable {\n  using SafeMath for uint256;\n\n  /***********************************|\n  |        Variables && Events        |\n  |__________________________________*/\n\n  // Initiate Variables\n  ISWSupplyManager internal factoryManager; //SkyWeaver Curencies Factory Manager Contract\n\n  // Mapping variables\n  uint256 internal weavePerSecond; // Amount of Weave that is created per second\n  uint256 internal lastHarvest;    // Last timestamp weave was harvested\n  uint256 internal weaveID;        // ID for weave, the only ID this contract can mint\n\n  /***********************************|\n  |               Events              |\n  |__________________________________*/\n\n  event WeaveHarvested(address recipient, uint256 amount);\n\n\n  /***********************************|\n  |            Constructor            |\n  |__________________________________*/\n\n  /**\n   * @notice Create weave factory, link SW factory manager and set weekly weave limit\n   * @param _factoryManagerAddr The address of the Skyweaver Factory Manager contract\n   * @param _weavePerSecond     Amount of weave that is created per second\n   * @param _weaveID            Weave's token ID\n   */\n  constructor(address _factoryManagerAddr, uint256 _weavePerSecond, uint256 _weaveID) public {\n\n    //Input validation\n    require(\n      _factoryManagerAddr != address(0),\n      \"WeaveFactory#constructor: INVALID_INPUT\"\n    );\n\n    // Set variables and constants\n    factoryManager = ISWSupplyManager(_factoryManagerAddr);\n    weavePerSecond = _weavePerSecond;\n    lastHarvest = now;\n    weaveID = _weaveID;\n  }\n\n\n  /***********************************|\n  |         Management Methods        |\n  |__________________________________*/\n\n  /**\n   * @notice Will mint weave and send it to _recipient\n   * @param _recipient Address where the weave will be sent to\n   * @param _data      Byte array that is passed if _recipient is a contract\n   */\n  function harvestWeave(address _recipient, bytes calldata _data) external onlyOwner() {\n    // Calculate how much weave can be harvested\n    uint256 time_since_last_harvest = now.sub(lastHarvest);\n    uint256 weave_to_harvest = time_since_last_harvest.mul(weavePerSecond);\n\n    // Update harvest time\n    lastHarvest = now;\n\n    // Mint weave\n    factoryManager.mint(_recipient, weaveID, weave_to_harvest, _data);\n    emit WeaveHarvested(_recipient, weave_to_harvest);\n  }\n\n\n  /***********************************|\n  |      Receiver Method Handler      |\n  |__________________________________*/\n\n  /**\n   * @notice Prevents receiving Ether\n   */\n  function () external {\n    revert(\"UNSUPPORTED_METHOD\");\n  }\n\n  /***********************************|\n  |         Getter Functions          |\n  |__________________________________*/\n\n  /**\n   * @notice Returns the address of the factory manager contract\n   */\n  function getFactoryManager() external view returns (address) {\n    return address(factoryManager);\n  }\n\n  /**\n   * @notice Returns Weave's token ID\n   */\n  function getWeaveID() external view returns (uint256) {\n    return weaveID;\n  }\n\n  /**\n   * @notice Returns the amount of weave that can be created per second\n   */\n  function getWeavePerSecond() external view returns (uint256) {\n    return weavePerSecond;\n  }\n\n  /**\n   * @notice Returns the last time weave was harvested\n   */\n  function getLastHarvest() external view returns (uint256) {\n    return lastHarvest;\n  }\n\n  /**\n   * @notice Returns the last time weave was harvested\n   */\n  function getAvailableWeave() external view returns (uint256) {\n    uint256 time_since_last_harvest = now.sub(lastHarvest);\n    return time_since_last_harvest.mul(weavePerSecond);\n  }\n\n}\n",
+  "sourcePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/shop/WeaveFactory.sol",
+  "ast": {
+    "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/shop/WeaveFactory.sol",
+    "exportedSymbols": {
+      "WeaveFactory": [
+        4175
+      ]
+    },
+    "id": 4176,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4011,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:13"
+      },
+      {
+        "id": 4012,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "25:33:13"
+      },
+      {
+        "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/utils/Ownable.sol",
+        "file": "../utils/Ownable.sol",
+        "id": 4013,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 4276,
+        "src": "60:30:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol",
+        "file": "../interfaces/ISWSupplyManager.sol",
+        "id": 4014,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 173,
+        "src": "91:44:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "multi-token-standard/contracts/interfaces/IERC1155.sol",
+        "file": "multi-token-standard/contracts/interfaces/IERC1155.sol",
+        "id": 4015,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 5626,
+        "src": "136:64:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "multi-token-standard/contracts/utils/SafeMath.sol",
+        "file": "multi-token-standard/contracts/utils/SafeMath.sol",
+        "id": 4016,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 9510,
+        "src": "201:59:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 4017,
+              "name": "Ownable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 4275,
+              "src": "371:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Ownable_$4275",
+                "typeString": "contract Ownable"
+              }
+            },
+            "id": 4018,
+            "nodeType": "InheritanceSpecifier",
+            "src": "371:7:13"
+          }
+        ],
+        "contractDependencies": [
+          4275
+        ],
+        "contractKind": "contract",
+        "documentation": "This is a contract allowing owner to harvest weave based on time elapsed",
+        "fullyImplemented": true,
+        "id": 4175,
+        "linearizedBaseContracts": [
+          4175,
+          4275
+        ],
+        "name": "WeaveFactory",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 4021,
+            "libraryName": {
+              "contractScope": null,
+              "id": 4019,
+              "name": "SafeMath",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 9509,
+              "src": "389:8:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_SafeMath_$9509",
+                "typeString": "library SafeMath"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "383:27:13",
+            "typeName": {
+              "id": 4020,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "402:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 4023,
+            "name": "factoryManager",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "559:40:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+              "typeString": "contract ISWSupplyManager"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 4022,
+              "name": "ISWSupplyManager",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 172,
+              "src": "559:16:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                "typeString": "contract ISWSupplyManager"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4025,
+            "name": "weavePerSecond",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "674:31:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4024,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "674:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4027,
+            "name": "lastHarvest",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "755:28:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4026,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "755:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4029,
+            "name": "weaveID",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "828:24:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4028,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "828:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 4035,
+            "name": "WeaveHarvested",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 4034,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4031,
+                  "indexed": false,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4035,
+                  "src": "1058:17:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4030,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1058:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4033,
+                  "indexed": false,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4035,
+                  "src": "1077:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4032,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1077:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1057:35:13"
+            },
+            "src": "1037:56:13"
+          },
+          {
+            "body": {
+              "id": 4071,
+              "nodeType": "Block",
+              "src": "1618:319:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 4049,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 4045,
+                          "name": "_factoryManagerAddr",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4037,
+                          "src": "1663:19:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 4047,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1694:1:13",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 4046,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "1686:7:13",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 4048,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1686:10:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "1663:33:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "5765617665466163746f727923636f6e7374727563746f723a20494e56414c49445f494e505554",
+                        "id": 4050,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1704:41:13",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_748c8d332cd2c9ba6be7ed2169b844debd612824c419bb77061dcb089f0bff02",
+                          "typeString": "literal_string \"WeaveFactory#constructor: INVALID_INPUT\""
+                        },
+                        "value": "WeaveFactory#constructor: INVALID_INPUT"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_748c8d332cd2c9ba6be7ed2169b844debd612824c419bb77061dcb089f0bff02",
+                          "typeString": "literal_string \"WeaveFactory#constructor: INVALID_INPUT\""
+                        }
+                      ],
+                      "id": 4044,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        11925,
+                        11926
+                      ],
+                      "referencedDeclaration": 11926,
+                      "src": "1648:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 4051,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1648:103:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4052,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1648:103:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4057,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4053,
+                      "name": "factoryManager",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4023,
+                      "src": "1793:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                        "typeString": "contract ISWSupplyManager"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 4055,
+                          "name": "_factoryManagerAddr",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4037,
+                          "src": "1827:19:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 4054,
+                        "name": "ISWSupplyManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 172,
+                        "src": "1810:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_ISWSupplyManager_$172_$",
+                          "typeString": "type(contract ISWSupplyManager)"
+                        }
+                      },
+                      "id": 4056,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1810:37:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                        "typeString": "contract ISWSupplyManager"
+                      }
+                    },
+                    "src": "1793:54:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                      "typeString": "contract ISWSupplyManager"
+                    }
+                  },
+                  "id": 4058,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1793:54:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4061,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4059,
+                      "name": "weavePerSecond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4025,
+                      "src": "1853:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4060,
+                      "name": "_weavePerSecond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4039,
+                      "src": "1870:15:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1853:32:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4062,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1853:32:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4065,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4063,
+                      "name": "lastHarvest",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4027,
+                      "src": "1891:11:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4064,
+                      "name": "now",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 11924,
+                      "src": "1905:3:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1891:17:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4066,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1891:17:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4069,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4067,
+                      "name": "weaveID",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4029,
+                      "src": "1914:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4068,
+                      "name": "_weaveID",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4041,
+                      "src": "1924:8:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1914:18:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4070,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1914:18:13"
+                }
+              ]
+            },
+            "documentation": "@notice Create weave factory, link SW factory manager and set weekly weave limit\n@param _factoryManagerAddr The address of the Skyweaver Factory Manager contract\n@param _weavePerSecond     Amount of weave that is created per second\n@param _weaveID            Weave's token ID",
+            "id": 4072,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4042,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4037,
+                  "name": "_factoryManagerAddr",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1539:27:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4036,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1539:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4039,
+                  "name": "_weavePerSecond",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1568:23:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4038,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1568:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4041,
+                  "name": "_weaveID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1593:16:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4040,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1593:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1538:72:13"
+            },
+            "returnParameters": {
+              "id": 4043,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1618:0:13"
+            },
+            "scope": 4175,
+            "src": "1527:410:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 4113,
+              "nodeType": "Block",
+              "src": "2355:386:13",
+              "statements": [
+                {
+                  "assignments": [
+                    4082
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4082,
+                      "name": "time_since_last_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4113,
+                      "src": "2410:31:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4081,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2410:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4087,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4085,
+                        "name": "lastHarvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4027,
+                        "src": "2452:11:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4083,
+                        "name": "now",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11924,
+                        "src": "2444:3:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4084,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "sub",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9462,
+                      "src": "2444:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4086,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2444:20:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2410:54:13"
+                },
+                {
+                  "assignments": [
+                    4089
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4089,
+                      "name": "weave_to_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4113,
+                      "src": "2470:24:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4088,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2470:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4094,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4092,
+                        "name": "weavePerSecond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4025,
+                        "src": "2525:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4090,
+                        "name": "time_since_last_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4082,
+                        "src": "2497:23:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4091,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mul",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9412,
+                      "src": "2497:27:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4093,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2497:43:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2470:70:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4097,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4095,
+                      "name": "lastHarvest",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4027,
+                      "src": "2574:11:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4096,
+                      "name": "now",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 11924,
+                      "src": "2588:3:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "2574:17:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4098,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2574:17:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4102,
+                        "name": "_recipient",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4074,
+                        "src": "2636:10:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4103,
+                        "name": "weaveID",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4029,
+                        "src": "2648:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4104,
+                        "name": "weave_to_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4089,
+                        "src": "2657:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4105,
+                        "name": "_data",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4076,
+                        "src": "2675:5:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes calldata"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes calldata"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4099,
+                        "name": "factoryManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4023,
+                        "src": "2616:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      },
+                      "id": 4101,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mint",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 138,
+                      "src": "2616:19:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$_t_uint256_$_t_bytes_memory_ptr_$returns$__$",
+                        "typeString": "function (address,uint256,uint256,bytes memory) external"
+                      }
+                    },
+                    "id": 4106,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2616:65:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4107,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2616:65:13"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4109,
+                        "name": "_recipient",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4074,
+                        "src": "2707:10:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4110,
+                        "name": "weave_to_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4089,
+                        "src": "2719:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 4108,
+                      "name": "WeaveHarvested",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4035,
+                      "src": "2692:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256)"
+                      }
+                    },
+                    "id": 4111,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2692:44:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4112,
+                  "nodeType": "EmitStatement",
+                  "src": "2687:49:13"
+                }
+              ]
+            },
+            "documentation": "@notice Will mint weave and send it to _recipient\n@param _recipient Address where the weave will be sent to\n@param _data      Byte array that is passed if _recipient is a contract",
+            "id": 4114,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [],
+                "id": 4079,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 4078,
+                  "name": "onlyOwner",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 4240,
+                  "src": "2343:9:13",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "2343:11:13"
+              }
+            ],
+            "name": "harvestWeave",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4077,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4074,
+                  "name": "_recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4114,
+                  "src": "2292:18:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4073,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2292:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4076,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4114,
+                  "src": "2312:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 4075,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2312:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2291:42:13"
+            },
+            "returnParameters": {
+              "id": 4080,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2355:0:13"
+            },
+            "scope": 4175,
+            "src": "2270:471:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4121,
+              "nodeType": "Block",
+              "src": "2938:39:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "554e535550504f525445445f4d4554484f44",
+                        "id": 4118,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "2951:20:13",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_47f3a24ab6edc0d74807bfa2d75f2563b3e0385396e090e484c961ca40009ad8",
+                          "typeString": "literal_string \"UNSUPPORTED_METHOD\""
+                        },
+                        "value": "UNSUPPORTED_METHOD"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_47f3a24ab6edc0d74807bfa2d75f2563b3e0385396e090e484c961ca40009ad8",
+                          "typeString": "literal_string \"UNSUPPORTED_METHOD\""
+                        }
+                      ],
+                      "id": 4117,
+                      "name": "revert",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        11927,
+                        11928
+                      ],
+                      "referencedDeclaration": 11928,
+                      "src": "2944:6:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (string memory) pure"
+                      }
+                    },
+                    "id": 4119,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2944:28:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4120,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2944:28:13"
+                }
+              ]
+            },
+            "documentation": "@notice Prevents receiving Ether",
+            "id": 4122,
+            "implemented": true,
+            "kind": "fallback",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4115,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2926:2:13"
+            },
+            "returnParameters": {
+              "id": 4116,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2938:0:13"
+            },
+            "scope": 4175,
+            "src": "2917:60:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4131,
+              "nodeType": "Block",
+              "src": "3240:41:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4128,
+                        "name": "factoryManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4023,
+                        "src": "3261:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      ],
+                      "id": 4127,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "3253:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_address_$",
+                        "typeString": "type(address)"
+                      },
+                      "typeName": "address"
+                    },
+                    "id": 4129,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3253:23:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 4126,
+                  "id": 4130,
+                  "nodeType": "Return",
+                  "src": "3246:30:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the address of the factory manager contract",
+            "id": 4132,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryManager",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4123,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3205:2:13"
+            },
+            "returnParameters": {
+              "id": 4126,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4125,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4132,
+                  "src": "3231:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4124,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3231:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3230:9:13"
+            },
+            "scope": 4175,
+            "src": "3179:102:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4139,
+              "nodeType": "Block",
+              "src": "3389:25:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4137,
+                    "name": "weaveID",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4029,
+                    "src": "3402:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4136,
+                  "id": 4138,
+                  "nodeType": "Return",
+                  "src": "3395:14:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns Weave's token ID",
+            "id": 4140,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWeaveID",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4133,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3354:2:13"
+            },
+            "returnParameters": {
+              "id": 4136,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4135,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4140,
+                  "src": "3380:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4134,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3380:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3379:9:13"
+            },
+            "scope": 4175,
+            "src": "3335:79:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4147,
+              "nodeType": "Block",
+              "src": "3563:32:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4145,
+                    "name": "weavePerSecond",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4025,
+                    "src": "3576:14:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4144,
+                  "id": 4146,
+                  "nodeType": "Return",
+                  "src": "3569:21:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the amount of weave that can be created per second",
+            "id": 4148,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWeavePerSecond",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4141,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3528:2:13"
+            },
+            "returnParameters": {
+              "id": 4144,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4143,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4148,
+                  "src": "3554:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4142,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3554:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3553:9:13"
+            },
+            "scope": 4175,
+            "src": "3502:93:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4155,
+              "nodeType": "Block",
+              "src": "3724:29:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4153,
+                    "name": "lastHarvest",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4027,
+                    "src": "3737:11:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4152,
+                  "id": 4154,
+                  "nodeType": "Return",
+                  "src": "3730:18:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the last time weave was harvested",
+            "id": 4156,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getLastHarvest",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4149,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3689:2:13"
+            },
+            "returnParameters": {
+              "id": 4152,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4151,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4156,
+                  "src": "3715:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4150,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3715:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3714:9:13"
+            },
+            "scope": 4175,
+            "src": "3666:87:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4173,
+              "nodeType": "Block",
+              "src": "3885:121:13",
+              "statements": [
+                {
+                  "assignments": [
+                    4162
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4162,
+                      "name": "time_since_last_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4173,
+                      "src": "3891:31:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4161,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "3891:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4167,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4165,
+                        "name": "lastHarvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4027,
+                        "src": "3933:11:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4163,
+                        "name": "now",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11924,
+                        "src": "3925:3:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4164,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "sub",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9462,
+                      "src": "3925:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4166,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3925:20:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "3891:54:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4170,
+                        "name": "weavePerSecond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4025,
+                        "src": "3986:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4168,
+                        "name": "time_since_last_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4162,
+                        "src": "3958:23:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4169,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mul",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9412,
+                      "src": "3958:27:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4171,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3958:43:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4160,
+                  "id": 4172,
+                  "nodeType": "Return",
+                  "src": "3951:50:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the last time weave was harvested",
+            "id": 4174,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getAvailableWeave",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4157,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3850:2:13"
+            },
+            "returnParameters": {
+              "id": 4160,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4159,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4174,
+                  "src": "3876:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4158,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3876:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3875:9:13"
+            },
+            "scope": 4175,
+            "src": "3824:182:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4176,
+        "src": "346:3663:13"
+      }
+    ],
+    "src": "0:4010:13"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/shop/WeaveFactory.sol",
+    "exportedSymbols": {
+      "WeaveFactory": [
+        4175
+      ]
+    },
+    "id": 4176,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 4011,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:13"
+      },
+      {
+        "id": 4012,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "25:33:13"
+      },
+      {
+        "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/utils/Ownable.sol",
+        "file": "../utils/Ownable.sol",
+        "id": 4013,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 4276,
+        "src": "60:30:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/michael/Documents/Projects/horizon-games/SkyWeaver-contracts/contracts/interfaces/ISWSupplyManager.sol",
+        "file": "../interfaces/ISWSupplyManager.sol",
+        "id": 4014,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 173,
+        "src": "91:44:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "multi-token-standard/contracts/interfaces/IERC1155.sol",
+        "file": "multi-token-standard/contracts/interfaces/IERC1155.sol",
+        "id": 4015,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 5626,
+        "src": "136:64:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "multi-token-standard/contracts/utils/SafeMath.sol",
+        "file": "multi-token-standard/contracts/utils/SafeMath.sol",
+        "id": 4016,
+        "nodeType": "ImportDirective",
+        "scope": 4176,
+        "sourceUnit": 9510,
+        "src": "201:59:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 4017,
+              "name": "Ownable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 4275,
+              "src": "371:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Ownable_$4275",
+                "typeString": "contract Ownable"
+              }
+            },
+            "id": 4018,
+            "nodeType": "InheritanceSpecifier",
+            "src": "371:7:13"
+          }
+        ],
+        "contractDependencies": [
+          4275
+        ],
+        "contractKind": "contract",
+        "documentation": "This is a contract allowing owner to harvest weave based on time elapsed",
+        "fullyImplemented": true,
+        "id": 4175,
+        "linearizedBaseContracts": [
+          4175,
+          4275
+        ],
+        "name": "WeaveFactory",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 4021,
+            "libraryName": {
+              "contractScope": null,
+              "id": 4019,
+              "name": "SafeMath",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 9509,
+              "src": "389:8:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_SafeMath_$9509",
+                "typeString": "library SafeMath"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "383:27:13",
+            "typeName": {
+              "id": 4020,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "402:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 4023,
+            "name": "factoryManager",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "559:40:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+              "typeString": "contract ISWSupplyManager"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 4022,
+              "name": "ISWSupplyManager",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 172,
+              "src": "559:16:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                "typeString": "contract ISWSupplyManager"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4025,
+            "name": "weavePerSecond",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "674:31:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4024,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "674:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4027,
+            "name": "lastHarvest",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "755:28:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4026,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "755:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 4029,
+            "name": "weaveID",
+            "nodeType": "VariableDeclaration",
+            "scope": 4175,
+            "src": "828:24:13",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 4028,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "828:7:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 4035,
+            "name": "WeaveHarvested",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 4034,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4031,
+                  "indexed": false,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4035,
+                  "src": "1058:17:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4030,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1058:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4033,
+                  "indexed": false,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4035,
+                  "src": "1077:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4032,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1077:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1057:35:13"
+            },
+            "src": "1037:56:13"
+          },
+          {
+            "body": {
+              "id": 4071,
+              "nodeType": "Block",
+              "src": "1618:319:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 4049,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 4045,
+                          "name": "_factoryManagerAddr",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4037,
+                          "src": "1663:19:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 4047,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1694:1:13",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 4046,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "1686:7:13",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 4048,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1686:10:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "1663:33:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "5765617665466163746f727923636f6e7374727563746f723a20494e56414c49445f494e505554",
+                        "id": 4050,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1704:41:13",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_748c8d332cd2c9ba6be7ed2169b844debd612824c419bb77061dcb089f0bff02",
+                          "typeString": "literal_string \"WeaveFactory#constructor: INVALID_INPUT\""
+                        },
+                        "value": "WeaveFactory#constructor: INVALID_INPUT"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_748c8d332cd2c9ba6be7ed2169b844debd612824c419bb77061dcb089f0bff02",
+                          "typeString": "literal_string \"WeaveFactory#constructor: INVALID_INPUT\""
+                        }
+                      ],
+                      "id": 4044,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        11925,
+                        11926
+                      ],
+                      "referencedDeclaration": 11926,
+                      "src": "1648:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 4051,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1648:103:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4052,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1648:103:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4057,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4053,
+                      "name": "factoryManager",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4023,
+                      "src": "1793:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                        "typeString": "contract ISWSupplyManager"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 4055,
+                          "name": "_factoryManagerAddr",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4037,
+                          "src": "1827:19:13",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 4054,
+                        "name": "ISWSupplyManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 172,
+                        "src": "1810:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_ISWSupplyManager_$172_$",
+                          "typeString": "type(contract ISWSupplyManager)"
+                        }
+                      },
+                      "id": 4056,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1810:37:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                        "typeString": "contract ISWSupplyManager"
+                      }
+                    },
+                    "src": "1793:54:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                      "typeString": "contract ISWSupplyManager"
+                    }
+                  },
+                  "id": 4058,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1793:54:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4061,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4059,
+                      "name": "weavePerSecond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4025,
+                      "src": "1853:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4060,
+                      "name": "_weavePerSecond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4039,
+                      "src": "1870:15:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1853:32:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4062,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1853:32:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4065,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4063,
+                      "name": "lastHarvest",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4027,
+                      "src": "1891:11:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4064,
+                      "name": "now",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 11924,
+                      "src": "1905:3:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1891:17:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4066,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1891:17:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4069,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4067,
+                      "name": "weaveID",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4029,
+                      "src": "1914:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4068,
+                      "name": "_weaveID",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4041,
+                      "src": "1924:8:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1914:18:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4070,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1914:18:13"
+                }
+              ]
+            },
+            "documentation": "@notice Create weave factory, link SW factory manager and set weekly weave limit\n@param _factoryManagerAddr The address of the Skyweaver Factory Manager contract\n@param _weavePerSecond     Amount of weave that is created per second\n@param _weaveID            Weave's token ID",
+            "id": 4072,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4042,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4037,
+                  "name": "_factoryManagerAddr",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1539:27:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4036,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1539:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4039,
+                  "name": "_weavePerSecond",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1568:23:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4038,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1568:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4041,
+                  "name": "_weaveID",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4072,
+                  "src": "1593:16:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4040,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1593:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1538:72:13"
+            },
+            "returnParameters": {
+              "id": 4043,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1618:0:13"
+            },
+            "scope": 4175,
+            "src": "1527:410:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 4113,
+              "nodeType": "Block",
+              "src": "2355:386:13",
+              "statements": [
+                {
+                  "assignments": [
+                    4082
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4082,
+                      "name": "time_since_last_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4113,
+                      "src": "2410:31:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4081,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2410:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4087,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4085,
+                        "name": "lastHarvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4027,
+                        "src": "2452:11:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4083,
+                        "name": "now",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11924,
+                        "src": "2444:3:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4084,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "sub",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9462,
+                      "src": "2444:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4086,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2444:20:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2410:54:13"
+                },
+                {
+                  "assignments": [
+                    4089
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4089,
+                      "name": "weave_to_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4113,
+                      "src": "2470:24:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4088,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2470:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4094,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4092,
+                        "name": "weavePerSecond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4025,
+                        "src": "2525:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4090,
+                        "name": "time_since_last_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4082,
+                        "src": "2497:23:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4091,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mul",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9412,
+                      "src": "2497:27:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4093,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2497:43:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2470:70:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4097,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 4095,
+                      "name": "lastHarvest",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4027,
+                      "src": "2574:11:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 4096,
+                      "name": "now",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 11924,
+                      "src": "2588:3:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "2574:17:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4098,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2574:17:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4102,
+                        "name": "_recipient",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4074,
+                        "src": "2636:10:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4103,
+                        "name": "weaveID",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4029,
+                        "src": "2648:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4104,
+                        "name": "weave_to_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4089,
+                        "src": "2657:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4105,
+                        "name": "_data",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4076,
+                        "src": "2675:5:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes calldata"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes_calldata_ptr",
+                          "typeString": "bytes calldata"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4099,
+                        "name": "factoryManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4023,
+                        "src": "2616:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      },
+                      "id": 4101,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mint",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 138,
+                      "src": "2616:19:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$_t_uint256_$_t_bytes_memory_ptr_$returns$__$",
+                        "typeString": "function (address,uint256,uint256,bytes memory) external"
+                      }
+                    },
+                    "id": 4106,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2616:65:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4107,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2616:65:13"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4109,
+                        "name": "_recipient",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4074,
+                        "src": "2707:10:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 4110,
+                        "name": "weave_to_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4089,
+                        "src": "2719:16:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 4108,
+                      "name": "WeaveHarvested",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4035,
+                      "src": "2692:14:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256)"
+                      }
+                    },
+                    "id": 4111,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2692:44:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4112,
+                  "nodeType": "EmitStatement",
+                  "src": "2687:49:13"
+                }
+              ]
+            },
+            "documentation": "@notice Will mint weave and send it to _recipient\n@param _recipient Address where the weave will be sent to\n@param _data      Byte array that is passed if _recipient is a contract",
+            "id": 4114,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [],
+                "id": 4079,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 4078,
+                  "name": "onlyOwner",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 4240,
+                  "src": "2343:9:13",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "2343:11:13"
+              }
+            ],
+            "name": "harvestWeave",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4077,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4074,
+                  "name": "_recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4114,
+                  "src": "2292:18:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4073,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2292:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 4076,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4114,
+                  "src": "2312:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 4075,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2312:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2291:42:13"
+            },
+            "returnParameters": {
+              "id": 4080,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2355:0:13"
+            },
+            "scope": 4175,
+            "src": "2270:471:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4121,
+              "nodeType": "Block",
+              "src": "2938:39:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "554e535550504f525445445f4d4554484f44",
+                        "id": 4118,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "2951:20:13",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_47f3a24ab6edc0d74807bfa2d75f2563b3e0385396e090e484c961ca40009ad8",
+                          "typeString": "literal_string \"UNSUPPORTED_METHOD\""
+                        },
+                        "value": "UNSUPPORTED_METHOD"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_47f3a24ab6edc0d74807bfa2d75f2563b3e0385396e090e484c961ca40009ad8",
+                          "typeString": "literal_string \"UNSUPPORTED_METHOD\""
+                        }
+                      ],
+                      "id": 4117,
+                      "name": "revert",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        11927,
+                        11928
+                      ],
+                      "referencedDeclaration": 11928,
+                      "src": "2944:6:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (string memory) pure"
+                      }
+                    },
+                    "id": 4119,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2944:28:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4120,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2944:28:13"
+                }
+              ]
+            },
+            "documentation": "@notice Prevents receiving Ether",
+            "id": 4122,
+            "implemented": true,
+            "kind": "fallback",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4115,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2926:2:13"
+            },
+            "returnParameters": {
+              "id": 4116,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2938:0:13"
+            },
+            "scope": 4175,
+            "src": "2917:60:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4131,
+              "nodeType": "Block",
+              "src": "3240:41:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4128,
+                        "name": "factoryManager",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4023,
+                        "src": "3261:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_contract$_ISWSupplyManager_$172",
+                          "typeString": "contract ISWSupplyManager"
+                        }
+                      ],
+                      "id": 4127,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "3253:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_address_$",
+                        "typeString": "type(address)"
+                      },
+                      "typeName": "address"
+                    },
+                    "id": 4129,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3253:23:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 4126,
+                  "id": 4130,
+                  "nodeType": "Return",
+                  "src": "3246:30:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the address of the factory manager contract",
+            "id": 4132,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryManager",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4123,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3205:2:13"
+            },
+            "returnParameters": {
+              "id": 4126,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4125,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4132,
+                  "src": "3231:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 4124,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3231:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3230:9:13"
+            },
+            "scope": 4175,
+            "src": "3179:102:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4139,
+              "nodeType": "Block",
+              "src": "3389:25:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4137,
+                    "name": "weaveID",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4029,
+                    "src": "3402:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4136,
+                  "id": 4138,
+                  "nodeType": "Return",
+                  "src": "3395:14:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns Weave's token ID",
+            "id": 4140,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWeaveID",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4133,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3354:2:13"
+            },
+            "returnParameters": {
+              "id": 4136,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4135,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4140,
+                  "src": "3380:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4134,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3380:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3379:9:13"
+            },
+            "scope": 4175,
+            "src": "3335:79:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4147,
+              "nodeType": "Block",
+              "src": "3563:32:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4145,
+                    "name": "weavePerSecond",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4025,
+                    "src": "3576:14:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4144,
+                  "id": 4146,
+                  "nodeType": "Return",
+                  "src": "3569:21:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the amount of weave that can be created per second",
+            "id": 4148,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWeavePerSecond",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4141,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3528:2:13"
+            },
+            "returnParameters": {
+              "id": 4144,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4143,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4148,
+                  "src": "3554:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4142,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3554:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3553:9:13"
+            },
+            "scope": 4175,
+            "src": "3502:93:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4155,
+              "nodeType": "Block",
+              "src": "3724:29:13",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 4153,
+                    "name": "lastHarvest",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 4027,
+                    "src": "3737:11:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4152,
+                  "id": 4154,
+                  "nodeType": "Return",
+                  "src": "3730:18:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the last time weave was harvested",
+            "id": 4156,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getLastHarvest",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4149,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3689:2:13"
+            },
+            "returnParameters": {
+              "id": 4152,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4151,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4156,
+                  "src": "3715:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4150,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3715:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3714:9:13"
+            },
+            "scope": 4175,
+            "src": "3666:87:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 4173,
+              "nodeType": "Block",
+              "src": "3885:121:13",
+              "statements": [
+                {
+                  "assignments": [
+                    4162
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4162,
+                      "name": "time_since_last_harvest",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4173,
+                      "src": "3891:31:13",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 4161,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "3891:7:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4167,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4165,
+                        "name": "lastHarvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4027,
+                        "src": "3933:11:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4163,
+                        "name": "now",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11924,
+                        "src": "3925:3:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4164,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "sub",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9462,
+                      "src": "3925:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4166,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3925:20:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "3891:54:13"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 4170,
+                        "name": "weavePerSecond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4025,
+                        "src": "3986:14:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 4168,
+                        "name": "time_since_last_harvest",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4162,
+                        "src": "3958:23:13",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "id": 4169,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "mul",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 9412,
+                      "src": "3958:27:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
+                        "typeString": "function (uint256,uint256) pure returns (uint256)"
+                      }
+                    },
+                    "id": 4171,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "3958:43:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 4160,
+                  "id": 4172,
+                  "nodeType": "Return",
+                  "src": "3951:50:13"
+                }
+              ]
+            },
+            "documentation": "@notice Returns the last time weave was harvested",
+            "id": 4174,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getAvailableWeave",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 4157,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "3850:2:13"
+            },
+            "returnParameters": {
+              "id": 4160,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4159,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4174,
+                  "src": "3876:7:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4158,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3876:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3875:9:13"
+            },
+            "scope": 4175,
+            "src": "3824:182:13",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 4176,
+        "src": "346:3663:13"
+      }
+    ],
+    "src": "0:4010:13"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-06-26T16:37:42.995Z",
+  "devdoc": {
+    "methods": {
+      "constructor": {
+        "params": {
+          "_factoryManagerAddr": "The address of the Skyweaver Factory Manager contract",
+          "_weaveID": "Weave's token ID",
+          "_weavePerSecond": "Amount of weave that is created per second"
+        }
+      },
+      "harvestWeave(address,bytes)": {
+        "params": {
+          "_data": "Byte array that is passed if _recipient is a contract",
+          "_recipient": "Address where the weave will be sent to"
+        }
+      },
+      "transferOwnership(address)": {
+        "params": {
+          "_newOwner": "Address of the new owner"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "constructor": "Create weave factory, link SW factory manager and set weekly weave limit",
+      "getAvailableWeave()": {
+        "notice": "Returns the last time weave was harvested"
+      },
+      "getFactoryManager()": {
+        "notice": "Returns the address of the factory manager contract"
+      },
+      "getLastHarvest()": {
+        "notice": "Returns the last time weave was harvested"
+      },
+      "getOwner()": {
+        "notice": "Returns the address of the owner."
+      },
+      "getWeaveID()": {
+        "notice": "Returns Weave's token ID"
+      },
+      "getWeavePerSecond()": {
+        "notice": "Returns the amount of weave that can be created per second"
+      },
+      "harvestWeave(address,bytes)": {
+        "notice": "Will mint weave and send it to _recipient"
+      },
+      "transferOwnership(address)": {
+        "notice": "Transfers the ownership of the contract to new address"
+      }
+    },
+    "notice": "This is a contract allowing owner to harvest weave based on time elapsed"
+  }
+}

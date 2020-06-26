@@ -28,6 +28,7 @@ const provider = (network, environment) => () => {
 }
 
 module.exports = {
+  contracts_build_directory: "./artifacts",
   networks: {
     ganache: {
       network_id: 127001,

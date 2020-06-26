@@ -1,0 +1,4623 @@
+{
+  "contractName": "INiftyswapExchange",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokensSoldIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokensSoldAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "currencyBoughtAmounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "CurrencyPurchase",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "provider",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokenAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "currencyAmounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "LiquidityAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "provider",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokenAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "currencyAmounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "LiquidityRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokensBoughtIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "tokensBoughtAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "currencySoldAmounts",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "TokensPurchase",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_operator",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "onERC1155Received",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_amounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "onERC1155BatchReceived",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_assetBoughtAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_assetSoldReserve",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_assetBoughtReserve",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBuyPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_assetSoldAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_assetSoldReserve",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_assetBoughtReserve",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSellPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getCurrencyReserves",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_tokensBought",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getPrice_currencyToToken",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_tokensSold",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getPrice_tokenToCurrency",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "_ids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "getTotalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTokenAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getCurrencyInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getFactoryAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokensSoldIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokensSoldAmounts\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"currencyBoughtAmounts\",\"type\":\"uint256[]\"}],\"name\":\"CurrencyPurchase\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"provider\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenAmounts\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"currencyAmounts\",\"type\":\"uint256[]\"}],\"name\":\"LiquidityAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"provider\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenAmounts\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"currencyAmounts\",\"type\":\"uint256[]\"}],\"name\":\"LiquidityRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokensBoughtIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokensBoughtAmounts\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"currencySoldAmounts\",\"type\":\"uint256[]\"}],\"name\":\"TokensPurchase\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_assetBoughtAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_assetSoldReserve\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_assetBoughtReserve\",\"type\":\"uint256\"}],\"name\":\"getBuyPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getCurrencyInfo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"}],\"name\":\"getCurrencyReserves\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getFactoryAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_tokensBought\",\"type\":\"uint256[]\"}],\"name\":\"getPrice_currencyToToken\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_tokensSold\",\"type\":\"uint256[]\"}],\"name\":\"getPrice_tokenToCurrency\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_assetSoldAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_assetSoldReserve\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_assetBoughtReserve\",\"type\":\"uint256\"}],\"name\":\"getSellPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getTokenAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"}],\"name\":\"getTotalSupply\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_from\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"_ids\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_amounts\",\"type\":\"uint256[]\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"onERC1155BatchReceived\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_from\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"onERC1155Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"getBuyPrice(uint256,uint256,uint256)\":{\"details\":\"Pricing function used for converting between currency token to Tokens.\",\"params\":{\"_assetBoughtAmount\":\"Amount of Tokens being bought.\",\"_assetBoughtReserve\":\"Amount of Tokens (output type) in exchange reserves.\",\"_assetSoldReserve\":\"Amount of currency tokens in exchange reserves.\"},\"return\":\"Amount of currency tokens to send to Niftyswap.\"},\"getCurrencyInfo()\":{\"return\":\"Address of the currency contract that is used as currency and its corresponding id\"},\"getCurrencyReserves(uint256[])\":{\"params\":{\"_ids\":\"Array of ID sto query currency reserve of\"},\"return\":\"amount of currency in reserve for each Token _id\"},\"getFactoryAddress()\":{\"return\":\"Address of factory that created this exchange.\"},\"getPrice_currencyToToken(uint256[],uint256[])\":{\"params\":{\"_ids\":\"Array of ID of tokens bought.\",\"_tokensBought\":\"Amount of Tokens bought.\"},\"return\":\"Amount of currency needed to buy Tokens in _ids for amounts in _tokensBought\"},\"getPrice_tokenToCurrency(uint256[],uint256[])\":{\"params\":{\"_ids\":\"Array of IDs  token sold.\",\"_tokensSold\":\"Array of amount of each Token sold.\"},\"return\":\"Amount of currency that can be bought for Tokens in _ids for amounts in _tokensSold\"},\"getSellPrice(uint256,uint256,uint256)\":{\"details\":\"Pricing function used for converting Tokens to currency token.\",\"params\":{\"_assetBoughtReserve\":\"Amount of currency tokens in exchange reserves.\",\"_assetSoldAmount\":\"Amount of Tokens being sold.\",\"_assetSoldReserve\":\"Amount of Tokens in exchange reserves.\"},\"return\":\"Amount of currency tokens to receive from Niftyswap.\"},\"getTokenAddress()\":{\"return\":\"Address of Token that is sold on this exchange.\"},\"getTotalSupply(uint256[])\":{\"params\":{\"_ids\":\"ID of the Tokens\"},\"return\":\"The total supply of each liquidity token id provided in _ids\"},\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\":{\"details\":\"`_data` must be encoded as follow: abi.encode(bytes4, MethodObj)  where bytes4 argument is the MethodObj object signature passed as defined  in the `Signatures for onReceive control logic` section above\",\"params\":{\"_amounts\":\"An array containing amounts of each Token being transferred\",\"_data\":\"Method signature and corresponding encoded arguments for method to call on *this* contract\",\"_from\":\"The address which previously owned the Token\",\"_ids\":\"An array containing ids of each Token being transferred\"},\"return\":\"bytes4(keccak256(\\\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\\\")\"},\"onERC1155Received(address,address,uint256,uint256,bytes)\":{\"details\":\"`_data` must be encoded as follow: abi.encode(bytes4, MethodObj)  where bytes4 argument is the MethodObj object signature passed as defined  in the `Signatures for onReceive control logic` section above\",\"params\":{\"_amount\":\"The amount of tokens being transferred\",\"_data\":\"Method signature and corresponding encoded arguments for method to call on *this* contract\",\"_from\":\"The address which previously owned the token\",\"_id\":\"The id of the token being transferred\",\"_operator\":\"The address which called the `safeTransferFrom` function\"},\"return\":\"`bytes4(keccak256(\\\"onERC1155Received(address,address,uint256,uint256,bytes)\\\"))`\"}}},\"userdoc\":{\"methods\":{\"getCurrencyReserves(uint256[])\":{\"notice\":\"Get amount of currency in reserve for each Token _id in _ids\"},\"getPrice_currencyToToken(uint256[],uint256[])\":{\"notice\":\"Return price for `currency => Token _id` trades with an exact token amount.\"},\"getPrice_tokenToCurrency(uint256[],uint256[])\":{\"notice\":\"Return price for `Token _id => currency` trades with an exact token amount.\"},\"getTotalSupply(uint256[])\":{\"notice\":\"Get total supply of liquidity tokens\"},\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\":{\"notice\":\"Handle which method is being called on transfer\"},\"onERC1155Received(address,address,uint256,uint256,bytes)\":{\"notice\":\"Handle which method is being called on Token transfer\"}}}},\"settings\":{\"compilationTarget\":{\"niftyswap/contracts/interfaces/INiftyswapExchange.sol\":\"INiftyswapExchange\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"niftyswap/contracts/interfaces/INiftyswapExchange.sol\":{\"keccak256\":\"0x34f384aba34390692a5d8dc82927067792822915877076d7d4d05a3025972bfe\",\"urls\":[\"bzz-raw://68c4b7873aa5f57eca1948b1d5f365189a6080866baa6694686e5a5ba32b8830\",\"dweb:/ipfs/QmS5bUjt97Cafpj1KuCuumFFYCUQV4gA5kV96EyJBEBnDb\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.16;\n\ninterface INiftyswapExchange {\n\n  /***********************************|\n  |               Events              |\n  |__________________________________*/\n\n  event TokensPurchase(\n    address indexed buyer,\n    address indexed recipient,\n    uint256[] tokensBoughtIds,\n    uint256[] tokensBoughtAmounts,\n    uint256[] currencySoldAmounts\n  );\n\n  event CurrencyPurchase(\n    address indexed buyer,\n    address indexed recipient,\n    uint256[] tokensSoldIds,\n    uint256[] tokensSoldAmounts,\n    uint256[] currencyBoughtAmounts\n  );\n\n  event LiquidityAdded(\n    address indexed provider,\n    uint256[] tokenIds,\n    uint256[] tokenAmounts,\n    uint256[] currencyAmounts\n  );\n\n  event LiquidityRemoved(\n    address indexed provider,\n    uint256[] tokenIds,\n    uint256[] tokenAmounts,\n    uint256[] currencyAmounts\n  );\n\n  /***********************************|\n  |        OnReceive Functions        |\n  |__________________________________*/\n\n  /**\n   * @notice Handle which method is being called on Token transfer\n   * @dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n   *   where bytes4 argument is the MethodObj object signature passed as defined\n   *   in the `Signatures for onReceive control logic` section above\n   * @param _operator The address which called the `safeTransferFrom` function\n   * @param _from     The address which previously owned the token\n   * @param _id       The id of the token being transferred\n   * @param _amount   The amount of tokens being transferred\n   * @param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n   * @return `bytes4(keccak256(\"onERC1155Received(address,address,uint256,uint256,bytes)\"))`\n   */\n  function onERC1155Received(address _operator, address _from, uint256 _id, uint256 _amount, bytes calldata _data) external returns(bytes4);\n\n  /**\n   * @notice Handle which method is being called on transfer\n   * @dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n   *   where bytes4 argument is the MethodObj object signature passed as defined\n   *   in the `Signatures for onReceive control logic` section above\n   * @param _from     The address which previously owned the Token\n   * @param _ids      An array containing ids of each Token being transferred\n   * @param _amounts  An array containing amounts of each Token being transferred\n   * @param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n   * @return bytes4(keccak256(\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\")\n   */\n  function onERC1155BatchReceived(address, address _from, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data) external returns(bytes4);\n\n\n  /***********************************|\n  |         Getter Functions          |\n  |__________________________________*/\n\n  /**\n   * @dev Pricing function used for converting between currency token to Tokens.\n   * @param _assetBoughtAmount  Amount of Tokens being bought.\n   * @param _assetSoldReserve   Amount of currency tokens in exchange reserves.\n   * @param _assetBoughtReserve Amount of Tokens (output type) in exchange reserves.\n   * @return Amount of currency tokens to send to Niftyswap.\n   */\n  function getBuyPrice(uint256 _assetBoughtAmount, uint256 _assetSoldReserve, uint256 _assetBoughtReserve) external pure returns (uint256);\n\n  /**\n   * @dev Pricing function used for converting Tokens to currency token.\n   * @param _assetSoldAmount    Amount of Tokens being sold.\n   * @param _assetSoldReserve   Amount of Tokens in exchange reserves.\n   * @param _assetBoughtReserve Amount of currency tokens in exchange reserves.\n   * @return Amount of currency tokens to receive from Niftyswap.\n   */\n  function getSellPrice(uint256 _assetSoldAmount,uint256 _assetSoldReserve, uint256 _assetBoughtReserve) external pure returns (uint256);\n\n  /**\n   * @notice Get amount of currency in reserve for each Token _id in _ids\n   * @param _ids Array of ID sto query currency reserve of\n   * @return amount of currency in reserve for each Token _id\n   */\n  function getCurrencyReserves(uint256[] calldata _ids) external view returns (uint256[] memory);\n\n  /**\n   * @notice Return price for `currency => Token _id` trades with an exact token amount.\n   * @param _ids          Array of ID of tokens bought.\n   * @param _tokensBought Amount of Tokens bought.\n   * @return Amount of currency needed to buy Tokens in _ids for amounts in _tokensBought\n   */\n  function getPrice_currencyToToken(uint256[] calldata _ids, uint256[] calldata _tokensBought) external view returns (uint256[] memory);\n\n  /**\n   * @notice Return price for `Token _id => currency` trades with an exact token amount.\n   * @param _ids        Array of IDs  token sold.\n   * @param _tokensSold Array of amount of each Token sold.\n   * @return Amount of currency that can be bought for Tokens in _ids for amounts in _tokensSold\n   */\n  function getPrice_tokenToCurrency(uint256[] calldata _ids, uint256[] calldata _tokensSold) external view returns (uint256[] memory);\n\n  /**\n   * @notice Get total supply of liquidity tokens\n   * @param _ids ID of the Tokens\n   * @return The total supply of each liquidity token id provided in _ids\n   */\n  function getTotalSupply(uint256[] calldata _ids) external view returns (uint256[] memory);\n\n  /**\n   * @return Address of Token that is sold on this exchange.\n   */\n  function getTokenAddress() external view returns (address);\n\n  /**\n   * @return Address of the currency contract that is used as currency and its corresponding id\n   */\n  function getCurrencyInfo() external view returns (address, uint256);\n\n  /**\n   * @return Address of factory that created this exchange.\n   */\n  function getFactoryAddress() external view returns (address);\n\n}",
+  "sourcePath": "niftyswap/contracts/interfaces/INiftyswapExchange.sol",
+  "ast": {
+    "absolutePath": "niftyswap/contracts/interfaces/INiftyswapExchange.sol",
+    "exportedSymbols": {
+      "INiftyswapExchange": [
+        11877
+      ]
+    },
+    "id": 11878,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11707,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:40"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 11877,
+        "linearizedBaseContracts": [
+          11877
+        ],
+        "name": "INiftyswapExchange",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 11722,
+            "name": "TokensPurchase",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11721,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11709,
+                  "indexed": true,
+                  "name": "buyer",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "207:21:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11708,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "207:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11711,
+                  "indexed": true,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "234:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11710,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "234:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11714,
+                  "indexed": false,
+                  "name": "tokensBoughtIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "265:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11712,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "265:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11713,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "265:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11717,
+                  "indexed": false,
+                  "name": "tokensBoughtAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "296:29:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11715,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "296:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11716,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "296:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11720,
+                  "indexed": false,
+                  "name": "currencySoldAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "331:29:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11718,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "331:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11719,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "331:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "201:163:40"
+            },
+            "src": "181:184:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11737,
+            "name": "CurrencyPurchase",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11736,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11724,
+                  "indexed": true,
+                  "name": "buyer",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "397:21:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11723,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "397:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11726,
+                  "indexed": true,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "424:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11725,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "424:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11729,
+                  "indexed": false,
+                  "name": "tokensSoldIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "455:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11727,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "455:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11728,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "455:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11732,
+                  "indexed": false,
+                  "name": "tokensSoldAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "484:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11730,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "484:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11731,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "484:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11735,
+                  "indexed": false,
+                  "name": "currencyBoughtAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "517:31:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11733,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "517:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11734,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "517:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "391:161:40"
+            },
+            "src": "369:184:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11750,
+            "name": "LiquidityAdded",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11749,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11739,
+                  "indexed": true,
+                  "name": "provider",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "583:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11738,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "583:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11742,
+                  "indexed": false,
+                  "name": "tokenIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "613:18:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11740,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "613:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11741,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "613:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11745,
+                  "indexed": false,
+                  "name": "tokenAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "637:22:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11743,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "637:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11744,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "637:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11748,
+                  "indexed": false,
+                  "name": "currencyAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "665:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11746,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "665:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11747,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "665:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "577:117:40"
+            },
+            "src": "557:138:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11763,
+            "name": "LiquidityRemoved",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11762,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11752,
+                  "indexed": true,
+                  "name": "provider",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "727:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11751,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "727:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11755,
+                  "indexed": false,
+                  "name": "tokenIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "757:18:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11753,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "757:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11754,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "757:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11758,
+                  "indexed": false,
+                  "name": "tokenAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "781:22:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11756,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "781:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11757,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "781:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11761,
+                  "indexed": false,
+                  "name": "currencyAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "809:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11759,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "809:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11760,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "809:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "721:117:40"
+            },
+            "src": "699:140:40"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Handle which method is being called on Token transfer\n@dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n  where bytes4 argument is the MethodObj object signature passed as defined\n  in the `Signatures for onReceive control logic` section above\n@param _operator The address which called the `safeTransferFrom` function\n@param _from     The address which previously owned the token\n@param _id       The id of the token being transferred\n@param _amount   The amount of tokens being transferred\n@param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n@return `bytes4(keccak256(\"onERC1155Received(address,address,uint256,uint256,bytes)\"))`",
+            "id": 11778,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onERC1155Received",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11774,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11765,
+                  "name": "_operator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1768:17:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11764,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1768:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11767,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1787:13:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11766,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1787:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11769,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1802:11:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11768,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1802:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11771,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1815:15:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11770,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1815:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11773,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1832:20:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11772,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1832:5:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1767:86:40"
+            },
+            "returnParameters": {
+              "id": 11777,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11776,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1871:6:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 11775,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1871:6:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1870:8:40"
+            },
+            "scope": 11877,
+            "src": "1741:138:40",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Handle which method is being called on transfer\n@dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n  where bytes4 argument is the MethodObj object signature passed as defined\n  in the `Signatures for onReceive control logic` section above\n@param _from     The address which previously owned the Token\n@param _ids      An array containing ids of each Token being transferred\n@param _amounts  An array containing amounts of each Token being transferred\n@param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n@return bytes4(keccak256(\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\")",
+            "id": 11795,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onERC1155BatchReceived",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11791,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11780,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2652:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11779,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2652:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11782,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2661:13:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11781,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2661:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11785,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2676:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11783,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2676:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11784,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2676:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11788,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2701:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11786,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2701:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11787,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2701:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11790,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2730:20:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11789,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2730:5:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2651:100:40"
+            },
+            "returnParameters": {
+              "id": 11794,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11793,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2769:6:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 11792,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2769:6:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2768:8:40"
+            },
+            "scope": 11877,
+            "src": "2620:157:40",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Pricing function used for converting between currency token to Tokens.\n@param _assetBoughtAmount  Amount of Tokens being bought.\n@param _assetSoldReserve   Amount of currency tokens in exchange reserves.\n@param _assetBoughtReserve Amount of Tokens (output type) in exchange reserves.\n@return Amount of currency tokens to send to Niftyswap.",
+            "id": 11806,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getBuyPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11802,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11797,
+                  "name": "_assetBoughtAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3306:26:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11796,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3306:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11799,
+                  "name": "_assetSoldReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3334:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11798,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3334:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11801,
+                  "name": "_assetBoughtReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3361:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11800,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3361:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3305:84:40"
+            },
+            "returnParameters": {
+              "id": 11805,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11804,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3413:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11803,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3413:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3412:9:40"
+            },
+            "scope": 11877,
+            "src": "3285:137:40",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Pricing function used for converting Tokens to currency token.\n@param _assetSoldAmount    Amount of Tokens being sold.\n@param _assetSoldReserve   Amount of Tokens in exchange reserves.\n@param _assetBoughtReserve Amount of currency tokens in exchange reserves.\n@return Amount of currency tokens to receive from Niftyswap.",
+            "id": 11817,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getSellPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11813,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11808,
+                  "name": "_assetSoldAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3811:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11807,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3811:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11810,
+                  "name": "_assetSoldReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3836:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11809,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3836:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11812,
+                  "name": "_assetBoughtReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3863:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11811,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3863:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3810:81:40"
+            },
+            "returnParameters": {
+              "id": 11816,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11815,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3915:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11814,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3915:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3914:9:40"
+            },
+            "scope": 11877,
+            "src": "3789:135:40",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get amount of currency in reserve for each Token _id in _ids\n@param _ids Array of ID sto query currency reserve of\n@return amount of currency in reserve for each Token _id",
+            "id": 11826,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrencyReserves",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11821,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11820,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11826,
+                  "src": "4164:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11818,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4164:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11819,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4164:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4163:25:40"
+            },
+            "returnParameters": {
+              "id": 11825,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11824,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11826,
+                  "src": "4212:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11822,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4212:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11823,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4212:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4211:18:40"
+            },
+            "scope": 11877,
+            "src": "4135:95:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Return price for `currency => Token _id` trades with an exact token amount.\n@param _ids          Array of ID of tokens bought.\n@param _tokensBought Amount of Tokens bought.\n@return Amount of currency needed to buy Tokens in _ids for amounts in _tokensBought",
+            "id": 11838,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice_currencyToToken",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11833,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11829,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4566:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11827,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4566:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11828,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4566:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11832,
+                  "name": "_tokensBought",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4591:32:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11830,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4591:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11831,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4591:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4565:59:40"
+            },
+            "returnParameters": {
+              "id": 11837,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11836,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4648:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11834,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4648:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11835,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4648:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4647:18:40"
+            },
+            "scope": 11877,
+            "src": "4532:134:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Return price for `Token _id => currency` trades with an exact token amount.\n@param _ids        Array of IDs  token sold.\n@param _tokensSold Array of amount of each Token sold.\n@return Amount of currency that can be bought for Tokens in _ids for amounts in _tokensSold",
+            "id": 11850,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice_tokenToCurrency",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11845,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11841,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5012:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11839,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5012:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11840,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5012:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11844,
+                  "name": "_tokensSold",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5037:30:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11842,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5037:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11843,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5037:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5011:57:40"
+            },
+            "returnParameters": {
+              "id": 11849,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11848,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5092:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11846,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5092:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11847,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5092:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5091:18:40"
+            },
+            "scope": 11877,
+            "src": "4978:132:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get total supply of liquidity tokens\n@param _ids ID of the Tokens\n@return The total supply of each liquidity token id provided in _ids",
+            "id": 11859,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTotalSupply",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11854,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11853,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11859,
+                  "src": "5308:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11851,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5308:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11852,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5308:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5307:25:40"
+            },
+            "returnParameters": {
+              "id": 11858,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11857,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11859,
+                  "src": "5356:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11855,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5356:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11856,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5356:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5355:18:40"
+            },
+            "scope": 11877,
+            "src": "5284:90:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of Token that is sold on this exchange.",
+            "id": 11864,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTokenAddress",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11860,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5475:2:40"
+            },
+            "returnParameters": {
+              "id": 11863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11862,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11864,
+                  "src": "5501:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11861,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5501:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5500:9:40"
+            },
+            "scope": 11877,
+            "src": "5451:59:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of the currency contract that is used as currency and its corresponding id",
+            "id": 11871,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrencyInfo",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11865,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5646:2:40"
+            },
+            "returnParameters": {
+              "id": 11870,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11867,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11871,
+                  "src": "5672:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11866,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5672:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11869,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11871,
+                  "src": "5681:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11868,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5681:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5671:18:40"
+            },
+            "scope": 11877,
+            "src": "5622:68:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of factory that created this exchange.",
+            "id": 11876,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryAddress",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11872,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5792:2:40"
+            },
+            "returnParameters": {
+              "id": 11875,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11874,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11876,
+                  "src": "5818:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11873,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5818:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5817:9:40"
+            },
+            "scope": 11877,
+            "src": "5766:61:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 11878,
+        "src": "26:5804:40"
+      }
+    ],
+    "src": "0:5830:40"
+  },
+  "legacyAST": {
+    "absolutePath": "niftyswap/contracts/interfaces/INiftyswapExchange.sol",
+    "exportedSymbols": {
+      "INiftyswapExchange": [
+        11877
+      ]
+    },
+    "id": 11878,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11707,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:40"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 11877,
+        "linearizedBaseContracts": [
+          11877
+        ],
+        "name": "INiftyswapExchange",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": "*********************************|\n|               Events              |\n|__________________________________",
+            "id": 11722,
+            "name": "TokensPurchase",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11721,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11709,
+                  "indexed": true,
+                  "name": "buyer",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "207:21:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11708,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "207:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11711,
+                  "indexed": true,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "234:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11710,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "234:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11714,
+                  "indexed": false,
+                  "name": "tokensBoughtIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "265:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11712,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "265:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11713,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "265:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11717,
+                  "indexed": false,
+                  "name": "tokensBoughtAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "296:29:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11715,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "296:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11716,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "296:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11720,
+                  "indexed": false,
+                  "name": "currencySoldAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11722,
+                  "src": "331:29:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11718,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "331:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11719,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "331:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "201:163:40"
+            },
+            "src": "181:184:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11737,
+            "name": "CurrencyPurchase",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11736,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11724,
+                  "indexed": true,
+                  "name": "buyer",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "397:21:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11723,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "397:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11726,
+                  "indexed": true,
+                  "name": "recipient",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "424:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11725,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "424:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11729,
+                  "indexed": false,
+                  "name": "tokensSoldIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "455:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11727,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "455:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11728,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "455:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11732,
+                  "indexed": false,
+                  "name": "tokensSoldAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "484:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11730,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "484:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11731,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "484:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11735,
+                  "indexed": false,
+                  "name": "currencyBoughtAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11737,
+                  "src": "517:31:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11733,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "517:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11734,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "517:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "391:161:40"
+            },
+            "src": "369:184:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11750,
+            "name": "LiquidityAdded",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11749,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11739,
+                  "indexed": true,
+                  "name": "provider",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "583:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11738,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "583:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11742,
+                  "indexed": false,
+                  "name": "tokenIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "613:18:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11740,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "613:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11741,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "613:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11745,
+                  "indexed": false,
+                  "name": "tokenAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "637:22:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11743,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "637:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11744,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "637:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11748,
+                  "indexed": false,
+                  "name": "currencyAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11750,
+                  "src": "665:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11746,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "665:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11747,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "665:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "577:117:40"
+            },
+            "src": "557:138:40"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 11763,
+            "name": "LiquidityRemoved",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 11762,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11752,
+                  "indexed": true,
+                  "name": "provider",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "727:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11751,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "727:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11755,
+                  "indexed": false,
+                  "name": "tokenIds",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "757:18:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11753,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "757:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11754,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "757:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11758,
+                  "indexed": false,
+                  "name": "tokenAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "781:22:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11756,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "781:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11757,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "781:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11761,
+                  "indexed": false,
+                  "name": "currencyAmounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11763,
+                  "src": "809:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11759,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "809:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11760,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "809:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "721:117:40"
+            },
+            "src": "699:140:40"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Handle which method is being called on Token transfer\n@dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n  where bytes4 argument is the MethodObj object signature passed as defined\n  in the `Signatures for onReceive control logic` section above\n@param _operator The address which called the `safeTransferFrom` function\n@param _from     The address which previously owned the token\n@param _id       The id of the token being transferred\n@param _amount   The amount of tokens being transferred\n@param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n@return `bytes4(keccak256(\"onERC1155Received(address,address,uint256,uint256,bytes)\"))`",
+            "id": 11778,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onERC1155Received",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11774,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11765,
+                  "name": "_operator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1768:17:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11764,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1768:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11767,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1787:13:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11766,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1787:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11769,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1802:11:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11768,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1802:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11771,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1815:15:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11770,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1815:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11773,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1832:20:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11772,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1832:5:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1767:86:40"
+            },
+            "returnParameters": {
+              "id": 11777,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11776,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11778,
+                  "src": "1871:6:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 11775,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1871:6:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1870:8:40"
+            },
+            "scope": 11877,
+            "src": "1741:138:40",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Handle which method is being called on transfer\n@dev `_data` must be encoded as follow: abi.encode(bytes4, MethodObj)\n  where bytes4 argument is the MethodObj object signature passed as defined\n  in the `Signatures for onReceive control logic` section above\n@param _from     The address which previously owned the Token\n@param _ids      An array containing ids of each Token being transferred\n@param _amounts  An array containing amounts of each Token being transferred\n@param _data     Method signature and corresponding encoded arguments for method to call on *this* contract\n@return bytes4(keccak256(\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\")",
+            "id": 11795,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onERC1155BatchReceived",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11791,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11780,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2652:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11779,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2652:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11782,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2661:13:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11781,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2661:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11785,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2676:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11783,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2676:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11784,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2676:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11788,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2701:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11786,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "2701:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11787,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2701:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11790,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2730:20:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11789,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2730:5:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2651:100:40"
+            },
+            "returnParameters": {
+              "id": 11794,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11793,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11795,
+                  "src": "2769:6:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 11792,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2769:6:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2768:8:40"
+            },
+            "scope": 11877,
+            "src": "2620:157:40",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Pricing function used for converting between currency token to Tokens.\n@param _assetBoughtAmount  Amount of Tokens being bought.\n@param _assetSoldReserve   Amount of currency tokens in exchange reserves.\n@param _assetBoughtReserve Amount of Tokens (output type) in exchange reserves.\n@return Amount of currency tokens to send to Niftyswap.",
+            "id": 11806,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getBuyPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11802,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11797,
+                  "name": "_assetBoughtAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3306:26:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11796,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3306:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11799,
+                  "name": "_assetSoldReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3334:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11798,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3334:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11801,
+                  "name": "_assetBoughtReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3361:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11800,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3361:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3305:84:40"
+            },
+            "returnParameters": {
+              "id": 11805,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11804,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11806,
+                  "src": "3413:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11803,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3413:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3412:9:40"
+            },
+            "scope": 11877,
+            "src": "3285:137:40",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Pricing function used for converting Tokens to currency token.\n@param _assetSoldAmount    Amount of Tokens being sold.\n@param _assetSoldReserve   Amount of Tokens in exchange reserves.\n@param _assetBoughtReserve Amount of currency tokens in exchange reserves.\n@return Amount of currency tokens to receive from Niftyswap.",
+            "id": 11817,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getSellPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11813,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11808,
+                  "name": "_assetSoldAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3811:24:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11807,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3811:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11810,
+                  "name": "_assetSoldReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3836:25:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11809,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3836:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11812,
+                  "name": "_assetBoughtReserve",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3863:27:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11811,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3863:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3810:81:40"
+            },
+            "returnParameters": {
+              "id": 11816,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11815,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11817,
+                  "src": "3915:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11814,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "3915:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "3914:9:40"
+            },
+            "scope": 11877,
+            "src": "3789:135:40",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get amount of currency in reserve for each Token _id in _ids\n@param _ids Array of ID sto query currency reserve of\n@return amount of currency in reserve for each Token _id",
+            "id": 11826,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrencyReserves",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11821,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11820,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11826,
+                  "src": "4164:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11818,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4164:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11819,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4164:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4163:25:40"
+            },
+            "returnParameters": {
+              "id": 11825,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11824,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11826,
+                  "src": "4212:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11822,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4212:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11823,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4212:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4211:18:40"
+            },
+            "scope": 11877,
+            "src": "4135:95:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Return price for `currency => Token _id` trades with an exact token amount.\n@param _ids          Array of ID of tokens bought.\n@param _tokensBought Amount of Tokens bought.\n@return Amount of currency needed to buy Tokens in _ids for amounts in _tokensBought",
+            "id": 11838,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice_currencyToToken",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11833,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11829,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4566:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11827,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4566:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11828,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4566:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11832,
+                  "name": "_tokensBought",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4591:32:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11830,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4591:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11831,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4591:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4565:59:40"
+            },
+            "returnParameters": {
+              "id": 11837,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11836,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11838,
+                  "src": "4648:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11834,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "4648:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11835,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "4648:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "4647:18:40"
+            },
+            "scope": 11877,
+            "src": "4532:134:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Return price for `Token _id => currency` trades with an exact token amount.\n@param _ids        Array of IDs  token sold.\n@param _tokensSold Array of amount of each Token sold.\n@return Amount of currency that can be bought for Tokens in _ids for amounts in _tokensSold",
+            "id": 11850,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice_tokenToCurrency",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11845,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11841,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5012:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11839,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5012:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11840,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5012:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11844,
+                  "name": "_tokensSold",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5037:30:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11842,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5037:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11843,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5037:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5011:57:40"
+            },
+            "returnParameters": {
+              "id": 11849,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11848,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11850,
+                  "src": "5092:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11846,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5092:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11847,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5092:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5091:18:40"
+            },
+            "scope": 11877,
+            "src": "4978:132:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get total supply of liquidity tokens\n@param _ids ID of the Tokens\n@return The total supply of each liquidity token id provided in _ids",
+            "id": 11859,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTotalSupply",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11854,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11853,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11859,
+                  "src": "5308:23:40",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11851,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5308:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11852,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5308:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5307:25:40"
+            },
+            "returnParameters": {
+              "id": 11858,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11857,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11859,
+                  "src": "5356:16:40",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 11855,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "5356:7:40",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 11856,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "5356:9:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5355:18:40"
+            },
+            "scope": 11877,
+            "src": "5284:90:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of Token that is sold on this exchange.",
+            "id": 11864,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTokenAddress",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11860,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5475:2:40"
+            },
+            "returnParameters": {
+              "id": 11863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11862,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11864,
+                  "src": "5501:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11861,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5501:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5500:9:40"
+            },
+            "scope": 11877,
+            "src": "5451:59:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of the currency contract that is used as currency and its corresponding id",
+            "id": 11871,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrencyInfo",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11865,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5646:2:40"
+            },
+            "returnParameters": {
+              "id": 11870,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11867,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11871,
+                  "src": "5672:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11866,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5672:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11869,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11871,
+                  "src": "5681:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11868,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5681:7:40",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5671:18:40"
+            },
+            "scope": 11877,
+            "src": "5622:68:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@return Address of factory that created this exchange.",
+            "id": 11876,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFactoryAddress",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11872,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "5792:2:40"
+            },
+            "returnParameters": {
+              "id": 11875,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11874,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11876,
+                  "src": "5818:7:40",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11873,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "5818:7:40",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "5817:9:40"
+            },
+            "scope": 11877,
+            "src": "5766:61:40",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 11878,
+        "src": "26:5804:40"
+      }
+    ],
+    "src": "0:5830:40"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-06-26T16:37:43.086Z",
+  "devdoc": {
+    "methods": {
+      "getBuyPrice(uint256,uint256,uint256)": {
+        "details": "Pricing function used for converting between currency token to Tokens.",
+        "params": {
+          "_assetBoughtAmount": "Amount of Tokens being bought.",
+          "_assetBoughtReserve": "Amount of Tokens (output type) in exchange reserves.",
+          "_assetSoldReserve": "Amount of currency tokens in exchange reserves."
+        },
+        "return": "Amount of currency tokens to send to Niftyswap."
+      },
+      "getCurrencyInfo()": {
+        "return": "Address of the currency contract that is used as currency and its corresponding id"
+      },
+      "getCurrencyReserves(uint256[])": {
+        "params": {
+          "_ids": "Array of ID sto query currency reserve of"
+        },
+        "return": "amount of currency in reserve for each Token _id"
+      },
+      "getFactoryAddress()": {
+        "return": "Address of factory that created this exchange."
+      },
+      "getPrice_currencyToToken(uint256[],uint256[])": {
+        "params": {
+          "_ids": "Array of ID of tokens bought.",
+          "_tokensBought": "Amount of Tokens bought."
+        },
+        "return": "Amount of currency needed to buy Tokens in _ids for amounts in _tokensBought"
+      },
+      "getPrice_tokenToCurrency(uint256[],uint256[])": {
+        "params": {
+          "_ids": "Array of IDs  token sold.",
+          "_tokensSold": "Array of amount of each Token sold."
+        },
+        "return": "Amount of currency that can be bought for Tokens in _ids for amounts in _tokensSold"
+      },
+      "getSellPrice(uint256,uint256,uint256)": {
+        "details": "Pricing function used for converting Tokens to currency token.",
+        "params": {
+          "_assetBoughtReserve": "Amount of currency tokens in exchange reserves.",
+          "_assetSoldAmount": "Amount of Tokens being sold.",
+          "_assetSoldReserve": "Amount of Tokens in exchange reserves."
+        },
+        "return": "Amount of currency tokens to receive from Niftyswap."
+      },
+      "getTokenAddress()": {
+        "return": "Address of Token that is sold on this exchange."
+      },
+      "getTotalSupply(uint256[])": {
+        "params": {
+          "_ids": "ID of the Tokens"
+        },
+        "return": "The total supply of each liquidity token id provided in _ids"
+      },
+      "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": {
+        "details": "`_data` must be encoded as follow: abi.encode(bytes4, MethodObj)  where bytes4 argument is the MethodObj object signature passed as defined  in the `Signatures for onReceive control logic` section above",
+        "params": {
+          "_amounts": "An array containing amounts of each Token being transferred",
+          "_data": "Method signature and corresponding encoded arguments for method to call on *this* contract",
+          "_from": "The address which previously owned the Token",
+          "_ids": "An array containing ids of each Token being transferred"
+        },
+        "return": "bytes4(keccak256(\"onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)\")"
+      },
+      "onERC1155Received(address,address,uint256,uint256,bytes)": {
+        "details": "`_data` must be encoded as follow: abi.encode(bytes4, MethodObj)  where bytes4 argument is the MethodObj object signature passed as defined  in the `Signatures for onReceive control logic` section above",
+        "params": {
+          "_amount": "The amount of tokens being transferred",
+          "_data": "Method signature and corresponding encoded arguments for method to call on *this* contract",
+          "_from": "The address which previously owned the token",
+          "_id": "The id of the token being transferred",
+          "_operator": "The address which called the `safeTransferFrom` function"
+        },
+        "return": "`bytes4(keccak256(\"onERC1155Received(address,address,uint256,uint256,bytes)\"))`"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "getCurrencyReserves(uint256[])": {
+        "notice": "Get amount of currency in reserve for each Token _id in _ids"
+      },
+      "getPrice_currencyToToken(uint256[],uint256[])": {
+        "notice": "Return price for `currency => Token _id` trades with an exact token amount."
+      },
+      "getPrice_tokenToCurrency(uint256[],uint256[])": {
+        "notice": "Return price for `Token _id => currency` trades with an exact token amount."
+      },
+      "getTotalSupply(uint256[])": {
+        "notice": "Get total supply of liquidity tokens"
+      },
+      "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": {
+        "notice": "Handle which method is being called on transfer"
+      },
+      "onERC1155Received(address,address,uint256,uint256,bytes)": {
+        "notice": "Handle which method is being called on Token transfer"
+      }
+    }
+  }
+}
