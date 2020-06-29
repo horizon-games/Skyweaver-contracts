@@ -22,9 +22,6 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   |             Variables             |
   |__________________________________*/
 
-  // Constants
-  uint256 constant internal decimals = 2; // Number of decimals
-
   // Token information
   ISkyweaverAssets immutable internal skyweaverAssets; // ERC-1155 Skyweaver assets contract
   IERC1155 immutable internal arcadeumCoin;            // ERC-1155 Arcadeum Coin contract
@@ -190,7 +187,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
 
   /**
    * @notice Will mint tokens to user
-   * @dev Can only mint up to the dailyLimit in a given day
+   * @dev Can only mint up to the periodMintLimit in a given 6hour period
    * @param _to      The address that receives the assets
    * @param _ids     Array of Tokens ID that are minted
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
