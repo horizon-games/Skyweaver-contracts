@@ -77,7 +77,7 @@ contract('BridgeFactory', (accounts: string[]) => {
 
   // Token Param
   const nTokenTypes    = new BigNumber(30) 
-  const nTokensPerType = new BigNumber(500)
+  const nTokensPerType = new BigNumber(50000)
 
   // Arcadeum Coin Param
   const arcID = new BigNumber(2);
@@ -88,7 +88,7 @@ contract('BridgeFactory', (accounts: string[]) => {
   const maxRange = new BigNumber(500);
 
   // Base Token Param
-  const periodMintLimit = new BigNumber(1000)
+  const periodMintLimit = new BigNumber(100000)
 
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
@@ -399,7 +399,7 @@ contract('BridgeFactory', (accounts: string[]) => {
 
   describe('batchMint()', () => {
     let mintIds = [33, 66, 99, 133]
-    let mintAmounts = [100, 200, 500, 100]
+    let mintAmounts = [10000, 20000, 50000, 10000]
 
     it('should PASS if caller is owner', async () => {
       const tx = factoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
@@ -438,7 +438,7 @@ contract('BridgeFactory', (accounts: string[]) => {
       let expected_supply
       beforeEach(async () => {
         let available_supply = await factoryContract.functions.getAvailableSupply()
-        expected_supply = available_supply.sub(900);
+        expected_supply = available_supply.sub(90000);
         await factoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
       })
 
