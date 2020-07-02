@@ -133,15 +133,15 @@ contract Conquest is IERC1155TokenReceiver, Ownable {
 
   /**
    * @notice Will exit user from conquest and mint tokens to user 
-   * @param _to      The address that receives the assets
+   * @param _user    The address that exists conquest and receive the rewards
    * @param _ids     Array of Tokens ID that are minted
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
    */
-  function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts)
+  function exitConquest(address _user, uint256[] calldata _ids, uint256[] calldata _amounts)
     external onlyOwner
   { 
     // Ensures user is currently in conquest
-    require(isActiveConquest[_to], "Conquest#batchMint: USER_IS_NOT_IN_CONQUEST");
+    require(isActiveConquest[_user], "Conquest#exitConquest: USER_IS_NOT_IN_CONQUEST");
 
     // Check if at most N cards are printed, which 
     // is the maximum one can earn per conquest
@@ -151,10 +151,10 @@ contract Conquest is IERC1155TokenReceiver, Ownable {
     }
 
     // Mark player as not playing anymore
-    isActiveConquest[_to] = false;
+    isActiveConquest[_user] = false;
 
     // Mint assets
-    skyweaverAssets.batchMint(_to, _ids, _amounts, "");
+    skyweaverAssets.batchMint(_user, _ids, _amounts, "");
   }
 
   /***********************************|
