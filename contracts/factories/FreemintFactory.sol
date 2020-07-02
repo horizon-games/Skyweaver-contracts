@@ -6,7 +6,7 @@ import "../interfaces/ISkyweaverAssets.sol";
 /**
  * This is a contract allowing owner to mint any tokens within a given
  * range. This factory will be used to mint communiy related assets, special
- * even assets that are meant to be given away.
+ * event assets that are meant to be given away.
  */
 contract FreemintFactory is Ownable {
 
