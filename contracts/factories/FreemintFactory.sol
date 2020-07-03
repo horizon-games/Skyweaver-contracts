@@ -5,7 +5,7 @@ import "../interfaces/ISkyweaverAssets.sol";
 
 /**
  * This is a contract allowing owner to mint any tokens within a given
- * range. This factory will be used to mint communiy related assets, special
+ * range. This factory will be used to mint community related assets, special
  * event assets that are meant to be given away.
  */
 contract FreemintFactory is Ownable {
@@ -24,7 +24,7 @@ contract FreemintFactory is Ownable {
   constructor(address _assetsAddr) public {
     require(
       _assetsAddr != address(0),
-      "SilverConquestFactory#constructor: INVALID_INPUT"
+      "FreemintFactory#constructor: INVALID_INPUT"
     );
     skyweaverAssets = ISkyweaverAssets(_assetsAddr);
   }
@@ -64,7 +64,7 @@ contract FreemintFactory is Ownable {
    * @notice Prevents receiving Ether, ERC-1155 or calls to unsuported methods
    */
   fallback () external {
-    revert("SilverConquestFactory#_: UNSUPPORTED_METHOD");
+    revert("FreemintFactory#_: UNSUPPORTED_METHOD");
   }
 
   /**
