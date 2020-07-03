@@ -27,7 +27,7 @@ contract Conquest is IERC1155TokenReceiver, Ownable {
   uint256 immutable public conquestEntryID;          // Conquest entry token id
 
   mapping(address => bool) public isActiveConquest;    // Whether a given player is currently in a conquest
-  mapping(address => uint256) public nextConquestTime; // Time when the last conquest started
+  mapping(address => uint256) public nextConquestTime; // Time when the next conquest can be started for players
 
   /***********************************|
   |            Constructor            |
