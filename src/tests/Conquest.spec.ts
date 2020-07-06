@@ -276,10 +276,44 @@ contract('Conquest', (accounts: string[]) => {
         expect(value).to.be.eql(true)
       })
 
+      it('should update user conquest count', async () => {
+        let value = await factoryContract.functions.isActiveConquest(userAddress)
+        expect(value).to.be.eql(true)
+      })
+
       it('should update next conquest time for user', async () => {
-        let blockTime = (await ownerProvider.getBlock(tx.blockNumber)).timestamp
-        let value = await factoryContract.functions.nextConquestTime(userAddress)
-        expect(value).to.be.eql(DELAY.add(blockTime))
+        let value = await factoryContract.functions.conquestsEntered(userAddress)
+        expect(value).to.be.eql(new BigNumber(1))
+      })
+
+      it('should emit ConquestEntered event', async () => {
+        let filterFromOperatorContract: ethers.ethers.EventFilter
+
+        // Get event filter to get internal tx event
+        filterFromOperatorContract = factoryContract.filters.ConquestEntered(null, null);
+
+        // Get logs from internal transaction event
+        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+        filterFromOperatorContract.fromBlock = 0;
+        let logs = await ownerProvider.getLogs(filterFromOperatorContract);
+        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.ConquestEntered.topic)
+      })
+      
+      describe.skip('ConquestEntered Event', () => {
+        it('should have user address as `tx.user` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.user).to.be.eql(userAddress)
+        })
+        it('should have correct time value as `tx.nConquests` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.nConquests).to.be.eql(1)
+        })
       })
     })
   })

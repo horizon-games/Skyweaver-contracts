@@ -27,7 +27,12 @@ contract Conquest is IERC1155TokenReceiver, Ownable {
   uint256 immutable public conquestEntryID;          // Conquest entry token id
 
   mapping(address => bool) public isActiveConquest;    // Whether a given player is currently in a conquest
+  mapping(address => uint256) public conquestsEntered; // Number of conquest a given player has entered so far
   mapping(address => uint256) public nextConquestTime; // Time when the next conquest can be started for players
+
+  // Event
+  event ConquestEntered(address user, uint256 nConquests);
+
 
   /***********************************|
   |            Constructor            |
@@ -120,7 +125,11 @@ contract Conquest is IERC1155TokenReceiver, Ownable {
 
     // Mark player as playing
     isActiveConquest[_from] = true;
+    conquestsEntered[_from] = conquestsEntered[_from].add(1);
     nextConquestTime[_from] = now.add(TIME_BETWEEN_CONQUESTS);
+
+    // Emit event
+    emit ConquestEntered(_from, conquestsEntered[_from]);
 
     // Return success
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
