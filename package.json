@@ -9,10 +9,11 @@
     "typings"
   ],
   "scripts": {
-    "test": "buidler --network ganache test",
     "build": "rm -rf typings && buidler clean && yarn compile && yarn gen:typings",
     "compile": "buidler --max-memory 4096 compile",
     "gen:typings": "rm -f typings/contracts/* && typechain --target ethers --outDir typings/contracts './artifacts/*.json'",
+    "test": "buidler --network ganache test",
+    "test:gas-report": "REPORT_GAS=true yarn test",
     "lint": "yarn lint:ts && yarn lint:sol",
     "lint:fix": "yarn lint:ts:fix && yarn lint:sol:fix",
     "lint:sol": "solium -d .",

@@ -21,6 +21,7 @@ const config: BuidlerConfig = {
     }
   },
   gasReporter: {
+    enabled: !!process.env.REPORT_GAS === true,
     currency: 'USD',
     gasPrice: 21,
     showTimeSpent: true
