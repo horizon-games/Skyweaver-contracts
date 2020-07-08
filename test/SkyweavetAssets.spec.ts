@@ -9,15 +9,14 @@ import {
 
 import * as utils from './utils'
 
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
-import { FactoryMock } from 'typings/contracts/FactoryMock'
+import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
+import { ERC1155Mock } from '../typings/contracts/ERC1155Mock'
+import { FactoryMock } from '../typings/contracts/FactoryMock'
 
-import { Zero } from 'ethers/constants';
 import { BigNumber } from 'ethers/utils';
+import { web3 } from '@nomiclabs/buidler'
 
 // init test wallets from package.json mnemonic
-const web3 = (global as any).web3
 
 const {
   wallet: ownerWallet,
@@ -45,7 +44,7 @@ const {
 
 const getBig = (id: number) => new BigNumber(id);
 
-contract('SWSupplyManager', (accounts: string[]) => {
+describe('SWSupplyManager', () => {
 
   let ownerAddress: string
   let userAddress: string

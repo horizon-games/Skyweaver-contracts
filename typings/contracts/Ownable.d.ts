@@ -12,11 +12,11 @@ import {
 
 interface OwnableInterface extends Interface {
   functions: {
+    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
+
     transferOwnership: TypedFunctionDescription<{
       encode([_newOwner]: [string]): string;
     }>;
-
-    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
   };
 
   events: {
@@ -43,20 +43,20 @@ export class Ownable extends Contract {
   interface: OwnableInterface;
 
   functions: {
+    getOwner(): Promise<string>;
+
     transferOwnership(
       _newOwner: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
-
-    getOwner(): Promise<string>;
   };
+
+  getOwner(): Promise<string>;
 
   transferOwnership(
     _newOwner: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
-
-  getOwner(): Promise<string>;
 
   filters: {
     OwnershipTransferred(
@@ -66,8 +66,8 @@ export class Ownable extends Contract {
   };
 
   estimate: {
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
-
     getOwner(): Promise<BigNumber>;
+
+    transferOwnership(_newOwner: string): Promise<BigNumber>;
   };
 }

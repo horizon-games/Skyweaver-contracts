@@ -8,12 +8,12 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { FreemintFactory } from 'typings/contracts/FreemintFactory'
+import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
+import { FreemintFactory } from '../typings/contracts/FreemintFactory'
 import { BigNumber } from 'ethers/utils';
+import { web3 } from '@nomiclabs/buidler'
 
 // init test wallets from package.json mnemonic
-const web3 = (global as any).web3
 
 const {
   wallet: ownerWallet,
@@ -39,7 +39,7 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 5)
 
-contract('SilverConquestFactory', (accounts: string[]) => {
+describe('SilverConquestFactory', () => {
   let userAddress: string
   let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract

@@ -12,26 +12,6 @@ import {
 
 interface DelayedOwnerInterface extends Interface {
   functions: {
-    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    transferOwnership: TypedFunctionDescription<{
-      encode([_newOwner]: [string]): string;
-    }>;
-
-    txHashes: TypedFunctionDescription<{ encode([]: [BigNumberish]): string }>;
-
-    register: TypedFunctionDescription<{
-      encode([_tx]: [
-        {
-          status: BigNumberish;
-          triggerTime: BigNumberish;
-          target: string;
-          id: BigNumberish;
-          data: Arrayish;
-        }
-      ]): string;
-    }>;
-
     cancel: TypedFunctionDescription<{
       encode([_tx]: [
         {
@@ -56,6 +36,8 @@ interface DelayedOwnerInterface extends Interface {
       ]): string;
     }>;
 
+    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
+
     isValidWitness: TypedFunctionDescription<{
       encode([_tx]: [
         {
@@ -67,6 +49,24 @@ interface DelayedOwnerInterface extends Interface {
         }
       ]): string;
     }>;
+
+    register: TypedFunctionDescription<{
+      encode([_tx]: [
+        {
+          status: BigNumberish;
+          triggerTime: BigNumberish;
+          target: string;
+          id: BigNumberish;
+          data: Arrayish;
+        }
+      ]): string;
+    }>;
+
+    transferOwnership: TypedFunctionDescription<{
+      encode([_newOwner]: [string]): string;
+    }>;
+
+    txHashes: TypedFunctionDescription<{ encode([]: [BigNumberish]): string }>;
   };
 
   events: {
@@ -108,26 +108,6 @@ export class DelayedOwner extends Contract {
   interface: DelayedOwnerInterface;
 
   functions: {
-    getOwner(): Promise<string>;
-
-    transferOwnership(
-      _newOwner: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    txHashes(arg0: BigNumberish): Promise<string>;
-
-    register(
-      _tx: {
-        status: BigNumberish;
-        triggerTime: BigNumberish;
-        target: string;
-        id: BigNumberish;
-        data: Arrayish;
-      },
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
     cancel(
       _tx: {
         status: BigNumberish;
@@ -150,6 +130,8 @@ export class DelayedOwner extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    getOwner(): Promise<string>;
+
     isValidWitness(_tx: {
       status: BigNumberish;
       triggerTime: BigNumberish;
@@ -157,27 +139,25 @@ export class DelayedOwner extends Contract {
       id: BigNumberish;
       data: Arrayish;
     }): Promise<boolean>;
+
+    register(
+      _tx: {
+        status: BigNumberish;
+        triggerTime: BigNumberish;
+        target: string;
+        id: BigNumberish;
+        data: Arrayish;
+      },
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      _newOwner: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    txHashes(arg0: BigNumberish): Promise<string>;
   };
-
-  getOwner(): Promise<string>;
-
-  transferOwnership(
-    _newOwner: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  txHashes(arg0: BigNumberish): Promise<string>;
-
-  register(
-    _tx: {
-      status: BigNumberish;
-      triggerTime: BigNumberish;
-      target: string;
-      id: BigNumberish;
-      data: Arrayish;
-    },
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
 
   cancel(
     _tx: {
@@ -201,6 +181,8 @@ export class DelayedOwner extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  getOwner(): Promise<string>;
+
   isValidWitness(_tx: {
     status: BigNumberish;
     triggerTime: BigNumberish;
@@ -208,6 +190,24 @@ export class DelayedOwner extends Contract {
     id: BigNumberish;
     data: Arrayish;
   }): Promise<boolean>;
+
+  register(
+    _tx: {
+      status: BigNumberish;
+      triggerTime: BigNumberish;
+      target: string;
+      id: BigNumberish;
+      data: Arrayish;
+    },
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    _newOwner: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  txHashes(arg0: BigNumberish): Promise<string>;
 
   filters: {
     OwnershipTransferred(
@@ -223,20 +223,6 @@ export class DelayedOwner extends Contract {
   };
 
   estimate: {
-    getOwner(): Promise<BigNumber>;
-
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
-
-    txHashes(arg0: BigNumberish): Promise<BigNumber>;
-
-    register(_tx: {
-      status: BigNumberish;
-      triggerTime: BigNumberish;
-      target: string;
-      id: BigNumberish;
-      data: Arrayish;
-    }): Promise<BigNumber>;
-
     cancel(_tx: {
       status: BigNumberish;
       triggerTime: BigNumberish;
@@ -253,6 +239,8 @@ export class DelayedOwner extends Contract {
       data: Arrayish;
     }): Promise<BigNumber>;
 
+    getOwner(): Promise<BigNumber>;
+
     isValidWitness(_tx: {
       status: BigNumberish;
       triggerTime: BigNumberish;
@@ -260,5 +248,17 @@ export class DelayedOwner extends Contract {
       id: BigNumberish;
       data: Arrayish;
     }): Promise<BigNumber>;
+
+    register(_tx: {
+      status: BigNumberish;
+      triggerTime: BigNumberish;
+      target: string;
+      id: BigNumberish;
+      data: Arrayish;
+    }): Promise<BigNumber>;
+
+    transferOwnership(_newOwner: string): Promise<BigNumber>;
+
+    txHashes(arg0: BigNumberish): Promise<BigNumber>;
   };
 }

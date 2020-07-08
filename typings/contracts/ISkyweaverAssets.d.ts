@@ -12,11 +12,8 @@ import {
 
 interface ISkyweaverAssetsInterface extends Interface {
   functions: {
-    setMaxIssuances: TypedFunctionDescription<{
-      encode([_ids, _newMaxIssuances]: [
-        BigNumberish[],
-        BigNumberish[]
-      ]): string;
+    activateFactory: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
     }>;
 
     addMintPermission: TypedFunctionDescription<{
@@ -27,45 +24,8 @@ interface ISkyweaverAssetsInterface extends Interface {
       ]): string;
     }>;
 
-    removeMintPermission: TypedFunctionDescription<{
-      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
-    }>;
-
-    activateFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    shutdownFactory: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    lockRangeMintPermissions: TypedFunctionDescription<{
-      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
-    }>;
-
-    getFactoryStatus: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    getFactoryAccessRanges: TypedFunctionDescription<{
-      encode([_factory]: [string]): string;
-    }>;
-
-    getMaxIssuances: TypedFunctionDescription<{
-      encode([_ids]: [BigNumberish[]]): string;
-    }>;
-
-    getCurrentIssuances: TypedFunctionDescription<{
-      encode([_ids]: [BigNumberish[]]): string;
-    }>;
-
-    mint: TypedFunctionDescription<{
-      encode([_to, _id, _amount, _data]: [
-        string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
-      ]): string;
+    batchBurn: TypedFunctionDescription<{
+      encode([_ids, _amounts]: [BigNumberish[], BigNumberish[]]): string;
     }>;
 
     batchMint: TypedFunctionDescription<{
@@ -81,8 +41,48 @@ interface ISkyweaverAssetsInterface extends Interface {
       encode([_id, _amount]: [BigNumberish, BigNumberish]): string;
     }>;
 
-    batchBurn: TypedFunctionDescription<{
-      encode([_ids, _amounts]: [BigNumberish[], BigNumberish[]]): string;
+    getCurrentIssuances: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
+    }>;
+
+    getFactoryAccessRanges: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    getFactoryStatus: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
+    }>;
+
+    getMaxIssuances: TypedFunctionDescription<{
+      encode([_ids]: [BigNumberish[]]): string;
+    }>;
+
+    lockRangeMintPermissions: TypedFunctionDescription<{
+      encode([_range]: [{ minID: BigNumberish; maxID: BigNumberish }]): string;
+    }>;
+
+    mint: TypedFunctionDescription<{
+      encode([_to, _id, _amount, _data]: [
+        string,
+        BigNumberish,
+        BigNumberish,
+        Arrayish
+      ]): string;
+    }>;
+
+    removeMintPermission: TypedFunctionDescription<{
+      encode([_factory, _rangeIndex]: [string, BigNumberish]): string;
+    }>;
+
+    setMaxIssuances: TypedFunctionDescription<{
+      encode([_ids, _newMaxIssuances]: [
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
+    }>;
+
+    shutdownFactory: TypedFunctionDescription<{
+      encode([_factory]: [string]): string;
     }>;
   };
 
@@ -122,9 +122,8 @@ export class ISkyweaverAssets extends Contract {
   interface: ISkyweaverAssetsInterface;
 
   functions: {
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[],
+    activateFactory(
+      _factory: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -135,42 +134,9 @@ export class ISkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    removeMintPermission(
-      _factory: string,
-      _rangeIndex: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    activateFactory(
-      _factory: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    shutdownFactory(
-      _factory: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    getFactoryStatus(_factory: string): Promise<boolean>;
-
-    getFactoryAccessRanges(
-      _factory: string
-    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish,
+    batchBurn(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -188,16 +154,49 @@ export class ISkyweaverAssets extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    batchBurn(
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+    getFactoryAccessRanges(
+      _factory: string
+    ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+    getFactoryStatus(_factory: string): Promise<boolean>;
+
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+    lockRangeMintPermissions(
+      _range: { minID: BigNumberish; maxID: BigNumberish },
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    setMaxIssuances(
       _ids: BigNumberish[],
-      _amounts: BigNumberish[],
+      _newMaxIssuances: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    shutdownFactory(
+      _factory: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
   };
 
-  setMaxIssuances(
-    _ids: BigNumberish[],
-    _newMaxIssuances: BigNumberish[],
+  activateFactory(
+    _factory: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -208,42 +207,9 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  removeMintPermission(
-    _factory: string,
-    _rangeIndex: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  activateFactory(
-    _factory: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  shutdownFactory(
-    _factory: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  lockRangeMintPermissions(
-    _range: { minID: BigNumberish; maxID: BigNumberish },
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  getFactoryStatus(_factory: string): Promise<boolean>;
-
-  getFactoryAccessRanges(
-    _factory: string
-  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
-
-  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
-
-  mint(
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: Arrayish,
+  batchBurn(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -261,9 +227,43 @@ export class ISkyweaverAssets extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  batchBurn(
+  getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  getFactoryAccessRanges(
+    _factory: string
+  ): Promise<{ minID: BigNumber; maxID: BigNumber }[]>;
+
+  getFactoryStatus(_factory: string): Promise<boolean>;
+
+  getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  lockRangeMintPermissions(
+    _range: { minID: BigNumberish; maxID: BigNumberish },
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  mint(
+    _to: string,
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  removeMintPermission(
+    _factory: string,
+    _rangeIndex: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  setMaxIssuances(
     _ids: BigNumberish[],
-    _amounts: BigNumberish[],
+    _newMaxIssuances: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  shutdownFactory(
+    _factory: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -281,10 +281,7 @@ export class ISkyweaverAssets extends Contract {
   };
 
   estimate: {
-    setMaxIssuances(
-      _ids: BigNumberish[],
-      _newMaxIssuances: BigNumberish[]
-    ): Promise<BigNumber>;
+    activateFactory(_factory: string): Promise<BigNumber>;
 
     addMintPermission(
       _factory: string,
@@ -292,33 +289,9 @@ export class ISkyweaverAssets extends Contract {
       _maxRange: BigNumberish
     ): Promise<BigNumber>;
 
-    removeMintPermission(
-      _factory: string,
-      _rangeIndex: BigNumberish
-    ): Promise<BigNumber>;
-
-    activateFactory(_factory: string): Promise<BigNumber>;
-
-    shutdownFactory(_factory: string): Promise<BigNumber>;
-
-    lockRangeMintPermissions(_range: {
-      minID: BigNumberish;
-      maxID: BigNumberish;
-    }): Promise<BigNumber>;
-
-    getFactoryStatus(_factory: string): Promise<BigNumber>;
-
-    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
-
-    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
-
-    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
-
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
+    batchBurn(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
     ): Promise<BigNumber>;
 
     batchMint(
@@ -330,9 +303,36 @@ export class ISkyweaverAssets extends Contract {
 
     burn(_id: BigNumberish, _amount: BigNumberish): Promise<BigNumber>;
 
-    batchBurn(
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
+    getCurrentIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    getFactoryAccessRanges(_factory: string): Promise<BigNumber>;
+
+    getFactoryStatus(_factory: string): Promise<BigNumber>;
+
+    getMaxIssuances(_ids: BigNumberish[]): Promise<BigNumber>;
+
+    lockRangeMintPermissions(_range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+    }): Promise<BigNumber>;
+
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
     ): Promise<BigNumber>;
+
+    removeMintPermission(
+      _factory: string,
+      _rangeIndex: BigNumberish
+    ): Promise<BigNumber>;
+
+    setMaxIssuances(
+      _ids: BigNumberish[],
+      _newMaxIssuances: BigNumberish[]
+    ): Promise<BigNumber>;
+
+    shutdownFactory(_factory: string): Promise<BigNumber>;
   };
 }

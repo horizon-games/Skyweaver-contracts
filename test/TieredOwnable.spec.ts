@@ -8,12 +8,12 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { TieredOwnableMock } from 'typings/contracts/TieredOwnableMock'
+import { TieredOwnableMock } from '../typings/contracts/TieredOwnableMock'
 import { BigNumber } from 'ethers/utils';
 import { Zero, MaxUint256 } from 'ethers/constants'
+import { web3 } from '@nomiclabs/buidler'
 
 // init test wallets from package.json mnemonic
-const web3 = (global as any).web3
 
 const {
   wallet: ownerWallet,
@@ -47,7 +47,7 @@ const {
 
 const getBig = (id: number) => new BigNumber(id);
 
-contract('TieredOwnable', (accounts: string[]) => {
+describe('TieredOwnable', () => {
   let ownerAddress: string
   let owner0Address: string
   let owner5Address: string
@@ -123,7 +123,7 @@ contract('TieredOwnable', (accounts: string[]) => {
     })
 
     context('When ownerTier was updated', () => {
-      let tx;
+      let tx: ethers.ContractTransaction;
       beforeEach(async () => {
         tx = await contract.functions.assignOwnership(randomAddress, newTier)
       })

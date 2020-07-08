@@ -20,26 +20,21 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_to",
+        name: "_from",
         type: "address"
       },
       {
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256"
+        internalType: "uint256[]",
+        name: "_ids",
+        type: "uint256[]"
       },
       {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256"
-      },
-      {
-        internalType: "bytes",
-        name: "_data",
-        type: "bytes"
+        internalType: "uint256[]",
+        name: "_amounts",
+        type: "uint256[]"
       }
     ],
-    name: "mint",
+    name: "batchBurn",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -99,21 +94,26 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_from",
+        name: "_to",
         type: "address"
       },
       {
-        internalType: "uint256[]",
-        name: "_ids",
-        type: "uint256[]"
+        internalType: "uint256",
+        name: "_id",
+        type: "uint256"
       },
       {
-        internalType: "uint256[]",
-        name: "_amounts",
-        type: "uint256[]"
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256"
+      },
+      {
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes"
       }
     ],
-    name: "batchBurn",
+    name: "mint",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"

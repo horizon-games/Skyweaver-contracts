@@ -12,14 +12,16 @@ import {
 
 interface IERC1155Interface extends Interface {
   functions: {
-    safeTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _id, _amount, _data]: [
-        string,
-        string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
-      ]): string;
+    balanceOf: TypedFunctionDescription<{
+      encode([_owner, _id]: [string, BigNumberish]): string;
+    }>;
+
+    balanceOfBatch: TypedFunctionDescription<{
+      encode([_owners, _ids]: [string[], BigNumberish[]]): string;
+    }>;
+
+    isApprovedForAll: TypedFunctionDescription<{
+      encode([_owner, _operator]: [string, string]): string;
     }>;
 
     safeBatchTransferFrom: TypedFunctionDescription<{
@@ -32,20 +34,18 @@ interface IERC1155Interface extends Interface {
       ]): string;
     }>;
 
-    balanceOf: TypedFunctionDescription<{
-      encode([_owner, _id]: [string, BigNumberish]): string;
-    }>;
-
-    balanceOfBatch: TypedFunctionDescription<{
-      encode([_owners, _ids]: [string[], BigNumberish[]]): string;
+    safeTransferFrom: TypedFunctionDescription<{
+      encode([_from, _to, _id, _amount, _data]: [
+        string,
+        string,
+        BigNumberish,
+        BigNumberish,
+        Arrayish
+      ]): string;
     }>;
 
     setApprovalForAll: TypedFunctionDescription<{
       encode([_operator, _approved]: [string, boolean]): string;
-    }>;
-
-    isApprovedForAll: TypedFunctionDescription<{
-      encode([_owner, _operator]: [string, string]): string;
     }>;
   };
 
@@ -98,14 +98,14 @@ export class IERC1155 extends Contract {
   interface: IERC1155Interface;
 
   functions: {
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
+    balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
+
+    balanceOfBatch(
+      _owners: string[],
+      _ids: BigNumberish[]
+    ): Promise<BigNumber[]>;
+
+    isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
 
     safeBatchTransferFrom(
       _from: string,
@@ -116,30 +116,27 @@ export class IERC1155 extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
-
-    balanceOfBatch(
-      _owners: string[],
-      _ids: BigNumberish[]
-    ): Promise<BigNumber[]>;
+    safeTransferFrom(
+      _from: string,
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     setApprovalForAll(
       _operator: string,
       _approved: boolean,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
-
-    isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
   };
 
-  safeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
+  balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
+
+  balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber[]>;
+
+  isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
 
   safeBatchTransferFrom(
     _from: string,
@@ -150,17 +147,20 @@ export class IERC1155 extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
-
-  balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber[]>;
+  safeTransferFrom(
+    _from: string,
+    _to: string,
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    _data: Arrayish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   setApprovalForAll(
     _operator: string,
     _approved: boolean,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
-
-  isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
 
   filters: {
     ApprovalForAll(
@@ -189,13 +189,11 @@ export class IERC1155 extends Contract {
   };
 
   estimate: {
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
-    ): Promise<BigNumber>;
+    balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
+
+    balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber>;
+
+    isApprovedForAll(_owner: string, _operator: string): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       _from: string,
@@ -205,15 +203,17 @@ export class IERC1155 extends Contract {
       _data: Arrayish
     ): Promise<BigNumber>;
 
-    balanceOf(_owner: string, _id: BigNumberish): Promise<BigNumber>;
-
-    balanceOfBatch(_owners: string[], _ids: BigNumberish[]): Promise<BigNumber>;
+    safeTransferFrom(
+      _from: string,
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
+    ): Promise<BigNumber>;
 
     setApprovalForAll(
       _operator: string,
       _approved: boolean
     ): Promise<BigNumber>;
-
-    isApprovedForAll(_owner: string, _operator: string): Promise<BigNumber>;
   };
 }

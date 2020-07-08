@@ -8,14 +8,14 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
-import { BridgeFactory } from 'typings/contracts/BridgeFactory'
+import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
+import { ERC1155Mock } from '../typings/contracts/ERC1155Mock'
+import { BridgeFactory } from '../typings/contracts/BridgeFactory'
 import { BigNumber } from 'ethers/utils';
 import { Zero } from 'ethers/constants'
+import { web3 } from '@nomiclabs/buidler'
 
 // init test wallets from package.json mnemonic
-const web3 = (global as any).web3
 
 const {
   wallet: subOwnerWallet,
@@ -50,7 +50,7 @@ const {
 
 const getBig = (id: number) => new BigNumber(id);
 
-contract('BridgeFactory', (accounts: string[]) => {
+describe('BridgeFactory', () => {
   let ownerAddress: string
   let subOwnerAddress: string
   let userAddress: string
