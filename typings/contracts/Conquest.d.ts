@@ -26,6 +26,14 @@ interface ConquestInterface extends Interface {
       encode([]: [string]): string;
     }>;
 
+    exitConquest: TypedFunctionDescription<{
+      encode([_user, _ids, _amounts]: [
+        string,
+        BigNumberish[],
+        BigNumberish[]
+      ]): string;
+    }>;
+
     getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
 
     isActiveConquest: TypedFunctionDescription<{
@@ -34,22 +42,6 @@ interface ConquestInterface extends Interface {
 
     nextConquestTime: TypedFunctionDescription<{
       encode([]: [string]): string;
-    }>;
-
-    skyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    transferOwnership: TypedFunctionDescription<{
-      encode([_newOwner]: [string]): string;
-    }>;
-
-    onERC1155Received: TypedFunctionDescription<{
-      encode([_operator, _from, _id, _amount, _data]: [
-        string,
-        string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
-      ]): string;
     }>;
 
     onERC1155BatchReceived: TypedFunctionDescription<{
@@ -62,16 +54,24 @@ interface ConquestInterface extends Interface {
       ]): string;
     }>;
 
-    exitConquest: TypedFunctionDescription<{
-      encode([_user, _ids, _amounts]: [
+    onERC1155Received: TypedFunctionDescription<{
+      encode([_operator, _from, _id, _amount, _data]: [
         string,
-        BigNumberish[],
-        BigNumberish[]
+        string,
+        BigNumberish,
+        BigNumberish,
+        Arrayish
       ]): string;
     }>;
 
+    skyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
+
     supportsInterface: TypedFunctionDescription<{
       encode([interfaceID]: [Arrayish]): string;
+    }>;
+
+    transferOwnership: TypedFunctionDescription<{
+      encode([_newOwner]: [string]): string;
     }>;
   };
 
@@ -113,16 +113,25 @@ export class Conquest extends Contract {
 
     conquestsEntered(arg0: string): Promise<BigNumber>;
 
+    exitConquest(
+      _user: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     getOwner(): Promise<string>;
 
     isActiveConquest(arg0: string): Promise<boolean>;
 
     nextConquestTime(arg0: string): Promise<BigNumber>;
 
-    skyweaverAssets(): Promise<string>;
-
-    transferOwnership(
-      _newOwner: string,
+    onERC1155BatchReceived(
+      arg0: string,
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      arg4: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -135,23 +144,14 @@ export class Conquest extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    onERC1155BatchReceived(
-      arg0: string,
-      _from: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      arg4: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    exitConquest(
-      _user: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
+    skyweaverAssets(): Promise<string>;
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
+
+    transferOwnership(
+      _newOwner: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
   };
 
   MAX_REWARD_AMOUNT(): Promise<BigNumber>;
@@ -164,16 +164,25 @@ export class Conquest extends Contract {
 
   conquestsEntered(arg0: string): Promise<BigNumber>;
 
+  exitConquest(
+    _user: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
   getOwner(): Promise<string>;
 
   isActiveConquest(arg0: string): Promise<boolean>;
 
   nextConquestTime(arg0: string): Promise<BigNumber>;
 
-  skyweaverAssets(): Promise<string>;
-
-  transferOwnership(
-    _newOwner: string,
+  onERC1155BatchReceived(
+    arg0: string,
+    _from: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    arg4: Arrayish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -186,23 +195,14 @@ export class Conquest extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  onERC1155BatchReceived(
-    arg0: string,
-    _from: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    arg4: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  exitConquest(
-    _user: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
+  skyweaverAssets(): Promise<string>;
 
   supportsInterface(interfaceID: Arrayish): Promise<boolean>;
+
+  transferOwnership(
+    _newOwner: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   filters: {
     ConquestEntered(user: null, nConquests: null): EventFilter;
@@ -224,23 +224,17 @@ export class Conquest extends Contract {
 
     conquestsEntered(arg0: string): Promise<BigNumber>;
 
+    exitConquest(
+      _user: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
+    ): Promise<BigNumber>;
+
     getOwner(): Promise<BigNumber>;
 
     isActiveConquest(arg0: string): Promise<BigNumber>;
 
     nextConquestTime(arg0: string): Promise<BigNumber>;
-
-    skyweaverAssets(): Promise<BigNumber>;
-
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
-
-    onERC1155Received(
-      _operator: string,
-      _from: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
-    ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -250,12 +244,18 @@ export class Conquest extends Contract {
       arg4: Arrayish
     ): Promise<BigNumber>;
 
-    exitConquest(
-      _user: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
+    onERC1155Received(
+      _operator: string,
+      _from: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
     ): Promise<BigNumber>;
 
+    skyweaverAssets(): Promise<BigNumber>;
+
     supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
+
+    transferOwnership(_newOwner: string): Promise<BigNumber>;
   };
 }

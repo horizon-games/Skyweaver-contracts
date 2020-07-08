@@ -36,19 +36,6 @@ const _abi = [
     type: "event"
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_newOwner",
-        type: "address"
-      }
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
     inputs: [],
     name: "getOwner",
     outputs: [
@@ -59,6 +46,19 @@ const _abi = [
       }
     ],
     stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_newOwner",
+        type: "address"
+      }
+    ],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function"
   }
 ];

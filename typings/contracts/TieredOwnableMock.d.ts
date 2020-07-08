@@ -12,6 +12,8 @@ import {
 
 interface TieredOwnableMockInterface extends Interface {
   functions: {
+    anyone: TypedFunctionDescription<{ encode([]: []): string }>;
+
     assignOwnership: TypedFunctionDescription<{
       encode([_address, _tier]: [string, BigNumberish]): string;
     }>;
@@ -25,8 +27,6 @@ interface TieredOwnableMockInterface extends Interface {
     onlyTierFive: TypedFunctionDescription<{ encode([]: []): string }>;
 
     onlyTierZero: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    anyone: TypedFunctionDescription<{ encode([]: []): string }>;
   };
 
   events: {
@@ -57,6 +57,8 @@ export class TieredOwnableMock extends Contract {
   interface: TieredOwnableMockInterface;
 
   functions: {
+    anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
     assignOwnership(
       _address: string,
       _tier: BigNumberish,
@@ -74,9 +76,9 @@ export class TieredOwnableMock extends Contract {
     onlyTierZero(
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
-
-    anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
   };
+
+  anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
   assignOwnership(
     _address: string,
@@ -92,8 +94,6 @@ export class TieredOwnableMock extends Contract {
 
   onlyTierZero(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-  anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
-
   filters: {
     OwnershipGranted(
       owner: string | null,
@@ -103,6 +103,8 @@ export class TieredOwnableMock extends Contract {
   };
 
   estimate: {
+    anyone(): Promise<BigNumber>;
+
     assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
 
     getOwnerTier(_owner: string): Promise<BigNumber>;
@@ -112,7 +114,5 @@ export class TieredOwnableMock extends Contract {
     onlyTierFive(): Promise<BigNumber>;
 
     onlyTierZero(): Promise<BigNumber>;
-
-    anyone(): Promise<BigNumber>;
   };
 }

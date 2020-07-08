@@ -12,12 +12,11 @@ import {
 
 interface IERC1155MintBurnInterface extends Interface {
   functions: {
-    mint: TypedFunctionDescription<{
-      encode([_to, _id, _amount, _data]: [
+    batchBurn: TypedFunctionDescription<{
+      encode([_from, _ids, _amounts]: [
         string,
-        BigNumberish,
-        BigNumberish,
-        Arrayish
+        BigNumberish[],
+        BigNumberish[]
       ]): string;
     }>;
 
@@ -38,11 +37,12 @@ interface IERC1155MintBurnInterface extends Interface {
       ]): string;
     }>;
 
-    batchBurn: TypedFunctionDescription<{
-      encode([_from, _ids, _amounts]: [
+    mint: TypedFunctionDescription<{
+      encode([_to, _id, _amount, _data]: [
         string,
-        BigNumberish[],
-        BigNumberish[]
+        BigNumberish,
+        BigNumberish,
+        Arrayish
       ]): string;
     }>;
   };
@@ -67,11 +67,10 @@ export class IERC1155MintBurn extends Contract {
   interface: IERC1155MintBurnInterface;
 
   functions: {
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish,
+    batchBurn(
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -90,19 +89,19 @@ export class IERC1155MintBurn extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    batchBurn(
-      _from: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
   };
 
-  mint(
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _data: Arrayish,
+  batchBurn(
+    _from: string,
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -121,21 +120,21 @@ export class IERC1155MintBurn extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  batchBurn(
-    _from: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
+  mint(
+    _to: string,
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    _data: Arrayish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
   filters: {};
 
   estimate: {
-    mint(
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _data: Arrayish
+    batchBurn(
+      _from: string,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
     ): Promise<BigNumber>;
 
     batchMint(
@@ -151,10 +150,11 @@ export class IERC1155MintBurn extends Contract {
       _amount: BigNumberish
     ): Promise<BigNumber>;
 
-    batchBurn(
-      _from: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
+    mint(
+      _to: string,
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      _data: Arrayish
     ): Promise<BigNumber>;
   };
 }

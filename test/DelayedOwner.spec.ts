@@ -8,13 +8,12 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { OwnableMock } from 'typings/contracts/OwnableMock'
-import { DelayedOwner } from 'typings/contracts/DelayedOwner'
+import { OwnableMock } from '../typings/contracts/OwnableMock'
+import { DelayedOwner } from '../typings/contracts/DelayedOwner'
 import { BigNumber } from 'ethers/utils';
-import { Zero, MaxUint256 } from 'ethers/constants'
+import { web3 } from '@nomiclabs/buidler'
 
 // init test wallets from package.json mnemonic
-const web3 = (global as any).web3
 
 const {
   wallet: ownerWallet,
@@ -30,7 +29,7 @@ const {
 
 const getBig = (id: number) => new BigNumber(id);
 
-contract('TieredOwnable', (accounts: string[]) => {
+describe('TieredOwnable', () => {
   let ownerAddress: string
   let randomAddress: string
 

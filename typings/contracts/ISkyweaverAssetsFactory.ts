@@ -107,17 +107,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256[]",
-        name: "_ids",
-        type: "uint256[]"
-      },
-      {
-        internalType: "uint256[]",
-        name: "_newMaxIssuances",
-        type: "uint256[]"
+        internalType: "address",
+        name: "_factory",
+        type: "address"
       }
     ],
-    name: "setMaxIssuances",
+    name: "activateFactory",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -148,184 +143,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_factory",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "_rangeIndex",
-        type: "uint256"
-      }
-    ],
-    name: "removeMintPermission",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address"
-      }
-    ],
-    name: "activateFactory",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address"
-      }
-    ],
-    name: "shutdownFactory",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "minID",
-            type: "uint256"
-          },
-          {
-            internalType: "uint256",
-            name: "maxID",
-            type: "uint256"
-          }
-        ],
-        internalType: "struct ISkyweaverAssets.AssetRange",
-        name: "_range",
-        type: "tuple"
-      }
-    ],
-    name: "lockRangeMintPermissions",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address"
-      }
-    ],
-    name: "getFactoryStatus",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address"
-      }
-    ],
-    name: "getFactoryAccessRanges",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "minID",
-            type: "uint256"
-          },
-          {
-            internalType: "uint256",
-            name: "maxID",
-            type: "uint256"
-          }
-        ],
-        internalType: "struct ISkyweaverAssets.AssetRange[]",
-        name: "",
-        type: "tuple[]"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256[]",
         name: "_ids",
         type: "uint256[]"
-      }
-    ],
-    name: "getMaxIssuances",
-    outputs: [
+      },
       {
         internalType: "uint256[]",
-        name: "",
+        name: "_amounts",
         type: "uint256[]"
       }
     ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256[]",
-        name: "_ids",
-        type: "uint256[]"
-      }
-    ],
-    name: "getCurrentIssuances",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_to",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256"
-      },
-      {
-        internalType: "bytes",
-        name: "_data",
-        type: "bytes"
-      }
-    ],
-    name: "mint",
+    name: "batchBurn",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -382,14 +210,186 @@ const _abi = [
         internalType: "uint256[]",
         name: "_ids",
         type: "uint256[]"
-      },
+      }
+    ],
+    name: "getCurrentIssuances",
+    outputs: [
       {
         internalType: "uint256[]",
-        name: "_amounts",
+        name: "",
         type: "uint256[]"
       }
     ],
-    name: "batchBurn",
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_factory",
+        type: "address"
+      }
+    ],
+    name: "getFactoryAccessRanges",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "minID",
+            type: "uint256"
+          },
+          {
+            internalType: "uint256",
+            name: "maxID",
+            type: "uint256"
+          }
+        ],
+        internalType: "struct ISkyweaverAssets.AssetRange[]",
+        name: "",
+        type: "tuple[]"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_factory",
+        type: "address"
+      }
+    ],
+    name: "getFactoryStatus",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256[]",
+        name: "_ids",
+        type: "uint256[]"
+      }
+    ],
+    name: "getMaxIssuances",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "minID",
+            type: "uint256"
+          },
+          {
+            internalType: "uint256",
+            name: "maxID",
+            type: "uint256"
+          }
+        ],
+        internalType: "struct ISkyweaverAssets.AssetRange",
+        name: "_range",
+        type: "tuple"
+      }
+    ],
+    name: "lockRangeMintPermissions",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "_id",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256"
+      },
+      {
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes"
+      }
+    ],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_factory",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "_rangeIndex",
+        type: "uint256"
+      }
+    ],
+    name: "removeMintPermission",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256[]",
+        name: "_ids",
+        type: "uint256[]"
+      },
+      {
+        internalType: "uint256[]",
+        name: "_newMaxIssuances",
+        type: "uint256[]"
+      }
+    ],
+    name: "setMaxIssuances",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_factory",
+        type: "address"
+      }
+    ],
+    name: "shutdownFactory",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"

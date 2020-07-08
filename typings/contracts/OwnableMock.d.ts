@@ -12,17 +12,17 @@ import {
 
 interface OwnableMockInterface extends Interface {
   functions: {
+    call_anyone: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    call_onlyOwner: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    call_throw: TypedFunctionDescription<{ encode([]: []): string }>;
+
     getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
 
     transferOwnership: TypedFunctionDescription<{
       encode([_newOwner]: [string]): string;
     }>;
-
-    call_onlyOwner: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    call_anyone: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    call_throw: TypedFunctionDescription<{ encode([]: []): string }>;
   };
 
   events: {
@@ -49,21 +49,29 @@ export class OwnableMock extends Contract {
   interface: OwnableMockInterface;
 
   functions: {
+    call_anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+    call_onlyOwner(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    call_throw(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
     getOwner(): Promise<string>;
 
     transferOwnership(
       _newOwner: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
-
-    call_onlyOwner(
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    call_anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
-
-    call_throw(overrides?: TransactionOverrides): Promise<ContractTransaction>;
   };
+
+  call_anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+  call_onlyOwner(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  call_throw(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
   getOwner(): Promise<string>;
 
@@ -71,14 +79,6 @@ export class OwnableMock extends Contract {
     _newOwner: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
-
-  call_onlyOwner(
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  call_anyone(overrides?: TransactionOverrides): Promise<ContractTransaction>;
-
-  call_throw(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
   filters: {
     OwnershipTransferred(
@@ -88,14 +88,14 @@ export class OwnableMock extends Contract {
   };
 
   estimate: {
-    getOwner(): Promise<BigNumber>;
-
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
+    call_anyone(): Promise<BigNumber>;
 
     call_onlyOwner(): Promise<BigNumber>;
 
-    call_anyone(): Promise<BigNumber>;
-
     call_throw(): Promise<BigNumber>;
+
+    getOwner(): Promise<BigNumber>;
+
+    transferOwnership(_newOwner: string): Promise<BigNumber>;
   };
 }
