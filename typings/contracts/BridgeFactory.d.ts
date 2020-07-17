@@ -81,6 +81,14 @@ interface BridgeFactoryInterface extends Interface {
     PeriodMintLimitChanged: TypedEventDescription<{
       encodeTopics([oldMintingLimit, newMintingLimit]: [null, null]): string[];
     }>;
+
+    ReDeposit: TypedEventDescription<{
+      encodeTopics([recipient, ids, amounts]: [
+        string | null,
+        null,
+        null
+      ]): string[];
+    }>;
   };
 }
 
@@ -221,6 +229,8 @@ export class BridgeFactory extends Contract {
       oldMintingLimit: null,
       newMintingLimit: null
     ): EventFilter;
+
+    ReDeposit(recipient: string | null, ids: null, amounts: null): EventFilter;
   };
 
   estimate: {

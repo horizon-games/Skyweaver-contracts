@@ -34,6 +34,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
+  event ReDeposit(address indexed recipient, uint256[] ids, uint256[] amounts);
 
   /***********************************|
   |            Constructor            |
@@ -193,31 +194,37 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
    */
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts)
-    external onlyOwnerTier(1)
+    external onlyOwnerTier(1) returns (bool success)
   {
-    // Get current period and current available supply
     uint256 live_period = livePeriod();
-    uint256 available_supply;
 
     // Get the available supply based on period
-    if (live_period == period) {
-      available_supply = availableSupply;
-    } else {
-      available_supply = periodMintLimit;
-      period = live_period;
-    }
+    uint256 available_supply = live_period == period ? availableSupply : periodMintLimit;
 
-    // Reduce supply based on amount being minted
-    // Will revert if available supply is insufficient
+    // If there is an insufficient available supply, a ReDeposit event will
+    // be emitted and minting will be aborted. This allows the bridge operator
+    // to re-mint the tokens to the recipient on the other chain.
     for (uint256 i = 0; i < _ids.length; i++) {
-      available_supply = available_supply.sub(_amounts[i]);
+      uint256 new_available_supply = available_supply - _amounts[i];
+      if (new_available_supply <= available_supply) {
+        available_supply = new_available_supply;
+      } else {
+        emit ReDeposit(_to, _ids, _amounts);
+        return false;
+      }
     }
 
     // Store available supply
     availableSupply = available_supply;
+
+    // Update period if changed
+    if (live_period != period) {
+      period = live_period;
+    }
     
     // Mint assets
     skyweaverAssets.batchMint(_to, _ids, _amounts, "");
+    return true;
   }
 
 

@@ -10,6 +10,7 @@ import {
 import * as utils from './utils'
 import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
 import { ERC1155Mock } from '../typings/contracts/ERC1155Mock'
+import { BridgeMock } from '../typings/contracts/BridgeMock'
 import { BridgeFactory } from '../typings/contracts/BridgeFactory'
 import { BigNumber } from 'ethers/utils';
 import { Zero } from 'ethers/constants'
@@ -58,11 +59,13 @@ describe('BridgeFactory', () => {
   let skyweaverAssetsAbstract: AbstractContract
   let arcadeumCoinAbstract: AbstractContract
   let factoryAbstract: AbstractContract
+  let bridgeMockAbstract: AbstractContract
 
   // Skyweaver Assets
   let skyweaverAssetsContract: SkyweaverAssets
   let userSkyweaverAssetContract: SkyweaverAssets
   let factoryContract: BridgeFactory
+  let bridgeOwner: BridgeMock
 
   // Arcadeum Coins
   let arcadeumCoinContract: ERC1155Mock
@@ -105,6 +108,7 @@ describe('BridgeFactory', () => {
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     arcadeumCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('BridgeFactory')
+    bridgeMockAbstract = await AbstractContract.fromArtifactName('BridgeMock')
   })
 
   // deploy before each test, to reset state of contract
@@ -127,6 +131,9 @@ describe('BridgeFactory', () => {
     userFactoryContract = await factoryContract.connect(userSigner) as BridgeFactory
     subOwnerFactoryContract = await factoryContract.connect(subOwnerSigner) as BridgeFactory
 
+    // Deploy bridge mock
+    bridgeOwner = await bridgeMockAbstract.deploy(ownerWallet, [factoryContract.address]) as BridgeMock
+
     // Assing vars
     factory = factoryContract.address
 
@@ -139,8 +146,10 @@ describe('BridgeFactory', () => {
     await skyweaverAssetsContract.functions.addMintPermission(ownerAddress, 0, 666);
 
     // Set subOwner to ownership tier 1
-    
     await factoryContract.functions.assignOwnership(subOwnerAddress, 1)
+
+    // Set bridgeMock as owner for mint
+    await factoryContract.functions.assignOwnership(bridgeOwner.address, 1) 
 
     // Mint silver cards to user
     await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
@@ -407,31 +416,43 @@ describe('BridgeFactory', () => {
     })
 
     it('should PASS if caller is subowner', async () => {
-      const tx = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
+      const tx = bridgeOwner.functions.batchMint(userAddress, mintIds, mintAmounts)
       await expect(tx).to.be.fulfilled
     })
 
-    it('should REVERT if caller is not owner', async () => {
+    it('should REVERT false if caller is not owner', async () => {
       const tx = userFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
       await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
     })
 
     it('should PASS if trying to mint exactly the available supply', async () => {
       let available_supply = await factoryContract.functions.getAvailableSupply() 
-      const tx = factoryContract.functions.batchMint(userAddress, [1], [available_supply])
+      const tx = bridgeOwner.functions.batchMint(userAddress, [1], [available_supply])
       await expect(tx).to.be.fulfilled
     })
 
-    it('should REVERT if trying to mint more than current supply', async () => {
+    it('should return FALSE if trying to mint more than current supply', async () => {
+      let available_supply = await factoryContract.functions.getAvailableSupply() 
+      const tx = bridgeOwner.functions.batchMint(userAddress, [1], [available_supply.add(1)])
+      await expect(tx).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
+
+      const tx2 = bridgeOwner.functions.batchMint(userAddress, [1, 2], [1, available_supply])
+      await expect(tx2).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
+
+      const tx3 = bridgeOwner.functions.batchMint(userAddress, [1, 2, 66], [1, available_supply.sub(1), 1])
+      await expect(tx3).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
+    })
+
+    it('should NOT REVERT if trying to mint more than current supply', async () => {
       let available_supply = await factoryContract.functions.getAvailableSupply() 
       const tx = factoryContract.functions.batchMint(userAddress, [1], [available_supply.add(1)])
-      await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+      await expect(tx).to.be.fulfilled
 
       const tx2 = factoryContract.functions.batchMint(userAddress, [1, 2], [1, available_supply])
-      await expect(tx2).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+      await expect(tx2).to.be.fulfilled
 
       const tx3 = factoryContract.functions.batchMint(userAddress, [1, 2, 66], [1, available_supply.sub(1), 1])
-      await expect(tx3).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+      await expect(tx3).to.be.fulfilled
     })
 
     context('When cards were minted', () => {
@@ -439,7 +460,7 @@ describe('BridgeFactory', () => {
       beforeEach(async () => {
         let available_supply = await factoryContract.functions.getAvailableSupply()
         expected_supply = available_supply.sub(90000);
-        await factoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
+        await bridgeOwner.functions.batchMint(userAddress, mintIds, mintAmounts)
       })
 
       it('should update user availableSupply', async () => {
@@ -448,13 +469,13 @@ describe('BridgeFactory', () => {
       })
 
       it('should be able to mint more assets in the same period', async () => {
-        let tx = factoryContract.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)])
+        let tx = bridgeOwner.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)])
         await expect(tx).to.be.fulfilled
       })
 
       it('should not be able to exceed minting limit for this period with second mint tx', async () => {
-        let tx = factoryContract.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)])
-        await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+        let tx = bridgeOwner.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)])
+        await expect(tx).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
       })
 
       it('should update user silver cards balance', async () => {
@@ -473,8 +494,8 @@ describe('BridgeFactory', () => {
         expect(supply).to.be.eql(expected_supply)
         
         // Try to mint current period
-        const tx1 = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
-        await expect(tx1).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
+        const tx1 = bridgeOwner.functions.batchMint(userAddress, mintIds, mintAmounts)
+        await expect(tx1).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
 
         // Move forward by 6 hours
         let sixHours = new BigNumber(60).mul(60).mul(6)
@@ -489,13 +510,122 @@ describe('BridgeFactory', () => {
         expect(supply).to.be.eql(periodMintLimit)
 
         // Try mint during new period
-        const tx2 = subOwnerFactoryContract.functions.batchMint(userAddress, mintIds, mintAmounts)
+        const tx2 = bridgeOwner.functions.batchMint(userAddress, mintIds, mintAmounts)
         await expect(tx2).to.be.fulfilled
 
         // Revert time to expected timestamp
         await ownerProvider.send("evm_revert", [snapshot])
       })
+    })
+    context('When cards were not minted due to out of supply', () => {
+      let expected_supply: BigNumber
+      let bad_mintAmounts =  mintAmounts.slice()
+      let tx
 
+      beforeEach(async () => {
+        expected_supply = await factoryContract.functions.getAvailableSupply()
+        bad_mintAmounts[0] = (expected_supply.add(1)).toNumber()
+        tx = await factoryContract.functions.batchMint(userAddress, mintIds, bad_mintAmounts)
+      })
+
+      it('should NOT update user availableSupply', async () => {
+        let supply = await factoryContract.functions.getAvailableSupply()
+        expect(supply).to.be.eql(expected_supply)
+      })
+
+      it('should be able to mint more assets in the same period', async () => {
+        let tx = bridgeOwner.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(3)])
+        await expect(tx).to.be.fulfilled
+      })
+
+      it('should not be able to exceed minting limit for this period with second mint tx', async () => {
+        let tx = bridgeOwner.functions.batchMint(randomAddress, mintIds, [1, 1, 1, expected_supply.sub(2)])
+        await expect(tx).to.be.rejectedWith(RevertError("BATCH_MINT_ERROR"))
+      })
+
+      it('should NOT update user silver cards balance', async () => {
+        let n_ids = mintIds.length
+        let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
+        let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, mintIds)
+        for (let i = 0; i < n_ids; i++) {
+          expect(userBalances[i]).to.be.eql(new BigNumber(0))
+        }
+      })
+
+      it('should refresh user availableSupply with new period', async () => {
+        // Check current supply
+        let current_period = await factoryContract.functions.livePeriod()
+        let supply = await factoryContract.functions.getAvailableSupply()
+        expect(supply).to.be.eql(expected_supply)
+        
+        // Try to mint current period
+        const tx1 = bridgeOwner.functions.batchMint(userAddress, [1], [expected_supply])
+        await expect(tx1).to.be.fulfilled;
+
+        // Move forward by 6 hours
+        let sixHours = new BigNumber(60).mul(60).mul(6)
+        let snapshot = await ownerProvider.send('evm_snapshot', [])
+        await ownerProvider.send("evm_increaseTime", [sixHours.toNumber()])
+        await ownerProvider.send("evm_mine", [])
+
+        // Try to more than limit without reverting
+        const tx2 = factoryContract.functions.batchMint(userAddress, mintIds, bad_mintAmounts)
+        await expect(tx2).to.be.fulfilled;
+
+        // Get new supply for current period
+        let new_period = await factoryContract.functions.livePeriod()
+        supply = await factoryContract.functions.getAvailableSupply()
+        expect(new_period).to.be.eql(current_period.add(1))
+        expect(supply).to.be.eql(periodMintLimit)
+
+        // Try mint during new period
+        const tx3 = bridgeOwner.functions.batchMint(userAddress, [1], [expected_supply])
+        await expect(tx3).to.be.fulfilled
+
+        // Revert time to expected timestamp
+        await ownerProvider.send("evm_revert", [snapshot])
+      })
+
+      it('should emit ReDeposit event', async () => {
+        let filterFromOperatorContract: ethers.ethers.EventFilter
+
+        // Get event filter to get internal tx event
+        filterFromOperatorContract = factoryContract.filters.ReDeposit(null,null,null);
+
+        // Get logs from internal transaction event
+        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+        filterFromOperatorContract.fromBlock = 0;
+        let logs = await ownerProvider.getLogs(filterFromOperatorContract);
+        expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.ReDeposit.topic)
+      })
+
+      describe('ReDeposit Event', () => {
+        it('should have user as `tx.recipient` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          expect(args.recipient).to.be.eql(userAddress)
+        })
+        it('should have correct ids as `tx.ids` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          for (let i = 0; i < mintIds.length; i++){
+            expect(args.ids[i]).to.be.eql(new BigNumber(mintIds[i]))
+          }
+        })
+        it('should have correct amounts as `tx.amounts` field', async () => {  
+          const receipt = await tx.wait(1)
+          const ev = receipt.events!.pop()!
+
+          const args = ev.args! as any
+          for (let i = 0; i < bad_mintAmounts.length; i++){
+            expect(args.amounts[i]).to.be.eql(new BigNumber(bad_mintAmounts[i]))
+          }
+        })
+      })
     })
   })
 })
