@@ -2,7 +2,6 @@ pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
-import "../utils/LibBytes.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
@@ -18,7 +17,6 @@ import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
  */
 contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
-  using LibBytes for bytes;
 
   /***********************************|
   |             Variables             |
@@ -152,7 +150,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155Received: INVALID_TOKEN");
     }  
     
-    emit Deposit(_from, _data.readBytes32(0));
+    emit Deposit(_from, abi.decode(_data, (bytes32)));
     return IERC1155TokenReceiver.onERC1155Received.selector;
   }
 
@@ -188,7 +186,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155BatchReceived: INVALID_TOKEN");
     }
 
-    emit Deposit(_from, _data.readBytes32(0));
+    emit Deposit(_from, abi.decode(_data, (bytes32)));
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
   }
 
@@ -208,9 +206,10 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     external onlyOwnerTier(1) returns (bool success)
   {
     uint256 live_period = livePeriod();
+    uint256 stored_period = period;
 
     // Get the available supply based on period
-    uint256 available_supply = live_period == period ? availableSupply : periodMintLimit;
+    uint256 available_supply = live_period == stored_period ? availableSupply : periodMintLimit;
 
     // If there is an insufficient available supply, a ReDeposit event will
     // be emitted and minting will be aborted. This allows the bridge operator
@@ -219,9 +218,12 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       uint256 new_available_supply = available_supply - _amounts[i];
       if (new_available_supply <= available_supply) {
         available_supply = new_available_supply;
+
       } else {
-        redepositNonce++;
-        emit ReDeposit(_to, _ids, _amounts, keccak256(abi.encode(redepositNonce)));
+        // Increment redeposit nonce
+        uint256 new_nonce = redepositNonce + 1;
+        redepositNonce = new_nonce;
+        emit ReDeposit(_to, _ids, _amounts, keccak256(abi.encode(new_nonce)));
         return false;
       }
     }
@@ -230,7 +232,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     availableSupply = available_supply;
 
     // Update period if changed
-    if (live_period != period) {
+    if (live_period != stored_period) {
       period = live_period;
     }
     
