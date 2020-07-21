@@ -269,41 +269,94 @@ describe('BridgeFactory', () => {
   describe('Bridge', () => {
     let id = ids[0]
     let amount = 1
+    let salt = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('salt'))
+    console.log(salt)
+
+    let conditions = [
+      'safeTransferFrom()',
+      'safeBatchTransferFrom()'  
+    ]
 
     context('Using Silver Cards', () => {
       context('Using safeTransferFrom', () => {
         it('should PASS if caller sends cards', async () => {
-          const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, id, amount, [], TX_PARAM)
+          const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, id, amount, salt, TX_PARAM)
           await expect(tx).to.be.fulfilled
         })
       })
   
       context('Using safeBatchTransferFrom', () => {
         it('should PASS if caller sends silver cards', async () => {
-          const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
+          const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, salt, TX_PARAM)
           await expect(tx).to.be.fulfilled
         })
       })
   
-      context('When cards were sent to Bridge', () => {
-        beforeEach(async () => {
-          await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
-        })
-  
-        it('should leave factory silver cards balance to 0', async () => {
-          let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
-          let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
-          for (let i = 0; i < ids.length; i++) {
-            expect(factory_balances[i]).to.be.eql(Zero)
-          }
-        })
-  
-        it('should update user silver cards balance', async () => {
-          let user_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => userAddress)
-          let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, ids)
-          for (let i = 0; i < ids.length; i++) {
-            expect(userBalances[i]).to.be.eql(Zero)
-          }
+      conditions.forEach(function(condition) { 
+        context(condition as string, () => {
+          context('When cards were sent to Bridge', () => {
+            let tx;
+            beforeEach(async () => {
+              if (condition == condition[0]) {
+                for (let i = 0; i < ids.length; i++) {
+                  tx = await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[i], amounts[i], salt, TX_PARAM)
+                }
+              } else {
+                tx = await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, salt, TX_PARAM)
+              }
+            })
+      
+            it('should leave factory silver cards balance to 0', async () => {
+              let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
+              let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
+              for (let i = 0; i < ids.length; i++) {
+                expect(factory_balances[i]).to.be.eql(Zero)
+              }
+            })
+      
+            it('should update user silver cards balance', async () => {
+              let user_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => userAddress)
+              let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, ids)
+              for (let i = 0; i < ids.length; i++) {
+                expect(userBalances[i]).to.be.eql(Zero)
+              }
+            })
+
+            it('should emit Deposit event', async () => {
+              let filterFromOperatorContract: ethers.ethers.EventFilter
+      
+              // Get event filter to get internal tx event
+              filterFromOperatorContract = factoryContract.filters.Deposit(null, null);
+      
+              // Get logs from internal transaction event
+              // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+              filterFromOperatorContract.fromBlock = 0;
+              let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+              expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.Deposit.topic)
+            })
+            
+            describe('Deposit Event', () => {
+              let args;
+              beforeEach(async () => {
+                let filterFromOperatorContract: ethers.ethers.EventFilter
+      
+                // Get event filter to get internal tx event
+                filterFromOperatorContract = factoryContract.filters.Deposit(null, null);
+        
+                // Get logs from internal transaction event
+                // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+                filterFromOperatorContract.fromBlock = 0;
+                let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+                args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
+              })
+              it('should have user address as `recipient` field', async () => {  
+                expect(args.recipient).to.be.eql(userAddress)
+              })
+              it('should have salt as `salt` field', async () => {  
+                expect(args.salt).to.be.eql(salt)
+              })
+            })
+          })
         })
       })
     })
@@ -314,7 +367,7 @@ describe('BridgeFactory', () => {
 
       context('Using safeBatchTransferFrom', () => {
         it('should PASS if caller sends arcs', async () => {
-          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], [], TX_PARAM)
+          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], salt, TX_PARAM)
           await expect(tx).to.be.fulfilled
         })
   
@@ -322,85 +375,130 @@ describe('BridgeFactory', () => {
           let invalid_id = 123456
           await userArcadeumCoinContract.functions.mintMock(userAddress, invalid_id, cost, [])
 
-          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [cost], [], TX_PARAM)
+          const tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [cost], salt, TX_PARAM)
           await expect(tx).to.be.rejectedWith(RevertError("BridgeFactory#onERC1155BatchReceived: INVALID_ARC_ID"))
 
-          const tx2 = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID, invalid_id], [cost, cost], [], TX_PARAM)
+          const tx2 = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID, invalid_id], [cost, cost], salt, TX_PARAM)
           await expect(tx2).to.be.rejectedWith(RevertError("BridgeFactory#onERC1155BatchReceived: INVALID_ARRAY_LENGTH"))
         })
       })
   
       context('Using safeTransferFrom', () => {
         it('should PASS if caller send arcs', async () => {
-          const tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
+          const tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, salt, TX_PARAM)
           await expect(tx).to.be.fulfilled
         })
       })
   
       context('When arc was sent to Bridge', () => {
-        beforeEach(async () => {
-          await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
-        })
+        conditions.forEach(function(condition) { 
+          context(condition as string, () => {
+            context('When cards were sent to Bridge', () => {
+              let tx;
+              beforeEach(async () => {
+                if (condition == condition[0]) {
+                  tx = await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, salt, TX_PARAM)
+                } else {
+                  tx = await userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], salt, TX_PARAM)
+                }
+              })
   
-        it('should leave factory silver cards balance to 0', async () => {
-          let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
-          let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
-          for (let i = 0; i < ids.length; i++) {
-            expect(factory_balances[i]).to.be.eql(Zero)
-          }
-        })
+              it('should leave factory silver cards balance to 0', async () => {
+                let factory_addresses = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => factory)
+                let factory_balances = await userSkyweaverAssetContract.functions.balanceOfBatch(factory_addresses, ids)
+                for (let i = 0; i < ids.length; i++) {
+                  expect(factory_balances[i]).to.be.eql(Zero)
+                }
+              })
 
-        it('should update factory ARC balance', async () => {
-          let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
-          expect(factory_balance).to.be.eql(cost)
-        })
-  
-        it('should update user ARC balance', async () => {
-          let user_balance = await arcadeumCoinContract.functions.balanceOf(userAddress, arcID)
-          expect(user_balance).to.be.eql(baseTokenAmount.sub(cost))
-        })
-  
+              it('should update factory ARC balance', async () => {
+                let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
+                expect(factory_balance).to.be.eql(cost)
+              })
+        
+              it('should update user ARC balance', async () => {
+                let user_balance = await arcadeumCoinContract.functions.balanceOf(userAddress, arcID)
+                expect(user_balance).to.be.eql(baseTokenAmount.sub(cost))
+              })
 
-        describe('withdraw() function', () => {
+              it('should emit Deposit event', async () => {
+                let filterFromOperatorContract: ethers.ethers.EventFilter
+        
+                // Get event filter to get internal tx event
+                filterFromOperatorContract = factoryContract.filters.Deposit(null, null);
+        
+                // Get logs from internal transaction event
+                // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+                filterFromOperatorContract.fromBlock = 0;
+                let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+                expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.Deposit.topic)
+              })
+              
+              describe('Deposit Event', () => {
+                let args;
+                beforeEach(async () => {
+                  let filterFromOperatorContract: ethers.ethers.EventFilter
+        
+                  // Get event filter to get internal tx event
+                  filterFromOperatorContract = factoryContract.filters.Deposit(null, null);
+          
+                  // Get logs from internal transaction event
+                  // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+                  filterFromOperatorContract.fromBlock = 0;
+                  let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+                  args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
+                })
+                it('should have user address as `recipient` field', async () => {  
+                  expect(args.recipient).to.be.eql(userAddress)
+                })
+                it('should have salt as `salt` field', async () => {  
+                  expect(args.salt).to.be.eql(salt)
+                })
+              })
 
-          let recipient = randomWallet.address
-          let data = []
+              describe('withdraw() function', () => {
 
-          it('should PASS if caller is owner', async () => {
-            const tx = factoryContract.functions.withdraw(recipient, data)
-            await expect(tx).to.be.fulfilled
-          })
+                let recipient = randomWallet.address
+                let data = []
 
-          it('should REVERT if caller is sub owner', async () => {
-            const tx = subOwnerFactoryContract.functions.withdraw(recipient, data)
-            await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
-          })
-      
-          it('should REVERT if caller is not owner', async () => {
-            const tx = userFactoryContract.functions.withdraw(recipient, data)
-            await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
-          })
-      
-          it('should REVERT if recipient is 0x0', async () => {
-            const tx = factoryContract.functions.withdraw(ZERO_ADDRESS, data)
-            await expect(tx).to.be.rejectedWith(RevertError("BridgeFactory#withdraw: INVALID_RECIPIENT"))
-          })
+                it('should PASS if caller is owner', async () => {
+                  const tx = factoryContract.functions.withdraw(recipient, data)
+                  await expect(tx).to.be.fulfilled
+                })
 
-          context('When ARC is withdrawn', () => {
-            beforeEach(async () => {
-              await factoryContract.functions.withdraw(recipient, data)
+                it('should REVERT if caller is sub owner', async () => {
+                  const tx = subOwnerFactoryContract.functions.withdraw(recipient, data)
+                  await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
+                })
+            
+                it('should REVERT if caller is not owner', async () => {
+                  const tx = userFactoryContract.functions.withdraw(recipient, data)
+                  await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
+                })
+            
+                it('should REVERT if recipient is 0x0', async () => {
+                  const tx = factoryContract.functions.withdraw(ZERO_ADDRESS, data)
+                  await expect(tx).to.be.rejectedWith(RevertError("BridgeFactory#withdraw: INVALID_RECIPIENT"))
+                })
+
+                context('When ARC is withdrawn', () => {
+                  beforeEach(async () => {
+                    await factoryContract.functions.withdraw(recipient, data)
+                  })
+
+                  it('should update factory ARC balance', async () => {
+                    let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
+                    expect(factory_balance).to.be.eql(Zero)
+                  })
+            
+                  it('should update recipient ARC balance', async () => {
+                    let recipient_balance = await arcadeumCoinContract.functions.balanceOf(recipient, arcID)
+                    expect(recipient_balance).to.be.eql(cost)
+                  })
+                })
+              })
             })
-
-            it('should update factory ARC balance', async () => {
-              let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
-              expect(factory_balance).to.be.eql(Zero)
-            })
-      
-            it('should update recipient ARC balance', async () => {
-              let recipient_balance = await arcadeumCoinContract.functions.balanceOf(recipient, arcID)
-              expect(recipient_balance).to.be.eql(cost)
-            })
-          })
+          })  
         })
       })
     })
@@ -590,7 +688,7 @@ describe('BridgeFactory', () => {
         let filterFromOperatorContract: ethers.ethers.EventFilter
 
         // Get event filter to get internal tx event
-        filterFromOperatorContract = factoryContract.filters.ReDeposit(null,null,null);
+        filterFromOperatorContract = factoryContract.filters.ReDeposit(null,null,null,null);
 
         // Get logs from internal transaction event
         // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)

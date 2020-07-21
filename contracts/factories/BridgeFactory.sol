@@ -2,6 +2,7 @@ pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
+import "../utils/LibBytes.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
@@ -17,6 +18,7 @@ import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
  */
 contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
+  using LibBytes for bytes;
 
   /***********************************|
   |             Variables             |
@@ -34,7 +36,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
-  event ReDeposit(address indexed recipient, uint256[] ids, uint256[] amounts);
+  event Deposit(address indexed recipient, bytes32 salt);
+  event ReDeposit(address indexed recipient, uint256[] ids, uint256[] amounts, bytes32 salt);
 
   /***********************************|
   |            Constructor            |
@@ -121,15 +124,17 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Burns SW asset when received, or store ARC
    * @dev Make sure to send the right assets and the correct amount 
    *      as it's not validated in this contract.
+   * @param _from    Source address
    * @param _id      Id of Token being transferred
    * @param _amount  Amount of Token _id being transferred
+   * @param _data    Should be a bytes32 salt provided by user
    */
   function onERC1155Received(
     address, // _operator
-    address, // _from 
+    address _from,
     uint256 _id, 
     uint256 _amount, 
-    bytes memory // _data
+    bytes memory _data
   )
     public override returns(bytes4)
   {
@@ -143,8 +148,9 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
 
     } else {
       revert("BridgeFactory#onERC1155Received: INVALID_TOKEN");
-    }
-
+    }  
+    
+    emit Deposit(_from, _data.readBytes32(0));
     return IERC1155TokenReceiver.onERC1155Received.selector;
   }
 
@@ -152,15 +158,17 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Burns SW assets when received, or store ARC
    * @dev Make sure to send the right assets and the correct amount 
    *      as it's not validated in this contract.
+   * @param _from    Source address
    * @param _ids     An array containing ids of each Token being transferred
    * @param _amounts An array containing amounts of each Token being transferred
+   * @param _data    Should be a bytes32 salt provided by user
    */
   function onERC1155BatchReceived(
     address, // _operator
-    address, // _from
+    address _from,
     uint256[] memory _ids,
     uint256[] memory _amounts,
-    bytes memory // _data
+    bytes memory _data
   )
     public override returns(bytes4)
   {
@@ -178,6 +186,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155BatchReceived: INVALID_TOKEN");
     }
 
+    emit Deposit(_from, _data.readBytes32(0));
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
   }
 
@@ -209,7 +218,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       if (new_available_supply <= available_supply) {
         available_supply = new_available_supply;
       } else {
-        emit ReDeposit(_to, _ids, _amounts);
+        bytes32 salt =  keccak256(abi.encode(_to, _ids, _amounts, block.number));
+        emit ReDeposit(_to, _ids, _amounts, salt);
         return false;
       }
     }
