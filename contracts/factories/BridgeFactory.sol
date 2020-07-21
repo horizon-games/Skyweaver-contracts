@@ -35,6 +35,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 internal periodMintLimit;                  // Amount that can be minted within 24h
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
+  uint256 internal redepositNonce; // Nonce for ReDeposit event salt
+
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
   event Deposit(address indexed recipient, bytes32 salt);
   event ReDeposit(address indexed recipient, uint256[] ids, uint256[] amounts, bytes32 salt);
@@ -218,8 +220,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       if (new_available_supply <= available_supply) {
         available_supply = new_available_supply;
       } else {
-        bytes32 salt =  keccak256(abi.encode(_to, _ids, _amounts, block.number));
-        emit ReDeposit(_to, _ids, _amounts, salt);
+        redepositNonce++;
+        emit ReDeposit(_to, _ids, _amounts, keccak256(abi.encode(redepositNonce)));
         return false;
       }
     }

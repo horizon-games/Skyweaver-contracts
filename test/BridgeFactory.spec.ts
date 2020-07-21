@@ -684,6 +684,24 @@ describe('BridgeFactory', () => {
         await ownerProvider.send("evm_revert", [snapshot])
       })
 
+      it('should increment redepositNonce', async () => {
+        let tx2 = await factoryContract.functions.batchMint(userAddress, mintIds, bad_mintAmounts)
+        let filterFromOperatorContract: ethers.ethers.EventFilter
+
+        // Get event filter to get internal tx event
+        filterFromOperatorContract = factoryContract.filters.ReDeposit(null,null,null,null);
+
+        // Get logs from internal transaction event
+        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+        filterFromOperatorContract.fromBlock = tx2.blockNumber;
+        let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+        let args = factoryContract.interface.events.ReDeposit.decode(logs[0].data, logs[0].topics)
+
+        // Incremented nonce
+        let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+        expect(args.salt).to.be.eql(redeposit_salt)
+      })
+
       it('should emit ReDeposit event', async () => {
         let filterFromOperatorContract: ethers.ethers.EventFilter
 
@@ -698,30 +716,40 @@ describe('BridgeFactory', () => {
       })
 
       describe('ReDeposit Event', () => {
-        it('should have user as `tx.recipient` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
+        let args;
+        beforeEach(async () => {
+          let filterFromOperatorContract: ethers.ethers.EventFilter
 
-          const args = ev.args! as any
+          // Get event filter to get internal tx event
+          filterFromOperatorContract = factoryContract.filters.ReDeposit(null,null,null,null);
+  
+          // Get logs from internal transaction event
+          // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+          filterFromOperatorContract.fromBlock = 0;
+          let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+          args = factoryContract.interface.events.ReDeposit.decode(logs[0].data, logs[0].topics)
+        })
+        it('should have user as `tx.recipient` field', async () => {  
           expect(args.recipient).to.be.eql(userAddress)
         })
         it('should have correct ids as `tx.ids` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
-
-          const args = ev.args! as any
           for (let i = 0; i < mintIds.length; i++){
             expect(args.ids[i]).to.be.eql(new BigNumber(mintIds[i]))
           }
         })
         it('should have correct amounts as `tx.amounts` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
-
-          const args = ev.args! as any
           for (let i = 0; i < bad_mintAmounts.length; i++){
             expect(args.amounts[i]).to.be.eql(new BigNumber(bad_mintAmounts[i]))
           }
+        })
+        it('should have correct amounts as `tx.amounts` field', async () => {  
+          for (let i = 0; i < bad_mintAmounts.length; i++){
+            expect(args.amounts[i]).to.be.eql(new BigNumber(bad_mintAmounts[i]))
+          }
+        })
+        it('should have the correct salt as `tx.salt` field', async () => { 
+          let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [1]))
+          expect(args.salt).to.be.eql(redeposit_salt)
         })
       })
     })
