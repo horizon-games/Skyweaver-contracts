@@ -298,20 +298,26 @@ describe('Conquest', () => {
         expect(logs[0].topics[0]).to.be.eql(factoryContract.interface.events.ConquestEntered.topic)
       })
       
-      describe.skip('ConquestEntered Event', () => {
-        it('should have user address as `tx.user` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
+      describe('ConquestEntered Event', () => {
+        let args;
+        beforeEach(async () => {
+          let filterFromOperatorContract: ethers.ethers.EventFilter
 
-          const args = ev.args! as any
+          // Get event filter to get internal tx event
+          filterFromOperatorContract = factoryContract.filters.ConquestEntered(null, null);
+  
+          // Get logs from internal transaction event
+          // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+          filterFromOperatorContract.fromBlock = 0;
+          let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+          args = factoryContract.interface.events.ConquestEntered.decode(logs[0].data, logs[0].topics)
+        })
+
+        it('should have user address as `tx.user` field', async () => {  
           expect(args.user).to.be.eql(userAddress)
         })
         it('should have correct time value as `tx.nConquests` field', async () => {  
-          const receipt = await tx.wait(1)
-          const ev = receipt.events!.pop()!
-
-          const args = ev.args! as any
-          expect(args.nConquests).to.be.eql(1)
+          expect(args.nConquests).to.be.eql(new BigNumber(1))
         })
       })
     })

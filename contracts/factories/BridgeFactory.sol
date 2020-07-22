@@ -33,7 +33,8 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 internal periodMintLimit;                  // Amount that can be minted within 24h
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
-  uint256 internal redepositNonce; // Nonce for ReDeposit event salt
+  // Nonce to be used when salt is not provided by the users for Deposit and Redeposit events
+  uint256 internal saltNonce; 
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
   event Deposit(address indexed recipient, bytes32 salt);
@@ -150,7 +151,10 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155Received: INVALID_TOKEN");
     }  
     
-    emit Deposit(_from, abi.decode(_data, (bytes32)));
+    // Get salt from _data argument or generate it if missing
+    bytes32 salt = _data.length == 0 ? generateSalt() : abi.decode(_data, (bytes32));
+    emit Deposit(_from, salt);
+
     return IERC1155TokenReceiver.onERC1155Received.selector;
   }
 
@@ -186,7 +190,10 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155BatchReceived: INVALID_TOKEN");
     }
 
-    emit Deposit(_from, abi.decode(_data, (bytes32)));
+    // Get salt from _data argument or generate it if missing
+    bytes32 salt = _data.length == 0 ? generateSalt() : abi.decode(_data, (bytes32));
+    emit Deposit(_from, salt);
+
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
   }
 
@@ -215,15 +222,12 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
     // be emitted and minting will be aborted. This allows the bridge operator
     // to re-mint the tokens to the recipient on the other chain.
     for (uint256 i = 0; i < _ids.length; i++) {
+      // Overflow is used to determine if a redeposit should happen or a mint should happen 
       uint256 new_available_supply = available_supply - _amounts[i];
       if (new_available_supply <= available_supply) {
         available_supply = new_available_supply;
-
       } else {
-        // Increment redeposit nonce
-        uint256 new_nonce = redepositNonce + 1;
-        redepositNonce = new_nonce;
-        emit ReDeposit(_to, _ids, _amounts, keccak256(abi.encode(new_nonce)));
+        emit ReDeposit(_to, _ids, _amounts, generateSalt());
         return false;
       }
     }
@@ -270,6 +274,15 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   /***********************************|
   |         Utility Functions         |
   |__________________________________*/
+
+  /**
+   * @notice Will generate a salt based on the saltNonce and increment the nonce
+   */
+  function generateSalt() internal returns (bytes32) {
+    uint256 new_nonce = saltNonce + 1;
+    saltNonce = new_nonce;
+    return keccak256(abi.encode(new_nonce));
+  }
 
   /**
    * @notice Calculate the current period

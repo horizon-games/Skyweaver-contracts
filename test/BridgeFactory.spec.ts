@@ -322,6 +322,34 @@ describe('BridgeFactory', () => {
               }
             })
 
+            it('should increment saltNonce if no data is provided', async () => {
+              let tx2;
+              await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
+              await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
+              if (condition == condition[0]) {
+                await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[0], amounts[0], [], TX_PARAM)
+                tx2 = await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[0], amounts[0], [], TX_PARAM)
+              } else {
+                await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
+                tx2 = await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
+              }
+
+              let filterFromOperatorContract: ethers.ethers.EventFilter
+      
+              // Get event filter to get internal tx event
+              filterFromOperatorContract = factoryContract.filters.Deposit(null,null);
+      
+              // Get logs from internal transaction event
+              // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+              filterFromOperatorContract.fromBlock = tx2.blockNumber;
+              let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+              let args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
+      
+              // Incremented nonce
+              let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+              expect(args.salt).to.be.eql(generated_salt)
+            })
+
             it('should emit Deposit event', async () => {
               let filterFromOperatorContract: ethers.ethers.EventFilter
       
@@ -419,6 +447,32 @@ describe('BridgeFactory', () => {
               it('should update user ARC balance', async () => {
                 let user_balance = await arcadeumCoinContract.functions.balanceOf(userAddress, arcID)
                 expect(user_balance).to.be.eql(baseTokenAmount.sub(cost))
+              })
+
+              it('should increment saltNonce if no data is provided', async () => {
+                let tx2;
+                if (condition == condition[0]) {
+                  await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
+                  tx2 = await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
+                } else {
+                  await userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], [], TX_PARAM)
+                  tx2 = await userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], [], TX_PARAM)
+                }
+  
+                let filterFromOperatorContract: ethers.ethers.EventFilter
+        
+                // Get event filter to get internal tx event
+                filterFromOperatorContract = factoryContract.filters.Deposit(null,null);
+        
+                // Get logs from internal transaction event
+                // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+                filterFromOperatorContract.fromBlock = tx2.blockNumber;
+                let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+                let args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
+        
+                // Incremented nonce
+                let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+                expect(args.salt).to.be.eql(generated_salt)
               })
 
               it('should emit Deposit event', async () => {
@@ -684,7 +738,7 @@ describe('BridgeFactory', () => {
         await ownerProvider.send("evm_revert", [snapshot])
       })
 
-      it('should increment redepositNonce', async () => {
+      it('should increment saltNonce', async () => {
         let tx2 = await factoryContract.functions.batchMint(userAddress, mintIds, bad_mintAmounts)
         let filterFromOperatorContract: ethers.ethers.EventFilter
 
