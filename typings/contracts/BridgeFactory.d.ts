@@ -37,7 +37,7 @@ interface BridgeFactoryInterface extends Interface {
     livePeriod: TypedFunctionDescription<{ encode([]: []): string }>;
 
     onERC1155BatchReceived: TypedFunctionDescription<{
-      encode([, , _ids, _amounts]: [
+      encode([, _from, _ids, _amounts, _data]: [
         string,
         string,
         BigNumberish[],
@@ -47,7 +47,7 @@ interface BridgeFactoryInterface extends Interface {
     }>;
 
     onERC1155Received: TypedFunctionDescription<{
-      encode([, , _id, _amount]: [
+      encode([, _from, _id, _amount, _data]: [
         string,
         string,
         BigNumberish,
@@ -70,6 +70,10 @@ interface BridgeFactoryInterface extends Interface {
   };
 
   events: {
+    Deposit: TypedEventDescription<{
+      encodeTopics([recipient, salt]: [string | null, null]): string[];
+    }>;
+
     OwnershipGranted: TypedEventDescription<{
       encodeTopics([owner, previousTier, newTier]: [
         string | null,
@@ -80,6 +84,15 @@ interface BridgeFactoryInterface extends Interface {
 
     PeriodMintLimitChanged: TypedEventDescription<{
       encodeTopics([oldMintingLimit, newMintingLimit]: [null, null]): string[];
+    }>;
+
+    ReDeposit: TypedEventDescription<{
+      encodeTopics([recipient, ids, amounts, salt]: [
+        string | null,
+        null,
+        null,
+        null
+      ]): string[];
     }>;
   };
 }
@@ -126,19 +139,19 @@ export class BridgeFactory extends Contract {
 
     onERC1155BatchReceived(
       arg0: string,
-      arg1: string,
+      _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: Arrayish,
+      _data: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
     onERC1155Received(
       arg0: string,
-      arg1: string,
+      _from: string,
       _id: BigNumberish,
       _amount: BigNumberish,
-      arg4: Arrayish,
+      _data: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -181,19 +194,19 @@ export class BridgeFactory extends Contract {
 
   onERC1155BatchReceived(
     arg0: string,
-    arg1: string,
+    _from: string,
     _ids: BigNumberish[],
     _amounts: BigNumberish[],
-    arg4: Arrayish,
+    _data: Arrayish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
   onERC1155Received(
     arg0: string,
-    arg1: string,
+    _from: string,
     _id: BigNumberish,
     _amount: BigNumberish,
-    arg4: Arrayish,
+    _data: Arrayish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -211,6 +224,8 @@ export class BridgeFactory extends Contract {
   ): Promise<ContractTransaction>;
 
   filters: {
+    Deposit(recipient: string | null, salt: null): EventFilter;
+
     OwnershipGranted(
       owner: string | null,
       previousTier: BigNumberish | null,
@@ -220,6 +235,13 @@ export class BridgeFactory extends Contract {
     PeriodMintLimitChanged(
       oldMintingLimit: null,
       newMintingLimit: null
+    ): EventFilter;
+
+    ReDeposit(
+      recipient: string | null,
+      ids: null,
+      amounts: null,
+      salt: null
     ): EventFilter;
   };
 
@@ -244,18 +266,18 @@ export class BridgeFactory extends Contract {
 
     onERC1155BatchReceived(
       arg0: string,
-      arg1: string,
+      _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: Arrayish
+      _data: Arrayish
     ): Promise<BigNumber>;
 
     onERC1155Received(
       arg0: string,
-      arg1: string,
+      _from: string,
       _id: BigNumberish,
       _amount: BigNumberish,
-      arg4: Arrayish
+      _data: Arrayish
     ): Promise<BigNumber>;
 
     supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;

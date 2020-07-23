@@ -4,5 +4,5 @@ cache
 
 .vscode/
 .vs_code/
-
+typings/contracts/*Factory.ts
 node_modules/

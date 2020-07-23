@@ -33,7 +33,12 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 internal periodMintLimit;                  // Amount that can be minted within 24h
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
+  // Nonce to be used when salt is not provided by the users for Deposit and Redeposit events
+  uint256 internal saltNonce; 
+
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
+  event Deposit(address indexed recipient, bytes32 salt);
+  event ReDeposit(address indexed recipient, uint256[] ids, uint256[] amounts, bytes32 salt);
 
   /***********************************|
   |            Constructor            |
@@ -120,15 +125,17 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Burns SW asset when received, or store ARC
    * @dev Make sure to send the right assets and the correct amount 
    *      as it's not validated in this contract.
+   * @param _from    Source address
    * @param _id      Id of Token being transferred
    * @param _amount  Amount of Token _id being transferred
+   * @param _data    Should be a bytes32 salt provided by user
    */
   function onERC1155Received(
     address, // _operator
-    address, // _from 
+    address _from,
     uint256 _id, 
     uint256 _amount, 
-    bytes memory // _data
+    bytes memory _data
   )
     public override returns(bytes4)
   {
@@ -142,7 +149,11 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
 
     } else {
       revert("BridgeFactory#onERC1155Received: INVALID_TOKEN");
-    }
+    }  
+    
+    // Get salt from _data argument or generate it if missing
+    bytes32 salt = _data.length == 0 ? generateSalt() : abi.decode(_data, (bytes32));
+    emit Deposit(_from, salt);
 
     return IERC1155TokenReceiver.onERC1155Received.selector;
   }
@@ -151,15 +162,17 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Burns SW assets when received, or store ARC
    * @dev Make sure to send the right assets and the correct amount 
    *      as it's not validated in this contract.
+   * @param _from    Source address
    * @param _ids     An array containing ids of each Token being transferred
    * @param _amounts An array containing amounts of each Token being transferred
+   * @param _data    Should be a bytes32 salt provided by user
    */
   function onERC1155BatchReceived(
     address, // _operator
-    address, // _from
+    address _from,
     uint256[] memory _ids,
     uint256[] memory _amounts,
-    bytes memory // _data
+    bytes memory _data
   )
     public override returns(bytes4)
   {
@@ -177,6 +190,10 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
       revert("BridgeFactory#onERC1155BatchReceived: INVALID_TOKEN");
     }
 
+    // Get salt from _data argument or generate it if missing
+    bytes32 salt = _data.length == 0 ? generateSalt() : abi.decode(_data, (bytes32));
+    emit Deposit(_from, salt);
+
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
   }
 
@@ -193,31 +210,39 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
    */
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts)
-    external onlyOwnerTier(1)
+    external onlyOwnerTier(1) returns (bool success)
   {
-    // Get current period and current available supply
     uint256 live_period = livePeriod();
-    uint256 available_supply;
+    uint256 stored_period = period;
 
     // Get the available supply based on period
-    if (live_period == period) {
-      available_supply = availableSupply;
-    } else {
-      available_supply = periodMintLimit;
-      period = live_period;
-    }
+    uint256 available_supply = live_period == stored_period ? availableSupply : periodMintLimit;
 
-    // Reduce supply based on amount being minted
-    // Will revert if available supply is insufficient
+    // If there is an insufficient available supply, a ReDeposit event will
+    // be emitted and minting will be aborted. This allows the bridge operator
+    // to re-mint the tokens to the recipient on the other chain.
     for (uint256 i = 0; i < _ids.length; i++) {
-      available_supply = available_supply.sub(_amounts[i]);
+      // Overflow is used to determine if a redeposit should happen or a mint should happen 
+      uint256 new_available_supply = available_supply - _amounts[i];
+      if (new_available_supply <= available_supply) {
+        available_supply = new_available_supply;
+      } else {
+        emit ReDeposit(_to, _ids, _amounts, generateSalt());
+        return false;
+      }
     }
 
     // Store available supply
     availableSupply = available_supply;
+
+    // Update period if changed
+    if (live_period != stored_period) {
+      period = live_period;
+    }
     
     // Mint assets
     skyweaverAssets.batchMint(_to, _ids, _amounts, "");
+    return true;
   }
 
 
@@ -249,6 +274,15 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   /***********************************|
   |         Utility Functions         |
   |__________________________________*/
+
+  /**
+   * @notice Will generate a salt based on the saltNonce and increment the nonce
+   */
+  function generateSalt() internal returns (bytes32) {
+    uint256 new_nonce = saltNonce + 1;
+    saltNonce = new_nonce;
+    return keccak256(abi.encode(new_nonce));
+  }
 
   /**
    * @notice Calculate the current period

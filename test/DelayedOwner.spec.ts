@@ -403,8 +403,6 @@ describe('TieredOwnable', () => {
         //@ts-ignore
         transaction2.data = iface.functions.call_throw.encode([])
         transaction2.id = 1
-        console.log(transaction)
-        console.log(transaction2)
         let tx0 = await contract.functions.register(transaction2)
 
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx0.hash!)
