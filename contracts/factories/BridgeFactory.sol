@@ -34,7 +34,7 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   // Nonce to be used when salt is not provided by the users for Deposit and Redeposit events
-  uint256 internal saltNonce; 
+  uint256 internal saltNonce = uint256(keccak256("org.skyweaver.bridge.initial.nonce")); 
 
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
   event Deposit(address indexed recipient, bytes32 salt);
