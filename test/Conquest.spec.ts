@@ -56,10 +56,6 @@ describe('Conquest', () => {
   let userSkyweaverAssetContract: SkyweaverAssets
   let factoryContract: Conquest
 
-  // Ticket token
-  let ticketContract: ERC1155Mock
-  let userTicketContract: ERC1155Mock
-
   // Factory manager
   let userFactoryContract: Conquest
 
@@ -71,12 +67,12 @@ describe('Conquest', () => {
   const nTokensPerType = new BigNumber(100)
 
   // Ticket token Param
-  const ticketID = new BigNumber(2);
+  const ticketID = new BigNumber(555);
   const ticketAmount = new BigNumber(10);
 
   // Parameters
   const DELAY = new BigNumber(5).mul(60) // 5 minutes
-  const MAX_REWARDS = new BigNumber(200);
+  const MAX_REWARDS = new BigNumber(200)
 
   // Range values 
   const minRange = new BigNumber(1);
@@ -100,9 +96,6 @@ describe('Conquest', () => {
 
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
-    // Deploy Ticket tokens
-    ticketContract = await ticketAbstract.deploy(ownerWallet) as ERC1155Mock
-    userTicketContract = await ticketContract.connect(userSigner) as ERC1155Mock
 
     // Deploy Skyweaver Assets Contract
     skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
@@ -111,7 +104,6 @@ describe('Conquest', () => {
     // Deploy silver card factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
       skyweaverAssetsContract.address,
-      ticketContract.address,
       ticketID
     ]) as Conquest
     userFactoryContract = await factoryContract.connect(userSigner) as Conquest
@@ -128,8 +120,8 @@ describe('Conquest', () => {
     await skyweaverAssetsContract.functions.addMintPermission(ownerAddress, 0, 666);
 
     // Mint Ticket tokens to owner and user
-    await ticketContract.functions.mintMock(ownerAddress, ticketID, ticketAmount , [])
-    await ticketContract.functions.mintMock(userAddress, ticketID, ticketAmount , [])
+    await skyweaverAssetsContract.functions.batchMint(ownerAddress, [ticketID], [ticketAmount] , [])
+    await skyweaverAssetsContract.functions.batchMint(userAddress, [ticketID], [ticketAmount] , [])
   })
 
   describe('Getter functions', () => {
@@ -158,7 +150,7 @@ describe('Conquest', () => {
 
     context('Using safeBatchTransferFrom', () => {
       it('should PASS if caller sends 1 ticket', async () => {
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await expect(tx).to.be.fulfilled
       })
 
@@ -172,48 +164,48 @@ describe('Conquest', () => {
       })
 
       it('should REVERT if ids length is more than 1', async () => {
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID, ticketID], [amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ERC1155#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID, ticketID], [amount], [], TX_PARAM)
+        await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
       })
 
       it('should REVERT if amounts length is more than 1', async () => {
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount, amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ERC1155#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount, amount], [], TX_PARAM)
+        await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
       })
 
       it('should REVERT if ID is not ticket', async () => {
-        let invalid_id = 123456
-        await userTicketContract.functions.mintMock(userAddress, invalid_id, amount, [])
+        let invalid_id = ticketID.sub(1)
+        await skyweaverAssetsContract.functions.batchMint(userAddress, [invalid_id], [amount], [])
 
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [amount], [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [invalid_id], [amount], [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_ID"))
       })
 
       it('should REVERT if sent more than 1 ticket', async () => {
         let invalid_amount = 2
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [invalid_amount], [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [invalid_amount], [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
       })
 
       it('should REVERT if caller is already in a conquest', async () => {
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await expect(tx).to.be.fulfilled
 
-        const tx2 = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+        const tx2 = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await expect(tx2).to.be.rejectedWith(RevertError("Conquest#entry: PLAYER_ALREADY_IN_CONQUEST"))
       })
 
       it('should REVERT if caller tries to do conquest faster than limit', async () => {
-        await userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+        await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await factoryContract.functions.exitConquest(userAddress, ids, amounts);
-        const tx = userTicketContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: NEW_CONQUEST_TOO_EARLY"))
       })
     })
 
     context('Using safeTransferFrom', () => {
       it('should PASS if caller sends 1 ticket', async () => {
-        const tx = userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
         await expect(tx).to.be.fulfilled
       })
 
@@ -227,29 +219,29 @@ describe('Conquest', () => {
       })
 
       it('should REVERT if ID is not ticket', async () => {
-        let invalid_id = 123456
-        await userTicketContract.functions.mintMock(userAddress, invalid_id, amount, [])
+        let invalid_id = ticketID.sub(1)
+        await skyweaverAssetsContract.functions.batchMint(userAddress, [invalid_id], [amount], [])
 
-        const tx = userTicketContract.functions.safeTransferFrom(userAddress, factory, invalid_id, amount, [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, invalid_id, amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_ID"))
       })
 
       it('should REVERT if sent more than 1 ticket', async () => {
         let invalid_amount = 2
-        const tx = userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, invalid_amount, [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, invalid_amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
       })
 
       it('should REVERT if caller is already in a conquest', async () => {
-        await userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-        const tx = userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: PLAYER_ALREADY_IN_CONQUEST"))
       })
 
       it('should REVERT if caller tries to do conquest faster than limit', async () => {
-        await userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
         await factoryContract.functions.exitConquest(userAddress, ids, amounts)
-        const tx = userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: NEW_CONQUEST_TOO_EARLY"))
       })
     })
@@ -257,16 +249,16 @@ describe('Conquest', () => {
     context('When ticket was sent to factory', () => {
       let tx;
       beforeEach(async () => {
-        tx = await userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+        tx = await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
       })
 
       it('should update factory ticket balance', async () => {
-        let factory_balance = await ticketContract.functions.balanceOf(factory, ticketID)
+        let factory_balance = await skyweaverAssetsContract.functions.balanceOf(factory, ticketID)
         expect(factory_balance).to.be.eql(amount)
       })
 
       it('should update user ticket balance', async () => {
-        let user_balance = await ticketContract.functions.balanceOf(userAddress, ticketID)
+        let user_balance = await skyweaverAssetsContract.functions.balanceOf(userAddress, ticketID)
         expect(user_balance).to.be.eql(ticketAmount.sub(amount))
       })
 
@@ -341,7 +333,7 @@ describe('Conquest', () => {
       conditions.forEach(function(condition) {
         context(condition[2] as string, () => {
           beforeEach(async () => {
-            await userTicketContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+            await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
             rewardIds = condition[0]
             rewardAmounts = condition[1]
           })
@@ -353,7 +345,7 @@ describe('Conquest', () => {
       
           it('should REVERT if caller is not owner', async () => {
             const tx = userFactoryContract.functions.exitConquest(userAddress, rewardIds, rewardAmounts)
-            await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+            await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
           })
       
           it('should REVERT if trying to mint more than max amount', async () => {

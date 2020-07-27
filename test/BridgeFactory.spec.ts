@@ -297,7 +297,7 @@ describe('BridgeFactory', () => {
           context('When cards were sent to Bridge', () => {
             let tx;
             beforeEach(async () => {
-              if (condition == condition[0]) {
+              if (condition == conditions[0]) {
                 for (let i = 0; i < ids.length; i++) {
                   tx = await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[i], amounts[i], salt, TX_PARAM)
                 }
@@ -326,7 +326,7 @@ describe('BridgeFactory', () => {
               let tx2;
               await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
               await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts, [])
-              if (condition == condition[0]) {
+              if (condition == conditions[0]) {
                 await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[0], amounts[0], [], TX_PARAM)
                 tx2 = await userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ids[0], amounts[0], [], TX_PARAM)
               } else {
@@ -424,7 +424,7 @@ describe('BridgeFactory', () => {
             context('When cards were sent to Bridge', () => {
               let tx;
               beforeEach(async () => {
-                if (condition == condition[0]) {
+                if (condition == conditions[0]) {
                   tx = await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, salt, TX_PARAM)
                 } else {
                   tx = await userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [cost], salt, TX_PARAM)
@@ -451,7 +451,7 @@ describe('BridgeFactory', () => {
 
               it('should increment saltNonce if no data is provided', async () => {
                 let tx2;
-                if (condition == condition[0]) {
+                if (condition == conditions[0]) {
                   await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
                   tx2 = await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, cost, [], TX_PARAM)
                 } else {

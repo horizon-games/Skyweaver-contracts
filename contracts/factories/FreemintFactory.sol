@@ -1,6 +1,6 @@
 pragma solidity ^0.6.8;
 
-import "../utils/Ownable.sol";
+import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 
 /**
@@ -8,7 +8,7 @@ import "../interfaces/ISkyweaverAssets.sol";
  * range. This factory will be used to mint community related assets, special
  * event assets that are meant to be given away.
  */
-contract FreemintFactory is Ownable {
+contract FreemintFactory is TieredOwnable {
 
   // ERC-1155 Skyweaver assets contract
   ISkyweaverAssets internal skyweaverAssets;
@@ -41,7 +41,7 @@ contract FreemintFactory is Ownable {
    * @param _amounts    Amount of Tokens id minted for each corresponding Token id in _tokenIds
    */
   function batchMint(address[] calldata _recipients, uint256[] calldata _ids, uint256[] calldata _amounts)
-    external onlyOwner()
+    external onlyOwnerTier(1)
   {
     for (uint256 i = 0 ; i < _recipients.length; i++) {
       skyweaverAssets.batchMint(_recipients[i], _ids, _amounts, "");
