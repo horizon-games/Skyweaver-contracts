@@ -93,6 +93,12 @@ describe('BridgeFactory', () => {
   // Base Token Param
   const periodMintLimit = new BigNumber(100000)
 
+  // Default salt nonce
+  const default_nonce_salt = ethers.utils.defaultAbiCoder.decode(
+    ['uint256'],
+    ethers.utils.keccak256(ethers.utils.toUtf8Bytes("org.skyweaver.bridge.initial.nonce"))
+  )[0]
+
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
   const amounts = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => nTokensPerType)
@@ -346,7 +352,7 @@ describe('BridgeFactory', () => {
               let args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
       
               // Incremented nonce
-              let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+              let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [default_nonce_salt.add(1)]))
               expect(args.salt).to.be.eql(generated_salt)
             })
 
@@ -471,7 +477,7 @@ describe('BridgeFactory', () => {
                 let args = factoryContract.interface.events.Deposit.decode(logs[0].data, logs[0].topics)
         
                 // Incremented nonce
-                let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+                let generated_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [default_nonce_salt.add(1)]))
                 expect(args.salt).to.be.eql(generated_salt)
               })
 
@@ -752,7 +758,7 @@ describe('BridgeFactory', () => {
         let args = factoryContract.interface.events.ReDeposit.decode(logs[0].data, logs[0].topics)
 
         // Incremented nonce
-        let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [2]))
+        let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [default_nonce_salt.add(1)]))
         expect(args.salt).to.be.eql(redeposit_salt)
       })
 
@@ -802,7 +808,7 @@ describe('BridgeFactory', () => {
           }
         })
         it('should have the correct salt as `tx.salt` field', async () => { 
-          let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [1]))
+          let redeposit_salt = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['uint256'], [default_nonce_salt.add(0)]))
           expect(args.salt).to.be.eql(redeposit_salt)
         })
       })
