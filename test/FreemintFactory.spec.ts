@@ -39,7 +39,7 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 5)
 
-describe('SilverConquestFactory', () => {
+describe('FreemintFactory', () => {
   let userAddress: string
   let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract
@@ -120,7 +120,7 @@ describe('SilverConquestFactory', () => {
 
     it('should REVERT if caller is not owner', async () => {
       const tx = userFactoryContract.functions.batchMint(recipients, mintIds, mintAmounts)
-      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+      await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
     })
 
     context('When assets were minted', () => {

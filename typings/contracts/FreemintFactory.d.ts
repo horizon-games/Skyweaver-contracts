@@ -12,6 +12,10 @@ import {
 
 interface FreemintFactoryInterface extends Interface {
   functions: {
+    assignOwnership: TypedFunctionDescription<{
+      encode([_address, _tier]: [string, BigNumberish]): string;
+    }>;
+
     batchMint: TypedFunctionDescription<{
       encode([_recipients, _ids, _amounts]: [
         string[],
@@ -20,24 +24,23 @@ interface FreemintFactoryInterface extends Interface {
       ]): string;
     }>;
 
-    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
+    getOwnerTier: TypedFunctionDescription<{
+      encode([_owner]: [string]): string;
+    }>;
 
     getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
 
     supportsInterface: TypedFunctionDescription<{
       encode([interfaceID]: [Arrayish]): string;
     }>;
-
-    transferOwnership: TypedFunctionDescription<{
-      encode([_newOwner]: [string]): string;
-    }>;
   };
 
   events: {
-    OwnershipTransferred: TypedEventDescription<{
-      encodeTopics([previousOwner, newOwner]: [
+    OwnershipGranted: TypedEventDescription<{
+      encodeTopics([owner, previousTier, newTier]: [
         string | null,
-        string | null
+        BigNumberish | null,
+        BigNumberish | null
       ]): string[];
     }>;
   };
@@ -60,6 +63,12 @@ export class FreemintFactory extends Contract {
   interface: FreemintFactoryInterface;
 
   functions: {
+    assignOwnership(
+      _address: string,
+      _tier: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     batchMint(
       _recipients: string[],
       _ids: BigNumberish[],
@@ -67,17 +76,18 @@ export class FreemintFactory extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getOwner(): Promise<string>;
+    getOwnerTier(_owner: string): Promise<BigNumber>;
 
     getSkyweaverAssets(): Promise<string>;
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
-
-    transferOwnership(
-      _newOwner: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
   };
+
+  assignOwnership(
+    _address: string,
+    _tier: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   batchMint(
     _recipients: string[],
@@ -86,37 +96,33 @@ export class FreemintFactory extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getOwner(): Promise<string>;
+  getOwnerTier(_owner: string): Promise<BigNumber>;
 
   getSkyweaverAssets(): Promise<string>;
 
   supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
-  transferOwnership(
-    _newOwner: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   filters: {
-    OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+    OwnershipGranted(
+      owner: string | null,
+      previousTier: BigNumberish | null,
+      newTier: BigNumberish | null
     ): EventFilter;
   };
 
   estimate: {
+    assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
+
     batchMint(
       _recipients: string[],
       _ids: BigNumberish[],
       _amounts: BigNumberish[]
     ): Promise<BigNumber>;
 
-    getOwner(): Promise<BigNumber>;
+    getOwnerTier(_owner: string): Promise<BigNumber>;
 
     getSkyweaverAssets(): Promise<BigNumber>;
 
     supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
-
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
   };
 }

@@ -18,7 +18,9 @@ interface ConquestInterface extends Interface {
       encode([]: []): string;
     }>;
 
-    conquestEntryAddress: TypedFunctionDescription<{ encode([]: []): string }>;
+    assignOwnership: TypedFunctionDescription<{
+      encode([_address, _tier]: [string, BigNumberish]): string;
+    }>;
 
     conquestEntryID: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -34,7 +36,9 @@ interface ConquestInterface extends Interface {
       ]): string;
     }>;
 
-    getOwner: TypedFunctionDescription<{ encode([]: []): string }>;
+    getOwnerTier: TypedFunctionDescription<{
+      encode([_owner]: [string]): string;
+    }>;
 
     isActiveConquest: TypedFunctionDescription<{
       encode([]: [string]): string;
@@ -69,10 +73,6 @@ interface ConquestInterface extends Interface {
     supportsInterface: TypedFunctionDescription<{
       encode([interfaceID]: [Arrayish]): string;
     }>;
-
-    transferOwnership: TypedFunctionDescription<{
-      encode([_newOwner]: [string]): string;
-    }>;
   };
 
   events: {
@@ -80,10 +80,11 @@ interface ConquestInterface extends Interface {
       encodeTopics([user, nConquests]: [null, null]): string[];
     }>;
 
-    OwnershipTransferred: TypedEventDescription<{
-      encodeTopics([previousOwner, newOwner]: [
+    OwnershipGranted: TypedEventDescription<{
+      encodeTopics([owner, previousTier, newTier]: [
         string | null,
-        string | null
+        BigNumberish | null,
+        BigNumberish | null
       ]): string[];
     }>;
   };
@@ -107,7 +108,11 @@ export class Conquest extends Contract {
 
     TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
 
-    conquestEntryAddress(): Promise<string>;
+    assignOwnership(
+      _address: string,
+      _tier: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     conquestEntryID(): Promise<BigNumber>;
 
@@ -120,7 +125,7 @@ export class Conquest extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getOwner(): Promise<string>;
+    getOwnerTier(_owner: string): Promise<BigNumber>;
 
     isActiveConquest(arg0: string): Promise<boolean>;
 
@@ -147,18 +152,17 @@ export class Conquest extends Contract {
     skyweaverAssets(): Promise<string>;
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
-
-    transferOwnership(
-      _newOwner: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
   };
 
   MAX_REWARD_AMOUNT(): Promise<BigNumber>;
 
   TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
 
-  conquestEntryAddress(): Promise<string>;
+  assignOwnership(
+    _address: string,
+    _tier: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   conquestEntryID(): Promise<BigNumber>;
 
@@ -171,7 +175,7 @@ export class Conquest extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getOwner(): Promise<string>;
+  getOwnerTier(_owner: string): Promise<BigNumber>;
 
   isActiveConquest(arg0: string): Promise<boolean>;
 
@@ -199,17 +203,13 @@ export class Conquest extends Contract {
 
   supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
-  transferOwnership(
-    _newOwner: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
   filters: {
     ConquestEntered(user: null, nConquests: null): EventFilter;
 
-    OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+    OwnershipGranted(
+      owner: string | null,
+      previousTier: BigNumberish | null,
+      newTier: BigNumberish | null
     ): EventFilter;
   };
 
@@ -218,7 +218,7 @@ export class Conquest extends Contract {
 
     TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
 
-    conquestEntryAddress(): Promise<BigNumber>;
+    assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
 
     conquestEntryID(): Promise<BigNumber>;
 
@@ -230,7 +230,7 @@ export class Conquest extends Contract {
       _amounts: BigNumberish[]
     ): Promise<BigNumber>;
 
-    getOwner(): Promise<BigNumber>;
+    getOwnerTier(_owner: string): Promise<BigNumber>;
 
     isActiveConquest(arg0: string): Promise<BigNumber>;
 
@@ -255,7 +255,5 @@ export class Conquest extends Contract {
     skyweaverAssets(): Promise<BigNumber>;
 
     supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
-
-    transferOwnership(_newOwner: string): Promise<BigNumber>;
   };
 }

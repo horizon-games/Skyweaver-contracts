@@ -279,9 +279,9 @@ contract BridgeFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Will generate a salt based on the saltNonce and increment the nonce
    */
   function generateSalt() internal returns (bytes32) {
-    uint256 new_nonce = saltNonce + 1;
-    saltNonce = new_nonce;
-    return keccak256(abi.encode(new_nonce));
+    uint256 salt_nonce = saltNonce;
+    saltNonce = salt_nonce + 1;
+    return keccak256(abi.encode(salt_nonce));
   }
 
   /**
