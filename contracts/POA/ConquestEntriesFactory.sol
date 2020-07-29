@@ -15,7 +15,8 @@ import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
  */
 contract ConquestEntryFactory is IERC1155TokenReceiver {
   using SafeMath for uint256;
-
+  uint256 constant internal CARD_DECIMALS = 2; // Number of decimals silver and gold cards have
+  
   /***********************************|
   |             Variables             |
   |__________________________________*/
@@ -122,7 +123,7 @@ contract ConquestEntryFactory is IERC1155TokenReceiver {
     skyweaverAssets.batchBurn(_ids, _amounts);
 
     // Mint conquest entries (silvers have 2 decimals)
-    skyweaverAssets.mint(_from, conquestEntryID, n_entries / 100, "");
+    skyweaverAssets.mint(_from, conquestEntryID, n_entries / 10**CARD_DECIMALS, "");
 
     // Return success
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
