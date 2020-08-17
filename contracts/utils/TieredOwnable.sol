@@ -1,5 +1,4 @@
 pragma solidity ^0.6.8;
-pragma experimental ABIEncoderV2;
 
 /**
  * @dev The TieredOwnable can assign ownership tiers to addresses,
@@ -29,14 +28,13 @@ contract TieredOwnable {
 
   /**
    * @notice Highest owners can change ownership tier of other owners
-   * @dev Do *not* change the ownership tier of the master owner unless another
-   *      owner has HIGHEST_OWNER_TIER tier, otherwise this function will be
-   *      unreachable.
+   * @dev Prevents changing sender's tier to ensure there is always at least one HIGHEST_OWNER_TIER owner.
    * @param _address Address of the owner
    * @param _tier    Ownership tier assigned to owner
    */
   function assignOwnership(address _address, uint256 _tier) public onlyOwnerTier(HIGHEST_OWNER_TIER) {
-    require(_address != address(0), "TieredOwnable#transferOwnership: INVALID_ADDRESS");
+    require(_address != address(0), "TieredOwnable#assignOwnership: INVALID_ADDRESS");
+    require(msg.sender != _address, "TieredOwnable#assignOwnership: UPDATING_SELF_TIER");
     emit OwnershipGranted(_address, ownerTier[_address], _tier);
     ownerTier[_address] = _tier;
   }

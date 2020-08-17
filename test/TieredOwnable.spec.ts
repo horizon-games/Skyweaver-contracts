@@ -122,6 +122,16 @@ describe('TieredOwnable', () => {
       await expect(tx1).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
     })
 
+    it('should REVERT if address is 0x0', async () => {
+      const tx1 = contract.functions.assignOwnership(ZERO_ADDRESS, newTier)
+      await expect(tx1).to.be.rejectedWith(RevertError("TieredOwnable#assignOwnership: INVALID_ADDRESS"))
+    })
+
+    it('should REVERT if address is sender', async () => {
+      const tx1 = contract.functions.assignOwnership(ownerAddress, newTier)
+      await expect(tx1).to.be.rejectedWith(RevertError("TieredOwnable#assignOwnership: UPDATING_SELF_TIER"))
+    })
+
     context('When ownerTier was updated', () => {
       let tx: ethers.ContractTransaction;
       beforeEach(async () => {
