@@ -19,8 +19,9 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   |             Variables             |
   |__________________________________*/
 
-  uint256 constant public TIME_BETWEEN_CONQUESTS = 5 minutes;  // Seconds that must elapse between two conquest
+  uint256 constant public TIME_BETWEEN_CONQUESTS = 2 minutes;  // Seconds that must elapse between two conquest
   uint256 constant public MAX_REWARD_AMOUNT = 200;             // Maximum number of cards one can win from a conquest (2 decimals)
+  uint256 constant public ENTRIES_DECIMALS = 2;                // Amount of decimals conquest entries have
 
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver assets contract
   uint256 immutable public conquestEntryID;          // Conquest entry token id
@@ -114,7 +115,7 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
     require(_ids.length == 1, "Conquest#entry: INVALID_IDS_ARRAY_LENGTH");
     require(_amounts.length == 1, "Conquest#entry: INVALID_AMOUNTS_ARRAY_LENGTH");
     require(_ids[0] == conquestEntryID, "Conquest#entry: INVALID_ENTRY_TOKEN_ID");
-    require(_amounts[0] == 1, "Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT");
+    require(_amounts[0] == 10**ENTRIES_DECIMALS, "Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT");
     require(!isActiveConquest[_from], "Conquest#entry: PLAYER_ALREADY_IN_CONQUEST");
     require(nextConquestTime[_from] <= now, "Conquest#entry: NEW_CONQUEST_TOO_EARLY");
 

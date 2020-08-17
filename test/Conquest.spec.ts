@@ -68,10 +68,10 @@ describe('Conquest', () => {
 
   // Ticket token Param
   const ticketID = new BigNumber(555);
-  const ticketAmount = new BigNumber(10);
+  const ticketAmount = new BigNumber(10).mul(100);
 
   // Parameters
-  const DELAY = new BigNumber(5).mul(60) // 5 minutes
+  const DELAY = new BigNumber(2).mul(60) // 2 minutes
   const MAX_REWARDS = new BigNumber(200)
 
   // Range values 
@@ -146,10 +146,10 @@ describe('Conquest', () => {
   })
 
   describe('Conquest', () => {
-    let amount = new BigNumber(1)
+    let amount = new BigNumber(100)
 
     context('Using safeBatchTransferFrom', () => {
-      it('should PASS if caller sends 1 ticket', async () => {
+      it('should PASS if caller sends 100 ticket', async () => {
         const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
         await expect(tx).to.be.fulfilled
       })
@@ -182,7 +182,7 @@ describe('Conquest', () => {
       })
 
       it('should REVERT if sent more than 1 ticket', async () => {
-        let invalid_amount = 2
+        let invalid_amount = 99
         const tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, [ticketID], [invalid_amount], [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
       })
@@ -204,7 +204,7 @@ describe('Conquest', () => {
     })
 
     context('Using safeTransferFrom', () => {
-      it('should PASS if caller sends 1 ticket', async () => {
+      it('should PASS if caller sends 100 ticket', async () => {
         const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
         await expect(tx).to.be.fulfilled
       })
@@ -227,7 +227,7 @@ describe('Conquest', () => {
       })
 
       it('should REVERT if sent more than 1 ticket', async () => {
-        let invalid_amount = 2
+        let invalid_amount = 101
         const tx = userSkyweaverAssetContract.functions.safeTransferFrom(userAddress, factory, ticketID, invalid_amount, [], TX_PARAM)
         await expect(tx).to.be.rejectedWith(RevertError("Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
       })
@@ -268,13 +268,14 @@ describe('Conquest', () => {
       })
 
       it('should update user conquest count', async () => {
-        let value = await factoryContract.functions.isActiveConquest(userAddress)
-        expect(value).to.be.eql(true)
+        let value = await factoryContract.functions.conquestsEntered(userAddress)
+        expect(value).to.be.eql(new BigNumber(1))
       })
 
       it('should update next conquest time for user', async () => {
-        let value = await factoryContract.functions.conquestsEntered(userAddress)
-        expect(value).to.be.eql(new BigNumber(1))
+        let timeStamp = (await ownerProvider.getBlock(tx.blockHash)).timestamp
+        let value = await factoryContract.functions.nextConquestTime(userAddress)
+        expect(value).to.be.eql(new BigNumber(timeStamp).add(DELAY))
       })
 
       it('should emit ConquestEntered event', async () => {
@@ -316,7 +317,7 @@ describe('Conquest', () => {
   })
 
   describe('exitConquest()', () => {
-    let amount = 1; // ticket amount
+    let amount = 100; // ticket amount
     let rewardIds;
     let rewardAmounts;
 

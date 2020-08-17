@@ -12,6 +12,8 @@ import {
 
 interface ConquestInterface extends Interface {
   functions: {
+    ENTRIES_DECIMALS: TypedFunctionDescription<{ encode([]: []): string }>;
+
     MAX_REWARD_AMOUNT: TypedFunctionDescription<{ encode([]: []): string }>;
 
     TIME_BETWEEN_CONQUESTS: TypedFunctionDescription<{
@@ -104,6 +106,8 @@ export class Conquest extends Contract {
   interface: ConquestInterface;
 
   functions: {
+    ENTRIES_DECIMALS(): Promise<BigNumber>;
+
     MAX_REWARD_AMOUNT(): Promise<BigNumber>;
 
     TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
@@ -153,6 +157,8 @@ export class Conquest extends Contract {
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
   };
+
+  ENTRIES_DECIMALS(): Promise<BigNumber>;
 
   MAX_REWARD_AMOUNT(): Promise<BigNumber>;
 
@@ -214,6 +220,8 @@ export class Conquest extends Contract {
   };
 
   estimate: {
+    ENTRIES_DECIMALS(): Promise<BigNumber>;
+
     MAX_REWARD_AMOUNT(): Promise<BigNumber>;
 
     TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;

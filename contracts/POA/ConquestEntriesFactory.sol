@@ -8,14 +8,20 @@ import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * Contract used on POA allowing players to convert their silver cards to 
+ * @notice Contract used  allowing players to convert their silver cards and ARC to 
  * conquest entries.
  * 
- * This contract should only be able to mint conquest entries.
+ * @dev Assumes both cards and entries have the same number of decimals, if not, need to change
+ * the amount minted
+ * 
+ * @dev This contract should only be able to mint conquest entries.
  */
 contract ConquestEntryFactory is IERC1155TokenReceiver {
   using SafeMath for uint256;
-  uint256 constant internal CARD_DECIMALS = 2; // Number of decimals silver and gold cards have
+  
+  // Assumes cards and entries have the same number of decimals,
+  // uint256 constant internal CARD_DECIMALS = 2;  // Number of decimals silver and gold cards have
+  // uint256 constant public ENTRIES_DECIMALS = 2; // Amount of decimals conquest entries have
   
   /***********************************|
   |             Variables             |
@@ -122,8 +128,8 @@ contract ConquestEntryFactory is IERC1155TokenReceiver {
     // Burn silver cards received
     skyweaverAssets.batchBurn(_ids, _amounts);
 
-    // Mint conquest entries (silvers have 2 decimals)
-    skyweaverAssets.mint(_from, conquestEntryID, n_entries / 10**CARD_DECIMALS, "");
+    // Mint conquest entries
+    skyweaverAssets.mint(_from, conquestEntryID, n_entries, "");
 
     // Return success
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;

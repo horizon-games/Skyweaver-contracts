@@ -68,7 +68,7 @@ describe('ConquestEntryFactory', () => {
 
   // Ticket token Param
   const ticketID = new BigNumber(555);
-  const ticketAmount = new BigNumber(10);
+  const ticketAmount = new BigNumber(10).mul(100);
 
   // Range values 
   const silverMinRange = new BigNumber(1);
@@ -213,7 +213,7 @@ describe('ConquestEntryFactory', () => {
 
           it('should update user conquest entries balance', async () => {
             let userBalance = await userSkyweaverAssetContract.functions.balanceOf(userAddress, ticketID)
-            expect(userBalance).to.be.eql(nTokenTypes.mul(nTokensPerType).div(100))
+            expect(userBalance).to.be.eql(nTokenTypes.mul(nTokensPerType))
           })
         })
       })
