@@ -79,8 +79,8 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
    * @param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint
    */
   function addMintPermission(address _factory, uint256 _minRange, uint256 _maxRange) external onlyOwner() {
-    require(_maxRange > 0, "SWSupplyManager#addMintPermission: NULL_RANGE");
-    require(_minRange <= _maxRange, "SWSupplyManager#addMintPermission: INVALID_RANGE");
+    require(_maxRange > 0, "SkyweaverAssets#addMintPermission: NULL_RANGE");
+    require(_minRange <= _maxRange, "SkyweaverAssets#addMintPermission: INVALID_RANGE");
 
     // Check if new range has an overlap with locked ranges.
     // lockedRanges is expected to be a small array
@@ -88,7 +88,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
       AssetRange memory locked_range = lockedRanges[i];
       require(
         (_maxRange < locked_range.minID) || (locked_range.maxID < _minRange),
-        "SWSupplyManager#addMintPermission: OVERLAP_WITH_LOCKED_RANGE"
+        "SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE"
       );
     }
 
@@ -146,7 +146,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
    * @param _newMaxIssuances Array of max issuances for each corresponding ID
    */
   function setMaxIssuances(uint256[] calldata _ids, uint256[] calldata _newMaxIssuances) external onlyOwner() {
-    require(_ids.length == _newMaxIssuances.length, "SWSupplyManager#setMaxIssuances: INVALID_ARRAYS_LENGTH");
+    require(_ids.length == _newMaxIssuances.length, "SkyweaverAssets#setMaxIssuances: INVALID_ARRAYS_LENGTH");
 
     // Can only *decrease* a max issuance
     // Can't set max issuance back to 0
@@ -154,7 +154,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
       if (maxIssuance[_ids[i]] > 0) {
         require(
           0 < _newMaxIssuances[i] && _newMaxIssuances[i] < maxIssuance[_ids[i]],
-          "SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"
+          "SkyweaverAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"
         );
       }
       maxIssuance[_ids[i]] = _newMaxIssuances[i];
@@ -233,7 +233,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
    * @param _amounts Array of amount of tokens to mint per id
    */
   function _validateMints(uint256[] memory _ids, uint256[] memory _amounts) internal {
-    require(isFactoryActive[msg.sender], "SWSupplyManager#_validateMints: FACTORY_NOT_ACTIVE");
+    require(isFactoryActive[msg.sender], "SkyweaverAssets#_validateMints: FACTORY_NOT_ACTIVE");
 
     // Number of mint ranges
     uint256 n_ranges = mintAccessRanges[msg.sender].length;
@@ -256,14 +256,14 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
         range_index += 1;
 
         // Load next range. If none left, ID is assumed to be out of all ranges
-        require(range_index < n_ranges, "SWSupplyManager#_validateMints: ID_OUT_OF_RANGE");
+        require(range_index < n_ranges, "SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE");
         range = mintAccessRanges[msg.sender][range_index];
       }
 
       // If max supply is specified for id
       if (max_issuance > 0) {
         uint256 new_current_issuance = currentIssuance[id].add(amount);
-        require(new_current_issuance <= max_issuance, "SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED");
+        require(new_current_issuance <= max_issuance, "SkyweaverAssets#_validateMints: MAX_ISSUANCE_EXCEEDED");
         currentIssuance[id] = new_current_issuance;
       }
     }

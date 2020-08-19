@@ -1,7 +1,7 @@
 pragma solidity ^0.6.8;
 
 /**
- * @dev The TieredOwnable can assign ownership tiers to addresses,
+ * @notice The TieredOwnable can assign ownership tiers to addresses,
  * allowing inheriting contracts to choose which tier can call which function.
  */
 contract TieredOwnable {

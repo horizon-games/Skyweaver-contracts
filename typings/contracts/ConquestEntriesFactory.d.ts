@@ -10,31 +10,19 @@ import {
   TypedFunctionDescription
 } from ".";
 
-interface BridgeFactoryInterface extends Interface {
+interface ConquestEntriesFactoryInterface extends Interface {
   functions: {
+    arcadeumCoinID: TypedFunctionDescription<{ encode([]: []): string }>;
+
     assignOwnership: TypedFunctionDescription<{
       encode([_address, _tier]: [string, BigNumberish]): string;
     }>;
 
-    batchMint: TypedFunctionDescription<{
-      encode([_to, _ids, _amounts]: [
-        string,
-        BigNumberish[],
-        BigNumberish[]
-      ]): string;
-    }>;
-
-    getAvailableSupply: TypedFunctionDescription<{ encode([]: []): string }>;
+    conquestEntryID: TypedFunctionDescription<{ encode([]: []): string }>;
 
     getOwnerTier: TypedFunctionDescription<{
       encode([_owner]: [string]): string;
     }>;
-
-    getPeriodMintLimit: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    getSkyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    livePeriod: TypedFunctionDescription<{ encode([]: []): string }>;
 
     onERC1155BatchReceived: TypedFunctionDescription<{
       encode([, _from, _ids, _amounts, _data]: [
@@ -47,7 +35,7 @@ interface BridgeFactoryInterface extends Interface {
     }>;
 
     onERC1155Received: TypedFunctionDescription<{
-      encode([, _from, _id, _amount, _data]: [
+      encode([_operator, _from, _id, _amount, _data]: [
         string,
         string,
         BigNumberish,
@@ -56,12 +44,14 @@ interface BridgeFactoryInterface extends Interface {
       ]): string;
     }>;
 
+    silverRangeMax: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    silverRangeMin: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    skyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
+
     supportsInterface: TypedFunctionDescription<{
       encode([interfaceID]: [Arrayish]): string;
-    }>;
-
-    updatePeriodMintLimit: TypedFunctionDescription<{
-      encode([_newPeriodMintLimit]: [BigNumberish]): string;
     }>;
 
     withdraw: TypedFunctionDescription<{
@@ -70,10 +60,6 @@ interface BridgeFactoryInterface extends Interface {
   };
 
   events: {
-    Deposit: TypedEventDescription<{
-      encodeTopics([recipient, salt]: [string | null, null]): string[];
-    }>;
-
     OwnershipGranted: TypedEventDescription<{
       encodeTopics([owner, previousTier, newTier]: [
         string | null,
@@ -81,61 +67,37 @@ interface BridgeFactoryInterface extends Interface {
         BigNumberish | null
       ]): string[];
     }>;
-
-    PeriodMintLimitChanged: TypedEventDescription<{
-      encodeTopics([oldMintingLimit, newMintingLimit]: [null, null]): string[];
-    }>;
-
-    ReDeposit: TypedEventDescription<{
-      encodeTopics([recipient, ids, amounts, salt]: [
-        string | null,
-        null,
-        null,
-        null
-      ]): string[];
-    }>;
   };
 }
 
-export class BridgeFactory extends Contract {
-  connect(signerOrProvider: Signer | Provider | string): BridgeFactory;
-  attach(addressOrName: string): BridgeFactory;
-  deployed(): Promise<BridgeFactory>;
+export class ConquestEntriesFactory extends Contract {
+  connect(signerOrProvider: Signer | Provider | string): ConquestEntriesFactory;
+  attach(addressOrName: string): ConquestEntriesFactory;
+  deployed(): Promise<ConquestEntriesFactory>;
 
-  on(event: EventFilter | string, listener: Listener): BridgeFactory;
-  once(event: EventFilter | string, listener: Listener): BridgeFactory;
+  on(event: EventFilter | string, listener: Listener): ConquestEntriesFactory;
+  once(event: EventFilter | string, listener: Listener): ConquestEntriesFactory;
   addListener(
     eventName: EventFilter | string,
     listener: Listener
-  ): BridgeFactory;
-  removeAllListeners(eventName: EventFilter | string): BridgeFactory;
-  removeListener(eventName: any, listener: Listener): BridgeFactory;
+  ): ConquestEntriesFactory;
+  removeAllListeners(eventName: EventFilter | string): ConquestEntriesFactory;
+  removeListener(eventName: any, listener: Listener): ConquestEntriesFactory;
 
-  interface: BridgeFactoryInterface;
+  interface: ConquestEntriesFactoryInterface;
 
   functions: {
+    arcadeumCoinID(): Promise<BigNumber>;
+
     assignOwnership(
       _address: string,
       _tier: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    getAvailableSupply(): Promise<BigNumber>;
+    conquestEntryID(): Promise<BigNumber>;
 
     getOwnerTier(_owner: string): Promise<BigNumber>;
-
-    getPeriodMintLimit(): Promise<BigNumber>;
-
-    getSkyweaverAssets(): Promise<string>;
-
-    livePeriod(): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -147,7 +109,7 @@ export class BridgeFactory extends Contract {
     ): Promise<ContractTransaction>;
 
     onERC1155Received(
-      arg0: string,
+      _operator: string,
       _from: string,
       _id: BigNumberish,
       _amount: BigNumberish,
@@ -155,12 +117,13 @@ export class BridgeFactory extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    supportsInterface(interfaceID: Arrayish): Promise<boolean>;
+    silverRangeMax(): Promise<BigNumber>;
 
-    updatePeriodMintLimit(
-      _newPeriodMintLimit: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
+    silverRangeMin(): Promise<BigNumber>;
+
+    skyweaverAssets(): Promise<string>;
+
+    supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
     withdraw(
       _recipient: string,
@@ -169,28 +132,17 @@ export class BridgeFactory extends Contract {
     ): Promise<ContractTransaction>;
   };
 
+  arcadeumCoinID(): Promise<BigNumber>;
+
   assignOwnership(
     _address: string,
     _tier: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  batchMint(
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  getAvailableSupply(): Promise<BigNumber>;
+  conquestEntryID(): Promise<BigNumber>;
 
   getOwnerTier(_owner: string): Promise<BigNumber>;
-
-  getPeriodMintLimit(): Promise<BigNumber>;
-
-  getSkyweaverAssets(): Promise<string>;
-
-  livePeriod(): Promise<BigNumber>;
 
   onERC1155BatchReceived(
     arg0: string,
@@ -202,7 +154,7 @@ export class BridgeFactory extends Contract {
   ): Promise<ContractTransaction>;
 
   onERC1155Received(
-    arg0: string,
+    _operator: string,
     _from: string,
     _id: BigNumberish,
     _amount: BigNumberish,
@@ -210,12 +162,13 @@ export class BridgeFactory extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  supportsInterface(interfaceID: Arrayish): Promise<boolean>;
+  silverRangeMax(): Promise<BigNumber>;
 
-  updatePeriodMintLimit(
-    _newPeriodMintLimit: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
+  silverRangeMin(): Promise<BigNumber>;
+
+  skyweaverAssets(): Promise<string>;
+
+  supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
   withdraw(
     _recipient: string,
@@ -224,45 +177,21 @@ export class BridgeFactory extends Contract {
   ): Promise<ContractTransaction>;
 
   filters: {
-    Deposit(recipient: string | null, salt: null): EventFilter;
-
     OwnershipGranted(
       owner: string | null,
       previousTier: BigNumberish | null,
       newTier: BigNumberish | null
     ): EventFilter;
-
-    PeriodMintLimitChanged(
-      oldMintingLimit: null,
-      newMintingLimit: null
-    ): EventFilter;
-
-    ReDeposit(
-      recipient: string | null,
-      ids: null,
-      amounts: null,
-      salt: null
-    ): EventFilter;
   };
 
   estimate: {
+    arcadeumCoinID(): Promise<BigNumber>;
+
     assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
 
-    batchMint(
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
-    ): Promise<BigNumber>;
-
-    getAvailableSupply(): Promise<BigNumber>;
+    conquestEntryID(): Promise<BigNumber>;
 
     getOwnerTier(_owner: string): Promise<BigNumber>;
-
-    getPeriodMintLimit(): Promise<BigNumber>;
-
-    getSkyweaverAssets(): Promise<BigNumber>;
-
-    livePeriod(): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       arg0: string,
@@ -273,18 +202,20 @@ export class BridgeFactory extends Contract {
     ): Promise<BigNumber>;
 
     onERC1155Received(
-      arg0: string,
+      _operator: string,
       _from: string,
       _id: BigNumberish,
       _amount: BigNumberish,
       _data: Arrayish
     ): Promise<BigNumber>;
 
-    supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
+    silverRangeMax(): Promise<BigNumber>;
 
-    updatePeriodMintLimit(
-      _newPeriodMintLimit: BigNumberish
-    ): Promise<BigNumber>;
+    silverRangeMin(): Promise<BigNumber>;
+
+    skyweaverAssets(): Promise<BigNumber>;
+
+    supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
 
     withdraw(_recipient: string, _data: Arrayish): Promise<BigNumber>;
   };

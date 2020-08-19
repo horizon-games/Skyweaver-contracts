@@ -44,7 +44,7 @@ const {
 
 const getBig = (id: number) => new BigNumber(id);
 
-describe('SWSupplyManager', () => {
+describe('SkyweaverAssets', () => {
 
   let ownerAddress: string
   let userAddress: string
@@ -140,12 +140,12 @@ describe('SWSupplyManager', () => {
 
     it('should REVERT if maxRange is 0', async () => {
       let tx = SWAssetsContract.functions.addMintPermission(factory, minRange, 0);
-      await expect(tx).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: NULL_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: NULL_RANGE") )
     })
 
     it('should REVERT if minRange is lower than maxRange', async () => {
       let tx = SWAssetsContract.functions.addMintPermission(factory, maxRange.add(1), maxRange);
-      await expect(tx).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: INVALID_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: INVALID_RANGE") )
     })
 
     it('should PASS if range is valid', async () => {
@@ -224,16 +224,16 @@ describe('SWSupplyManager', () => {
       await SWAssetsContract.functions.lockRangeMintPermissions(range)
 
       let tx = SWAssetsContract.functions.addMintPermission(factory, maxRange, maxRange.add(100))
-      await expect(tx).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx2 = SWAssetsContract.functions.addMintPermission(factory, 0, minRange)
-      await expect(tx2).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx2).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx3 = SWAssetsContract.functions.addMintPermission(factory, minRange, maxRange)
-      await expect(tx3).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx3).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
       let tx4 = SWAssetsContract.functions.addMintPermission(factory, 0, minRange.add(10))
-      await expect(tx4).to.be.rejectedWith( RevertError("SWSupplyManager#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
+      await expect(tx4).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
     })
 
     it('should pass if range does not overlap with locked range', async () => {
@@ -588,7 +588,7 @@ describe('SWSupplyManager', () => {
 
     it('should REVERT if arrays are not the same length', async () => {
       const tx = SWAssetsContract.functions.setMaxIssuances([id], [maxIssuance, maxIssuance])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#setMaxIssuances: INVALID_ARRAYS_LENGTH"))
     })
 
     context('Wen max issuance is already set', () => {
@@ -604,17 +604,17 @@ describe('SWSupplyManager', () => {
 
       it('should REVERT if new max issuance is same', async () => {
         const tx = SWAssetsContract.functions.setMaxIssuances([id], [maxIssuance])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
       it('should REVERT if new max issuance is higher', async () => {
         const tx = SWAssetsContract.functions.setMaxIssuances([id], [maxIssuance.add(1)])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
 
       it('should REVERT if new max issuance is 0', async () => {
         const tx = SWAssetsContract.functions.setMaxIssuances([id], [0])
-        await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
+        await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#setMaxIssuances: INVALID_NEW_MAX_ISSUANCE"))
       })
     })
   })
@@ -636,17 +636,17 @@ describe('SWSupplyManager', () => {
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
       await SWAssetsContract.functions.shutdownFactory(factory)
       const tx = factoryContract.functions.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: FACTORY_NOT_ACTIVE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: FACTORY_NOT_ACTIVE"))
     })
 
     it('should REVERT if IDs to mint are not authorized', async () => {
       let invalid_ids = new Array(nTokenTypes).fill('').map((a, i) => maxRange.add(a+1))
       const tx = factoryContract.functions.batchMint(userAddress, invalid_ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_ids_low = new Array(nTokenTypes).fill('').map((a, i) => minRange.add(a-1))
       const tx_2 = factoryContract.functions.batchMint(userAddress, invalid_ids_low, amounts, [])
-      await expect(tx_2).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx_2).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
       await SWAssetsContract.functions.addMintPermission(factory, minRange2, maxRange2)
@@ -654,11 +654,11 @@ describe('SWSupplyManager', () => {
 
       let invalid_ids_high_2 = new Array(nTokenTypes).fill('').map((a, i) => maxRange2.add(a+1))
       const tx3 = factoryContract.functions.batchMint(userAddress, invalid_ids_high_2, amounts, [])
-      await expect(tx3).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx3).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_ids_low_3 = new Array(nTokenTypes).fill('').map((a, i) => minRange3.add(a-1))
       const tx4 = factoryContract.functions.batchMint(userAddress, invalid_ids_low_3, amounts, [])
-      await expect(tx4).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx4).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if NO id ranges are authorized for factory', async () => {
@@ -671,7 +671,7 @@ describe('SWSupplyManager', () => {
       let invalid_ids = ids.slice()
       invalid_ids[invalid_ids.length - 1] = maxRange.add(1)
       const tx = factoryContract.functions.batchMint(userAddress, invalid_ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if exceeds max issuance', async () => {
@@ -679,7 +679,7 @@ describe('SWSupplyManager', () => {
       const id = nTokenTypes - 1
       await SWAssetsContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.batchMint(userAddress, ids, amounts, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
     it('should PASS if reach exact max issuance', async () => {
@@ -750,19 +750,19 @@ describe('SWSupplyManager', () => {
     it('should REVERT if some ids in different ranges are not sorted', async () => {
       await SWAssetsContract.functions.addMintPermission(factory, minRange2, maxRange2)
       const tx = factoryContract.functions.batchMint(userAddress, ids2.concat(ids), amounts.concat(amounts), [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.functions.addMintPermission(factory, minRange2, maxRange2)
       const tx2 = factoryContract.functions.batchMint(userAddress, ids.concat(ids3).concat(ids2), amounts.concat(amounts).concat(amounts), [])
-      await expect(tx2).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx2).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.functions.addMintPermission(factory, minRange3, maxRange3)
       const tx3 = factoryContract.functions.batchMint(userAddress, [maxRange, maxRange3, maxRange2], [2,2,2], [])
-      await expect(tx3).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx3).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       await SWAssetsContract.functions.addMintPermission(factory, minRange3, maxRange3)
       const tx4 = factoryContract.functions.batchMint(userAddress, [minRange, minRange3, minRange2], [2,2,2], [])
-      await expect(tx4).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx4).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     context('When tokens were minted', () => {
@@ -800,17 +800,17 @@ describe('SWSupplyManager', () => {
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
       await SWAssetsContract.functions.shutdownFactory(factory)
       const tx = factoryContract.functions.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: FACTORY_NOT_ACTIVE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: FACTORY_NOT_ACTIVE"))
     })
 
     it('should REVERT if IDs to mint are not authorized', async () => {
       let invalid_id_high = maxRange.add(1)
       const tx = factoryContract.functions.mint(userAddress, invalid_id_high, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       let invalid_id_low = minRange.sub(1)
       const tx1 = factoryContract.functions.mint(userAddress, invalid_id_low, amount, [])
-      await expect(tx1).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx1).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
       await SWAssetsContract.functions.addMintPermission(factory, minRange2, maxRange2)
@@ -818,11 +818,11 @@ describe('SWSupplyManager', () => {
 
       let invalid_ids_high_2 = maxRange2.add(1)
       const tx2 = factoryContract.functions.mint(userAddress, invalid_ids_high_2, amount, [])
-      await expect(tx2).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx2).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
       
       let invalid_id_low_2 = minRange3.sub(1)
       const tx3 = factoryContract.functions.mint(userAddress, invalid_id_low_2, amount, [])
-      await expect(tx3).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: ID_OUT_OF_RANGE"))
+      await expect(tx3).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should REVERT if exceeds max issuance', async () => {
@@ -830,7 +830,7 @@ describe('SWSupplyManager', () => {
       const id = nTokenTypes - 1
       await SWAssetsContract.functions.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.functions.mint(userAddress, id, amount, [])
-      await expect(tx).to.be.rejectedWith(RevertError("SWSupplyManager#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: MAX_ISSUANCE_EXCEEDED"))
     })
 
     it('should PASS if reach exact max issuance', async () => {
