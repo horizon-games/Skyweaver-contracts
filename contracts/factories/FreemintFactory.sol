@@ -2,6 +2,8 @@ pragma solidity ^0.6.8;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
+import "multi-token-standard/contracts/interfaces/IERC165.sol";
+import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
  * This is a contract allowing owner to mint any tokens within a given
@@ -68,11 +70,14 @@ contract FreemintFactory is TieredOwnable {
   }
 
   /**
-   * @notice Indicates whether a contract implements a given interface
+   * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.
    * @param  interfaceID The ERC-165 interface ID that is queried for support.s
-   * @return Whether a given interface is supported or not
+   * @dev This function MUST return true if it implements the ERC1155TokenReceiver interface and ERC-165 interface.
+   *      This function MUST NOT consume more than 5,000 gas.
+   * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
-    return  interfaceID == 0x01ffc9a7; // ERC-165 support (i.e. `bytes4(keccak256('supportsInterface(bytes4)'))`).
+    return  interfaceID == type(IERC165).interfaceId || 
+    interfaceID == type(IERC1155TokenReceiver).interfaceId;
   }
 }

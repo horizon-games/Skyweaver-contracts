@@ -1,6 +1,6 @@
 {
   "name": "@horizongames/skyweaver-contracts",
-  "version": "2.2.0",
+  "version": "2.3.2",
   "license": "none",
   "files": [
     "artifacts",

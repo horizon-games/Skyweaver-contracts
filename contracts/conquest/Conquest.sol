@@ -3,14 +3,14 @@ pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
+import "../interfaces/IRewardFactory.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * Contract used on POA to internally keep track of players participation
- * in Conquest. 
+ * Keep track of players participation in Conquest and used to issue rewards.
  */
 contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
@@ -19,12 +19,18 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   |             Variables             |
   |__________________________________*/
 
-  uint256 constant public TIME_BETWEEN_CONQUESTS = 5 minutes;  // Seconds that must elapse between two conquest
-  uint256 constant public MAX_REWARD_AMOUNT = 200;             // Maximum number of cards one can win from a conquest (2 decimals)
+  // Parameters
+  uint256 constant internal TIME_BETWEEN_CONQUESTS = 2 minutes; // Seconds that must elapse between two conquest
+  uint256 constant internal ENTRIES_DECIMALS = 2;               // Amount of decimals conquest entries have
+  uint256 constant internal CARDS_DECIMALS = 2;                 // Number of decimals cards have
 
+  // Contracts
+  IRewardFactory immutable public silverCardFactory; // Factory that mints Silver cards
+  IRewardFactory immutable public goldCardFactory;   // Factory that mints Gold cards
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver assets contract
   uint256 immutable public conquestEntryID;          // Conquest entry token id
 
+  // Mappings
   mapping(address => bool) public isActiveConquest;    // Whether a given player is currently in a conquest
   mapping(address => uint256) public conquestsEntered; // Number of conquest a given player has entered so far
   mapping(address => uint256) public nextConquestTime; // Time when the next conquest can be started for players
@@ -39,21 +45,29 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
-   * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
-   * @param _conquestEntryTokenId   Conquest entry token id
+   * @param _skyweaverAssetsAddress   The address of the ERC-1155 Assets Token contract
+   * @param _silverCardFactoryAddress The address of the Silver Card Factory
+   * @param _goldCardFactoryAddress   The address of the Gold Card Factory
+   * @param _conquestEntryTokenId     Conquest entry token id
    */
   constructor(
     address _skyweaverAssetsAddress,
+    address _silverCardFactoryAddress,
+    address _goldCardFactoryAddress,
     uint256 _conquestEntryTokenId
   ) public 
   {
     require(
-      _skyweaverAssetsAddress != address(0),
+      _skyweaverAssetsAddress != address(0) &&
+      _silverCardFactoryAddress != address(0) &&
+      _goldCardFactoryAddress != address(0),
       "Conquest#constructor: INVALID_INPUT"
     );
 
-    // Assets
+    // Store parameters
     skyweaverAssets = ISkyweaverAssets(_skyweaverAssetsAddress);
+    silverCardFactory = IRewardFactory(_silverCardFactoryAddress);
+    goldCardFactory = IRewardFactory(_goldCardFactoryAddress);
     conquestEntryID = _conquestEntryTokenId;
   }
 
@@ -114,7 +128,7 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
     require(_ids.length == 1, "Conquest#entry: INVALID_IDS_ARRAY_LENGTH");
     require(_amounts.length == 1, "Conquest#entry: INVALID_AMOUNTS_ARRAY_LENGTH");
     require(_ids[0] == conquestEntryID, "Conquest#entry: INVALID_ENTRY_TOKEN_ID");
-    require(_amounts[0] == 1, "Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT");
+    require(_amounts[0] == 10**ENTRIES_DECIMALS, "Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT");
     require(!isActiveConquest[_from], "Conquest#entry: PLAYER_ALREADY_IN_CONQUEST");
     require(nextConquestTime[_from] <= now, "Conquest#entry: NEW_CONQUEST_TOO_EARLY");
 
@@ -122,6 +136,9 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
     isActiveConquest[_from] = true;
     conquestsEntered[_from] = conquestsEntered[_from].add(1);
     nextConquestTime[_from] = now.add(TIME_BETWEEN_CONQUESTS);
+
+    // Burn tickets
+    skyweaverAssets.burn(conquestEntryID, 10**ENTRIES_DECIMALS);
 
     // Emit event
     emit ConquestEntered(_from, conquestsEntered[_from]);
@@ -137,33 +154,57 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
 
   /**
    * @notice Will exit user from conquest and mint tokens to user 
-   * @param _user    The address that exists conquest and receive the rewards
-   * @param _ids     Array of Tokens ID that are minted
-   * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
+   * @param _user      The address that exits conquest and receive the rewards
+   * @param _silverIds Ids of silver cards to mint (duplicate ids if amount > 1)
+   * @param _goldIds   Ids of gold cards to mint (duplicate ids if amount > 1)
    */
-  function exitConquest(address _user, uint256[] calldata _ids, uint256[] calldata _amounts)
+  function exitConquest(address _user, uint256[] calldata _silverIds, uint256[] calldata _goldIds)
     external onlyOwnerTier(1)
   { 
-    // Ensures user is currently in conquest
     require(isActiveConquest[_user], "Conquest#exitConquest: USER_IS_NOT_IN_CONQUEST");
-
-    // Check if at most N cards are printed, which 
-    // is the maximum one can earn per conquest
-    uint256 maxRewards = MAX_REWARD_AMOUNT;
-    for (uint256 i = 0; i < _ids.length; i++) {
-      maxRewards = maxRewards.sub(_amounts[i]);
-    }
 
     // Mark player as not playing anymore
     isActiveConquest[_user] = false;
 
-    // Mint assets
-    skyweaverAssets.batchMint(_user, _ids, _amounts, "");
+    // 0 win - 1 loss ===> 0 rewards
+    if (_silverIds.length == 0 && _goldIds.length == 0) {
+      /*  Do nothing if user didn't win any matches  */
+
+    // 1 win - 1 loss ===> 1 Silver card
+    } else if (_silverIds.length == 1 && _goldIds.length == 0) { 
+      silverCardFactory.batchMint(_user, _silverIds, array(1, 10**CARDS_DECIMALS), "");
+
+    // 2 wins - 1 loss ===> 2 silver cards
+    } else if (_silverIds.length == 2 && _goldIds.length == 0) { 
+      silverCardFactory.batchMint(_user, _silverIds, array(2, 10**CARDS_DECIMALS), "");
+
+    // 3 wins - 0 loss ===> 1 Silver card and 1 Gold card
+    } else if (_silverIds.length == 1 && _goldIds.length == 1) { 
+      silverCardFactory.batchMint(_user, _silverIds, array(1, 10**CARDS_DECIMALS), "");
+      goldCardFactory.batchMint(_user, _goldIds, array(1, 10**CARDS_DECIMALS), "");
+
+    // Revert for any other combination
+    } else {
+      revert("Conquest#exitConquest: INVALID_REWARDS");
+    }
   }
 
   /***********************************|
   |         Utility Functions         |
   |__________________________________*/
+
+  /** 
+   * @notice Will create an array of uint _value of length _length
+   * @param _length Number of ones in array
+   * @param _value  Value to put in array
+   */
+  function array(uint256 _length, uint256 _value) internal pure returns (uint256[] memory) {
+    uint256[] memory a = new uint256[](_length);
+    for (uint256 i = 0; i < _length; i++) {
+      a[i] = _value;
+    }
+    return a;
+  }
 
   /**
    * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.

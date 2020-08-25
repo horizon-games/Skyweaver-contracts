@@ -1,6 +1,7 @@
 pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
+import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
@@ -8,24 +9,38 @@ import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * Contract used on POA allowing players to convert their silver cards to 
+ * @notice Contract used  allowing players to convert their silver cards and ARC to 
  * conquest entries.
  * 
- * This contract should only be able to mint conquest entries.
+ * @dev Assumes both cards and entries have the same number of decimals, if not, need to change
+ * the amount minted
+ * 
+ * @dev This contract should only be able to mint conquest entries.
  */
-contract ConquestEntryFactory is IERC1155TokenReceiver {
+contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
-  uint256 constant internal CARD_DECIMALS = 2; // Number of decimals silver and gold cards have
   
   /***********************************|
   |             Variables             |
   |__________________________________*/
 
+  // Assets
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver assets contract
-  uint256 immutable public conquestEntryID;          // Conquest entry token id
-  Range public silverRange;                          // Range of asset ids that can be converted to tickets
+  IERC1155 immutable internal arcadeumCoin; // ERC-1155 Arcadeum Coin contract
+  uint256 immutable public arcadeumCoinID;  // ID of ARC token in respective ERC-1155 contract
+  uint256 immutable public silverRangeMin;  // Lower bound for the range of asset IDs that can be converted to entries
+  uint256 immutable public silverRangeMax;  // Upper bound for the range of asset IDs that can be converted to entries
 
-  struct Range {uint256 min; uint256 max;}
+  // Conquest entry token id
+  uint256 immutable public conquestEntryID; 
+
+  // Parameters
+  // Assumes cards and entries have the same number of decimals,
+  // uint256 constant internal CARD_DECIMALS = 2;            // Number of decimals cards have
+  // uint256 constant internal ENTRIES_DECIMALS = 2;         // Number of decimals entries have
+  uint256 constant internal ARC_DECIMALS = 16;               // Number of decimals arc have
+  uint256 constant internal ARC_REQUIRED = 10**ARC_DECIMALS; // 100 arc for 1 conquest entry (after decimals)
+
 
   /***********************************|
   |            Constructor            |
@@ -34,24 +49,34 @@ contract ConquestEntryFactory is IERC1155TokenReceiver {
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
    * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
+   * @param _arcadeumCoinAddress    The address of the ERC-1155 Arcadeum coin
+   * @param _arcadeumCoinId    Arcadeum coin token id
    * @param _conquestEntryTokenId   Conquest entry token id
-   * @param _silverCardsRange       ID range that includes only silver cards
+   * @param _silverRangeMin         Minimum id for silver cards
+   * @param _silverRangeMax         Maximum id for silver cards
    */
   constructor(
     address _skyweaverAssetsAddress,
+    address _arcadeumCoinAddress,
+    uint256 _arcadeumCoinId,
     uint256 _conquestEntryTokenId,
-    Range memory _silverCardsRange
+    uint256 _silverRangeMin,
+    uint256 _silverRangeMax
   ) public 
   {
     require(
-      _skyweaverAssetsAddress != address(0),
+      _skyweaverAssetsAddress != address(0) && 
+      _arcadeumCoinAddress != address(0),
       "Conquest#constructor: INVALID_INPUT"
     );
 
     // Assets
     skyweaverAssets = ISkyweaverAssets(_skyweaverAssetsAddress);
+    arcadeumCoin = IERC1155(_arcadeumCoinAddress);
+    arcadeumCoinID = _arcadeumCoinId;
     conquestEntryID = _conquestEntryTokenId;
-    silverRange = _silverCardsRange;
+    silverRangeMin = _silverRangeMin;
+    silverRangeMax = _silverRangeMax;
   }
 
   
@@ -63,7 +88,7 @@ contract ConquestEntryFactory is IERC1155TokenReceiver {
    * @notice Prevents receiving Ether or calls to unsuported methods
    */
   fallback () external {
-    revert("ConquestEntryFactory#_: UNSUPPORTED_METHOD");
+    revert("ConquestEntriesFactory#_: UNSUPPORTED_METHOD");
   }
 
   /**
@@ -93,40 +118,69 @@ contract ConquestEntryFactory is IERC1155TokenReceiver {
   }
 
   /**
-   * @notice Players converting silver cards to conquest entries
+   * @notice Players converting silver cards or ARCs to conquest entries
    * @param _from    Address who sent the token
    * @param _ids     An array containing ids of each Token being transferred
    * @param _amounts An array containing amounts of each Token being transferred
+   * @param _data    If data is provided, it should be address who will receive the entries
    */
   function onERC1155BatchReceived(
     address, // _operator
     address _from,
     uint256[] memory _ids,
     uint256[] memory _amounts,
-    bytes memory // _data
+    bytes memory _data
   )
     public override returns(bytes4)
-  {
-    require(msg.sender == address(skyweaverAssets), "ConquestEntryFactory#onERC1155BatchReceived: INVALID_TOKEN_ADDRESS");
-    uint256 n_entries = 0; // Number of entries to mint
+  { 
+    // Number of entries to mint
+    uint256 n_entries = 0; 
 
-    // Validate IDs and count number of entries to mint
-    for (uint256 i = 0; i < _ids.length; i++) {
-      require(
-        silverRange.min <= _ids[i] && _ids[i] <= silverRange.max, 
-        "ConquestEntryFactory#onERC1155BatchReceived: ID_IS_OUT_OF_RANGE"
-      );
-      n_entries = n_entries.add(_amounts[i]);
+    // Burn cards or store ARC
+    if (msg.sender == address(skyweaverAssets)) {
+      
+      // Validate IDs and count number of entries to mint
+      for (uint256 i = 0; i < _ids.length; i++) {
+        require(
+          silverRangeMin <= _ids[i] && _ids[i] <= silverRangeMax, 
+          "ConquestEntriesFactory#onERC1155BatchReceived: ID_IS_OUT_OF_RANGE"
+        );
+        n_entries = n_entries.add(_amounts[i]);
+      }
+
+      // Burn silver cards received
+      skyweaverAssets.batchBurn(_ids, _amounts);
+
+    } else if (msg.sender == address(arcadeumCoin)) {
+      require(_ids.length == 1, "ConquestEntriesFactory#onERC1155BatchReceived: INVALID_ARRAY_LENGTH");
+      require(_ids[0] == arcadeumCoinID, "ConquestEntriesFactory#onERC1155BatchReceived: INVALID_ARC_ID");
+      n_entries = _amounts[0] / ARC_REQUIRED; 
+
+      // Do nothing else. ARCs are stored until withdrawn
+
+    } else {
+      revert("ConquestEntriesFactory#onERC1155BatchReceived: INVALID_TOKEN_ADDRESS");
     }
 
-    // Burn silver cards received
-    skyweaverAssets.batchBurn(_ids, _amounts);
+    // If an address is specified in _data, use it as receiver, otherwise use _from address
+    address receiver = _data.length > 0 ? abi.decode(_data, (address)) : _from;
 
-    // Mint conquest entries (silvers have 2 decimals)
-    skyweaverAssets.mint(_from, conquestEntryID, n_entries / 10**CARD_DECIMALS, "");
+    // Mint conquest entries
+    skyweaverAssets.mint(receiver, conquestEntryID, n_entries, "");
 
     // Return success
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
+  }
+
+  /**
+   * @notice Send current ARC balance of conquest contract to recipient
+   * @param _recipient Address where the currency will be sent to
+   * @param _data      Data to pass with transfer function
+   */
+  function withdraw(address _recipient, bytes calldata _data) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
+    require(_recipient != address(0x0), "ConquestEntriesFactory#withdraw: INVALID_RECIPIENT");
+    uint256 this_balance = arcadeumCoin.balanceOf(address(this), arcadeumCoinID);
+    arcadeumCoin.safeTransferFrom(address(this), _recipient, arcadeumCoinID, this_balance, _data);
   }
 
 

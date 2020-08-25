@@ -12,12 +12,6 @@ import {
 
 interface ConquestInterface extends Interface {
   functions: {
-    MAX_REWARD_AMOUNT: TypedFunctionDescription<{ encode([]: []): string }>;
-
-    TIME_BETWEEN_CONQUESTS: TypedFunctionDescription<{
-      encode([]: []): string;
-    }>;
-
     assignOwnership: TypedFunctionDescription<{
       encode([_address, _tier]: [string, BigNumberish]): string;
     }>;
@@ -29,7 +23,7 @@ interface ConquestInterface extends Interface {
     }>;
 
     exitConquest: TypedFunctionDescription<{
-      encode([_user, _ids, _amounts]: [
+      encode([_user, _silverIds, _goldIds]: [
         string,
         BigNumberish[],
         BigNumberish[]
@@ -39,6 +33,8 @@ interface ConquestInterface extends Interface {
     getOwnerTier: TypedFunctionDescription<{
       encode([_owner]: [string]): string;
     }>;
+
+    goldCardFactory: TypedFunctionDescription<{ encode([]: []): string }>;
 
     isActiveConquest: TypedFunctionDescription<{
       encode([]: [string]): string;
@@ -67,6 +63,8 @@ interface ConquestInterface extends Interface {
         Arrayish
       ]): string;
     }>;
+
+    silverCardFactory: TypedFunctionDescription<{ encode([]: []): string }>;
 
     skyweaverAssets: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -104,10 +102,6 @@ export class Conquest extends Contract {
   interface: ConquestInterface;
 
   functions: {
-    MAX_REWARD_AMOUNT(): Promise<BigNumber>;
-
-    TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
-
     assignOwnership(
       _address: string,
       _tier: BigNumberish,
@@ -120,12 +114,14 @@ export class Conquest extends Contract {
 
     exitConquest(
       _user: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
+      _silverIds: BigNumberish[],
+      _goldIds: BigNumberish[],
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
     getOwnerTier(_owner: string): Promise<BigNumber>;
+
+    goldCardFactory(): Promise<string>;
 
     isActiveConquest(arg0: string): Promise<boolean>;
 
@@ -149,14 +145,12 @@ export class Conquest extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    silverCardFactory(): Promise<string>;
+
     skyweaverAssets(): Promise<string>;
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
   };
-
-  MAX_REWARD_AMOUNT(): Promise<BigNumber>;
-
-  TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
 
   assignOwnership(
     _address: string,
@@ -170,12 +164,14 @@ export class Conquest extends Contract {
 
   exitConquest(
     _user: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
+    _silverIds: BigNumberish[],
+    _goldIds: BigNumberish[],
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
   getOwnerTier(_owner: string): Promise<BigNumber>;
+
+  goldCardFactory(): Promise<string>;
 
   isActiveConquest(arg0: string): Promise<boolean>;
 
@@ -199,6 +195,8 @@ export class Conquest extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  silverCardFactory(): Promise<string>;
+
   skyweaverAssets(): Promise<string>;
 
   supportsInterface(interfaceID: Arrayish): Promise<boolean>;
@@ -214,10 +212,6 @@ export class Conquest extends Contract {
   };
 
   estimate: {
-    MAX_REWARD_AMOUNT(): Promise<BigNumber>;
-
-    TIME_BETWEEN_CONQUESTS(): Promise<BigNumber>;
-
     assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
 
     conquestEntryID(): Promise<BigNumber>;
@@ -226,11 +220,13 @@ export class Conquest extends Contract {
 
     exitConquest(
       _user: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[]
+      _silverIds: BigNumberish[],
+      _goldIds: BigNumberish[]
     ): Promise<BigNumber>;
 
     getOwnerTier(_owner: string): Promise<BigNumber>;
+
+    goldCardFactory(): Promise<BigNumber>;
 
     isActiveConquest(arg0: string): Promise<BigNumber>;
 
@@ -251,6 +247,8 @@ export class Conquest extends Contract {
       _amount: BigNumberish,
       _data: Arrayish
     ): Promise<BigNumber>;
+
+    silverCardFactory(): Promise<BigNumber>;
 
     skyweaverAssets(): Promise<BigNumber>;
 
