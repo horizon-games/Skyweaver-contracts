@@ -101,6 +101,17 @@ describe('TieredOwnable', () => {
     })
   })
 
+  describe('Constructor', () => {
+    it('should not set owner to msg.sender by default', async () => {
+      const contract_test = await ownerMockAbstract.deploy(ownerWallet, [randomAddress]) as TieredOwnableMock
+      const owner_owner_tier = await contract_test.functions.getOwnerTier(ownerAddress)
+      const randowm_owner_tier = await contract_test.functions.getOwnerTier(randomAddress)
+      
+      expect(owner_owner_tier).to.be.eql(Zero)
+      expect(randowm_owner_tier).to.be.eql(MaxUint256)
+    })
+  })
+
   describe('assignOwnership() function', () => {
     let newTier = new BigNumber(7)
 
