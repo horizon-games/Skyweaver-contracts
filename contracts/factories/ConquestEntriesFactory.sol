@@ -48,21 +48,23 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
+   * @param _firstOwner             Address of the first owner
    * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
    * @param _arcadeumCoinAddress    The address of the ERC-1155 Arcadeum coin
-   * @param _arcadeumCoinId    Arcadeum coin token id
+   * @param _arcadeumCoinId         Arcadeum coin token id
    * @param _conquestEntryTokenId   Conquest entry token id
    * @param _silverRangeMin         Minimum id for silver cards
    * @param _silverRangeMax         Maximum id for silver cards
    */
   constructor(
+    address _firstOwner,
     address _skyweaverAssetsAddress,
     address _arcadeumCoinAddress,
     uint256 _arcadeumCoinId,
     uint256 _conquestEntryTokenId,
     uint256 _silverRangeMin,
     uint256 _silverRangeMax
-  ) public 
+  ) TieredOwnable(_firstOwner) public 
   {
     require(
       _skyweaverAssetsAddress != address(0) && 

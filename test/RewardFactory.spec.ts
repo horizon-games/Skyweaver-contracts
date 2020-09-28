@@ -99,11 +99,12 @@ describe('RewardFactory', () => {
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
     // Deploy Skyweaver Assets Contract
-    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
+    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
     userSkyweaverAssetContract = await skyweaverAssetsContract.connect(userSigner)
 
     // Deploy silver card factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
       periodMintLimit
     ]) as RewardFactory

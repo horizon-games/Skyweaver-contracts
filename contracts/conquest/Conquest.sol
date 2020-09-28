@@ -45,17 +45,19 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
+   * @param _firstOwner               Address of the first owner
    * @param _skyweaverAssetsAddress   The address of the ERC-1155 Assets Token contract
    * @param _silverCardFactoryAddress The address of the Silver Card Factory
    * @param _goldCardFactoryAddress   The address of the Gold Card Factory
    * @param _conquestEntryTokenId     Conquest entry token id
    */
   constructor(
+    address _firstOwner,
     address _skyweaverAssetsAddress,
     address _silverCardFactoryAddress,
     address _goldCardFactoryAddress,
     uint256 _conquestEntryTokenId
-  ) public 
+  ) TieredOwnable(_firstOwner) public 
   {
     require(
       _skyweaverAssetsAddress != address(0) &&

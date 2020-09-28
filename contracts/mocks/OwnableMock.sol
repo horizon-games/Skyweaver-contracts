@@ -6,6 +6,8 @@ import "../utils/Ownable.sol";
 
 contract OwnableMock is Ownable {
 
+  constructor(address _firstOwner) Ownable(_firstOwner) public {}
+
   function call_onlyOwner() external onlyOwner() returns(bool) {
     return true;
   }

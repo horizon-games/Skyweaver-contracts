@@ -95,7 +95,7 @@ describe('SkyweaverAssets', () => {
     userArcadeumCoinContract = await arcadeumCoinContract.connect(userSigner) as ERC1155Mock
 
     // Deploy SWFactory manager
-    SWAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
+    SWAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
     userSWAssetsContract = await SWAssetsContract.connect(userSigner) as SkyweaverAssets
 
     // Deploy mock factory

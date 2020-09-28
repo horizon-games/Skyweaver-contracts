@@ -63,11 +63,11 @@ describe('TieredOwnable', () => {
   beforeEach(async () => {
 
     // Deploy delayed owner contract
-    contract = await delayedOwnerMockAbstract.deploy(ownerWallet, [delay]) as DelayedOwner
+    contract = await delayedOwnerMockAbstract.deploy(ownerWallet, [ownerAddress, delay]) as DelayedOwner
     randomContract = await contract.connect(randomSigner) as DelayedOwner
 
     // Deploy Ownable contract
-    targetContract = await ownedMockAbstract.deploy(ownerWallet) as OwnableMock
+    targetContract = await ownedMockAbstract.deploy(ownerWallet, [ownerAddress]) as OwnableMock
     randomTargetContract = await targetContract.connect(randomSigner) as OwnableMock
 
     transaction.target = targetContract.address;

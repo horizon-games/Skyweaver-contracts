@@ -110,11 +110,12 @@ describe('ConquestEntriesFactory', () => {
     userArcadeumCoinContract = await arcadeumCoinContract.connect(userSigner) as ERC1155Mock
 
     // Deploy Skyweaver Assets Contract
-    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
+    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
     userSkyweaverAssetContract = await skyweaverAssetsContract.connect(userSigner)
 
     // Deploy factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
       arcadeumCoinContract.address,
       arcID,

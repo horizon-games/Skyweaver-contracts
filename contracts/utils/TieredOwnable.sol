@@ -11,11 +11,12 @@ contract TieredOwnable {
   event OwnershipGranted(address indexed owner, uint256 indexed previousTier, uint256 indexed newTier);
 
   /**
-   * @dev Sets the sender as the contract's "master owner"
+   * @dev Sets the _firstOwner provided to highest owner tier
+   * @dev _firstOwner First address to be a owner of this contract
    */
-  constructor () internal {
-    ownerTier[msg.sender] = HIGHEST_OWNER_TIER;
-    emit OwnershipGranted(msg.sender, 0, HIGHEST_OWNER_TIER);
+  constructor (address _firstOwner) internal {
+    ownerTier[_firstOwner] = HIGHEST_OWNER_TIER;
+    emit OwnershipGranted(_firstOwner, 0, HIGHEST_OWNER_TIER);
   }
 
   /**

@@ -21,9 +21,10 @@ contract FreemintFactory is TieredOwnable {
 
   /**
    * @notice Create factory & link skyweaver assets
+   * @param _firstOwner Address of the first owner
    * @param _assetsAddr The address of the ERC-1155 Assets Token contract
    */
-  constructor(address _assetsAddr) public {
+  constructor(address _firstOwner, address _assetsAddr) TieredOwnable(_firstOwner) public {
     require(
       _assetsAddr != address(0),
       "FreemintFactory#constructor: INVALID_INPUT"

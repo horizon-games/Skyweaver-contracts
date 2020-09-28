@@ -41,6 +41,7 @@ const {
 
 describe('FreemintFactory', () => {
   let userAddress: string
+  let ownerAddress: string
   let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract
   let factoryAbstract: AbstractContract
@@ -61,6 +62,7 @@ describe('FreemintFactory', () => {
 
   // load contract abi and deploy to test server
   before(async () => {
+    ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
@@ -71,11 +73,12 @@ describe('FreemintFactory', () => {
   beforeEach(async () => {
 
     // Deploy Skyweaver Assets Contract
-    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
+    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
     userSkyweaverAssetContract = await skyweaverAssetsContract.connect(userSigner)
 
     // Deploy factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
     ]) as FreemintFactory
     userFactoryContract = await factoryContract.connect(userSigner) as FreemintFactory

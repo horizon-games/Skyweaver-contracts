@@ -111,22 +111,25 @@ describe('Conquest', () => {
   beforeEach(async () => {
 
     // Deploy Skyweaver Assets Contract
-    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet) as SkyweaverAssets
+    skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
     userSkyweaverAssetContract = await skyweaverAssetsContract.connect(userSigner)
 
     // Deploy Silver and Gold cards factories
     silverFactory = await rewardFactoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
       PERIOD_MINT_LIMIT
     ]) as RewardFactory
 
     goldFactory = await rewardFactoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
       PERIOD_MINT_LIMIT.div(5)
     ]) as RewardFactory
 
     // Deploy silver card factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
+      ownerAddress,
       skyweaverAssetsContract.address,
       silverFactory.address,
       goldFactory.address,

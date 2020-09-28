@@ -42,9 +42,10 @@ contract DelayedOwner is Ownable {
 
   /**
    * @dev Registers the execution delay for this contract 
+   * @param _firstOwner Address of the first owner
    * @param _delay Amount of time in seconds the delay will be
    */
-  constructor (uint256 _delay) public {
+  constructor (address _firstOwner, uint256 _delay) Ownable(_firstOwner) public {
     EXECUTION_DELAY = _delay;
   }
 

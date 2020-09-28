@@ -74,7 +74,7 @@ describe('TieredOwnable', () => {
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
     // Deploy Arcadeum Coins
-    contract = await ownerMockAbstract.deploy(ownerWallet) as TieredOwnableMock
+    contract = await ownerMockAbstract.deploy(ownerWallet, [ownerAddress]) as TieredOwnableMock
     owner0Contract = await contract.connect(owner0Signer) as TieredOwnableMock
     owner5Contract = await contract.connect(owner5Signer) as TieredOwnableMock
     userContract = await contract.connect(userSigner) as TieredOwnableMock

@@ -5,6 +5,9 @@ pragma experimental ABIEncoderV2;
 import "../utils/TieredOwnable.sol";
 
 contract TieredOwnableMock is TieredOwnable {
+
+  constructor(address _firstOwner) TieredOwnable(_firstOwner) public {}
+
   function onlyMaxTier() external onlyOwnerTier(HIGHEST_OWNER_TIER) returns(bool) {
     return true;
   }

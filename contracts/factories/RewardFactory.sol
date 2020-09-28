@@ -37,13 +37,15 @@ contract RewardFactory is TieredOwnable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
+   * @param _firstOwner       Address of the first owner
    * @param _assetsAddr       The address of the ERC-1155 Assets Token contract
    * @param _periodMintLimit  Can only mint N assets per period
    */
   constructor(
+    address _firstOwner,
     address _assetsAddr,
     uint256 _periodMintLimit
-  ) public {
+  ) TieredOwnable(_firstOwner) public {
     require(
       _assetsAddr != address(0) &&
       _periodMintLimit > 0,

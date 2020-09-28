@@ -50,6 +50,14 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
   event MintPermissionRemoved(address indexed factory, AssetRange deleted_range);
   event RangeLocked(AssetRange locked_range);
 
+
+  /***********************************|
+  |             Constuctor            |
+  |__________________________________*/
+  
+  constructor (address _firstOwner) Ownable(_firstOwner) public {}
+
+
   /***********************************|
   |     Factory Management Methods    |
   |__________________________________*/

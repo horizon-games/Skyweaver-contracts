@@ -12,12 +12,12 @@ contract Ownable {
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
   /**
-   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-   * account.
+   * @dev The Ownable constructor sets the original `owner` of the contract to the specied address
+   * @param _firstOwner Address of the first owner
    */
-  constructor () internal {
-    owner = msg.sender;
-    emit OwnershipTransferred(address(0), owner);
+  constructor (address _firstOwner) internal {
+    owner = _firstOwner;
+    emit OwnershipTransferred(address(0), _firstOwner);
   }
 
   /**
