@@ -25,7 +25,7 @@ contract RewardFactory is TieredOwnable {
   // Period variables
   uint256 internal period;                           // Current period
   uint256 internal availableSupply;                  // Amount of assets that can currently be minted
-  uint256 public periodMintLimit;                    // Amount that can be minted within 24h
+  uint256 public periodMintLimit;                    // Amount that can be minted within 6h
   uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
 
   // Event
