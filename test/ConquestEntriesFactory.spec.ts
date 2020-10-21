@@ -50,12 +50,12 @@ describe('ConquestEntriesFactory', () => {
   let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract
   let ticketAbstract: AbstractContract
-  let arcadeumCoinAbstract: AbstractContract
+  let wDaiAbstract: AbstractContract
   let factoryAbstract: AbstractContract
 
-  // Arcadeum Coins
-  let arcadeumCoinContract: ERC1155Mock
-  let userArcadeumCoinContract: ERC1155Mock
+  // Wrapped DAI
+  let wDaiContract: ERC1155Mock
+  let userwDaiContract: ERC1155Mock
 
   // Skyweaver Assets
   let skyweaverAssetsContract: SkyweaverAssets
@@ -72,19 +72,18 @@ describe('ConquestEntriesFactory', () => {
   const nTokenTypes    = new BigNumber(30) 
   const nTokensPerType = new BigNumber(100).mul(100)
 
-  const nArc = new BigNumber(500).mul(new BigNumber(10).pow(16))
+  const nWDAI = new BigNumber(5).mul(new BigNumber(10).pow(18))
 
   // Ticket token Param
   const ticketID = new BigNumber(555);
-  const ticketAmount = new BigNumber(10).mul(100);
 
   // Range values 
   const silverMinRange = new BigNumber(1);
   const silverMaxRange = new BigNumber(500);
 
-  // Arcadeum Coin Param
-  const arcID = new BigNumber(2);
-  const baseTokenAmount = new BigNumber(1000000000).mul(new BigNumber(10).pow(16))
+  // wDAI Param
+  const wDaiID = new BigNumber(2);
+  const baseTokenAmount = new BigNumber(10000000).mul(new BigNumber(10).pow(18))
 
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
@@ -99,15 +98,15 @@ describe('ConquestEntriesFactory', () => {
     randomAddress = await randomWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     ticketAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
-    arcadeumCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
+    wDaiAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('ConquestEntriesFactory')
   })
 
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
-    // Deploy Arcadeum Coins
-    arcadeumCoinContract = await arcadeumCoinAbstract.deploy(ownerWallet) as ERC1155Mock
-    userArcadeumCoinContract = await arcadeumCoinContract.connect(userSigner) as ERC1155Mock
+    // Deploy Wrapped DAI
+    wDaiContract = await wDaiAbstract.deploy(ownerWallet) as ERC1155Mock
+    userwDaiContract = await wDaiContract.connect(userSigner) as ERC1155Mock
 
     // Deploy Skyweaver Assets Contract
     skyweaverAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
@@ -117,8 +116,8 @@ describe('ConquestEntriesFactory', () => {
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
       ownerAddress,
       skyweaverAssetsContract.address,
-      arcadeumCoinContract.address,
-      arcID,
+      wDaiContract.address,
+      wDaiID,
       ticketID, 
       silverMinRange, 
       silverMaxRange
@@ -139,9 +138,9 @@ describe('ConquestEntriesFactory', () => {
     // Mint cards tokens to user
     await skyweaverAssetsContract.functions.batchMint(userAddress, ids, amounts , [])
 
-    // Mint Arcadeum coins to owner and user
-    await arcadeumCoinContract.functions.mintMock(ownerAddress, arcID, baseTokenAmount, [])
-    await arcadeumCoinContract.functions.mintMock(userAddress, arcID, baseTokenAmount, [])
+    // Mint wDAI to owner and user
+    await wDaiContract.functions.mintMock(ownerAddress, wDaiID, baseTokenAmount, [])
+    await wDaiContract.functions.mintMock(userAddress, wDaiID, baseTokenAmount, [])
   })
 
   describe('Getter functions', () => {
@@ -191,9 +190,9 @@ describe('ConquestEntriesFactory', () => {
           } else if (condition == conditions[1]) {
             tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, [], TX_PARAM)
           } else if (condition == conditions[2]) {
-            tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, nArc, [], TX_PARAM)
+            tx = userwDaiContract.functions.safeTransferFrom(userAddress, factory, wDaiID, nWDAI, [], TX_PARAM)
           } else if (condition == conditions[3]) {
-            tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [nArc], [], TX_PARAM)
+            tx = userwDaiContract.functions.safeBatchTransferFrom(userAddress, factory, [wDaiID], [nWDAI], [], TX_PARAM)
           }
 
           await expect(tx).to.be.fulfilled
@@ -209,15 +208,15 @@ describe('ConquestEntriesFactory', () => {
           } else if (condition == conditions[1]) {
             tx = userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, encoded_recipient, TX_PARAM)
           } else if (condition == conditions[2]) {
-            tx = userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, nArc, encoded_recipient, TX_PARAM)
+            tx = userwDaiContract.functions.safeTransferFrom(userAddress, factory, wDaiID, nWDAI, encoded_recipient, TX_PARAM)
           } else if (condition == conditions[3]) {
-            tx = userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [nArc], encoded_recipient, TX_PARAM)
+            tx = userwDaiContract.functions.safeBatchTransferFrom(userAddress, factory, [wDaiID], [nWDAI], encoded_recipient, TX_PARAM)
           }
 
           await expect(tx).to.be.fulfilled
         })
 
-        it('should REVERT if asset is not silver card or arc', async () => {
+        it('should REVERT if asset is not silver card or wDAI', async () => {
           let tx;
           await skyweaverAssetsContract.functions.batchMint(userAddress, [silverMaxRange.add(1), silverMaxRange.add(2)], [nTokensPerType, nTokensPerType] , [])
           if (condition == conditions[0]) {
@@ -252,9 +251,9 @@ describe('ConquestEntriesFactory', () => {
                 } else if (condition == conditions[1]) {
                   tx = await userSkyweaverAssetContract.functions.safeBatchTransferFrom(userAddress, factory, ids, amounts, data, TX_PARAM)
                 } else if (condition == conditions[2]) {
-                  tx = await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, nArc, data, TX_PARAM)
+                  tx = await userwDaiContract.functions.safeTransferFrom(userAddress, factory, wDaiID, nWDAI, data, TX_PARAM)
                 } else if (condition == conditions[3]) {
-                  tx = await userArcadeumCoinContract.functions.safeBatchTransferFrom(userAddress, factory, [arcID], [nArc], data, TX_PARAM)
+                  tx = await userwDaiContract.functions.safeBatchTransferFrom(userAddress, factory, [wDaiID], [nWDAI], data, TX_PARAM)
                 }
               })
               
@@ -281,19 +280,19 @@ describe('ConquestEntriesFactory', () => {
                 })
 
               } else {
-                it('should update factory arc balance', async () => {
-                  let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
-                  expect(factory_balance).to.be.eql(nArc)
+                it('should update factory wDAI balance', async () => {
+                  let factory_balance = await wDaiContract.functions.balanceOf(factory, wDaiID)
+                  expect(factory_balance).to.be.eql(nWDAI)
                 })
 
-                it('should update user arc balance', async () => {
-                  let factory_balance = await arcadeumCoinContract.functions.balanceOf(userAddress, arcID)
-                  expect(factory_balance).to.be.eql(baseTokenAmount.sub(nArc))
+                it('should update user wDAI balance', async () => {
+                  let factory_balance = await wDaiContract.functions.balanceOf(userAddress, wDaiID)
+                  expect(factory_balance).to.be.eql(baseTokenAmount.sub(nWDAI))
                 })
 
                 it('should update recipient conquest entries balance', async () => {
                   let userBalance = await userSkyweaverAssetContract.functions.balanceOf(recipient, ticketID)
-                  expect(userBalance).to.be.eql(nArc.div(new BigNumber(10).pow(16)))
+                  expect(userBalance).to.be.eql(nWDAI.div(new BigNumber(10).pow(18)))
                 })
               }
 
@@ -313,7 +312,7 @@ describe('ConquestEntriesFactory', () => {
       let data = []
 
       beforeEach(async () => {
-        await userArcadeumCoinContract.functions.safeTransferFrom(userAddress, factory, arcID, nArc, [], TX_PARAM)
+        await userwDaiContract.functions.safeTransferFrom(userAddress, factory, wDaiID, nWDAI, [], TX_PARAM)
       })
 
       it('should PASS if caller is owner', async () => {
@@ -337,13 +336,13 @@ describe('ConquestEntriesFactory', () => {
         })
 
         it('should update factory ARC balance', async () => {
-          let factory_balance = await arcadeumCoinContract.functions.balanceOf(factory, arcID)
+          let factory_balance = await wDaiContract.functions.balanceOf(factory, wDaiID)
           expect(factory_balance).to.be.eql(Zero)
         })
   
         it('should update recipient ARC balance', async () => {
-          let recipient_balance = await arcadeumCoinContract.functions.balanceOf(recipient, arcID)
-          expect(recipient_balance).to.be.eql(nArc)
+          let recipient_balance = await wDaiContract.functions.balanceOf(recipient, wDaiID)
+          expect(recipient_balance).to.be.eql(nWDAI)
         })
       })
     })

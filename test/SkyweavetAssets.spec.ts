@@ -49,17 +49,17 @@ describe('SkyweaverAssets', () => {
   let ownerAddress: string
   let userAddress: string
   let skyweaverAssetsAbstract: AbstractContract
-  let arcadeumCoinAbstract: AbstractContract
+  let wDaiCoinAbstract: AbstractContract
   let factoryAbstract: AbstractContract
 
   // Skyweaver Assets
-  let arcadeumCoinContract: ERC1155Mock
+  let wDaiContract: ERC1155Mock
   let SWAssetsContract: SkyweaverAssets
   let userSWAssetsContract: SkyweaverAssets
   let factoryContract: FactoryMock
 
-  // Arcadeum Coins
-  let userArcadeumCoinContract: ERC1155Mock
+  // Wrapped DAI
+  let userWDaiContract: ERC1155Mock
 
   // Token Param
   const nTokenTypes    = 30 
@@ -84,15 +84,15 @@ describe('SkyweaverAssets', () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
-    arcadeumCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
+    wDaiCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('FactoryMock')
   })
 
   // deploy before each test, to reset state of contract
   beforeEach(async () => {
-    // Deploy Arcadeum Coins
-    arcadeumCoinContract = await arcadeumCoinAbstract.deploy(ownerWallet) as ERC1155Mock
-    userArcadeumCoinContract = await arcadeumCoinContract.connect(userSigner) as ERC1155Mock
+    // Deploy Wrapped DAI
+    wDaiContract = await wDaiCoinAbstract.deploy(ownerWallet) as ERC1155Mock
+    userWDaiContract = await wDaiContract.connect(userSigner) as ERC1155Mock
 
     // Deploy SWFactory manager
     SWAssetsContract = await skyweaverAssetsAbstract.deploy(ownerWallet, [ownerAddress]) as SkyweaverAssets
@@ -101,9 +101,9 @@ describe('SkyweaverAssets', () => {
     // Deploy mock factory
     factoryContract = await factoryAbstract.deploy(ownerWallet, [SWAssetsContract.address]) as FactoryMock
 
-    // Mint Arcadeum coins to owner and user
-    await arcadeumCoinContract.functions.mintMock(ownerAddress, baseTokenID, baseTokenAmount, [])
-    await arcadeumCoinContract.functions.mintMock(userAddress, baseTokenID, baseTokenAmount, [])
+    // Mint wDAI to owner and user
+    await wDaiContract.functions.mintMock(ownerAddress, baseTokenID, baseTokenAmount, [])
+    await wDaiContract.functions.mintMock(userAddress, baseTokenID, baseTokenAmount, [])
 
     // Assing vars
     factory = factoryContract.address

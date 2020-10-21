@@ -9,7 +9,7 @@ import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * @notice Contract used  allowing players to convert their silver cards and ARC to 
+ * @notice Contract used  allowing players to convert their silver cards and Wrapped DAI (wDAI) to 
  * conquest entries.
  * 
  * @dev Assumes both cards and entries have the same number of decimals, if not, need to change
@@ -26,20 +26,20 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
 
   // Assets
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver assets contract
-  IERC1155 immutable internal arcadeumCoin; // ERC-1155 Arcadeum Coin contract
-  uint256 immutable public arcadeumCoinID;  // ID of ARC token in respective ERC-1155 contract
-  uint256 immutable public silverRangeMin;  // Lower bound for the range of asset IDs that can be converted to entries
-  uint256 immutable public silverRangeMax;  // Upper bound for the range of asset IDs that can be converted to entries
+  IERC1155 immutable internal wDai;                  // ERC-1155 Wrapped DAI contract
+  uint256 immutable public wDaiID;                   // ID of wDAI token in respective ERC-1155 contract
+  uint256 immutable public silverRangeMin;           // Lower bound for the range of asset IDs that can be converted to entries
+  uint256 immutable public silverRangeMax;           // Upper bound for the range of asset IDs that can be converted to entries
 
   // Conquest entry token id
   uint256 immutable public conquestEntryID; 
 
   // Parameters
   // Assumes cards and entries have the same number of decimals,
-  // uint256 constant internal CARD_DECIMALS = 2;            // Number of decimals cards have
-  // uint256 constant internal ENTRIES_DECIMALS = 2;         // Number of decimals entries have
-  uint256 constant internal ARC_DECIMALS = 16;               // Number of decimals arc have
-  uint256 constant internal ARC_REQUIRED = 10**ARC_DECIMALS; // 100 arc for 1 conquest entry (after decimals)
+  // uint256 constant internal CARD_DECIMALS = 2;                  // Number of decimals cards have
+  // uint256 constant internal ENTRIES_DECIMALS = 2;               // Number of decimals entries have
+  uint256 constant internal wDAI_DECIMALS = 18;                    // Number of decimals wDAI have
+  uint256 constant internal wDAI_REQUIRED = 1 * 10**wDAI_DECIMALS; // 1 wDAI for 1 conquest entry (after decimals)
 
 
   /***********************************|
@@ -50,8 +50,8 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Create factory, link skyweaver assets and store initial parameters
    * @param _firstOwner             Address of the first owner
    * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
-   * @param _arcadeumCoinAddress    The address of the ERC-1155 Arcadeum coin
-   * @param _arcadeumCoinId         Arcadeum coin token id
+   * @param _wDaiAddress            The address of the ERC-1155 Wrapped DAI
+   * @param _wDaiId                 Wrapped DAI token id
    * @param _conquestEntryTokenId   Conquest entry token id
    * @param _silverRangeMin         Minimum id for silver cards
    * @param _silverRangeMax         Maximum id for silver cards
@@ -59,8 +59,8 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   constructor(
     address _firstOwner,
     address _skyweaverAssetsAddress,
-    address _arcadeumCoinAddress,
-    uint256 _arcadeumCoinId,
+    address _wDaiAddress,
+    uint256 _wDaiId,
     uint256 _conquestEntryTokenId,
     uint256 _silverRangeMin,
     uint256 _silverRangeMax
@@ -68,14 +68,14 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   {
     require(
       _skyweaverAssetsAddress != address(0) && 
-      _arcadeumCoinAddress != address(0),
+      _wDaiAddress != address(0),
       "Conquest#constructor: INVALID_INPUT"
     );
 
     // Assets
     skyweaverAssets = ISkyweaverAssets(_skyweaverAssetsAddress);
-    arcadeumCoin = IERC1155(_arcadeumCoinAddress);
-    arcadeumCoinID = _arcadeumCoinId;
+    wDai = IERC1155(_wDaiAddress);
+    wDaiID = _wDaiId;
     conquestEntryID = _conquestEntryTokenId;
     silverRangeMin = _silverRangeMin;
     silverRangeMax = _silverRangeMax;
@@ -120,7 +120,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Players converting silver cards or ARCs to conquest entries
+   * @notice Players converting silver cards or wDAIs to conquest entries
    * @param _from    Address who sent the token
    * @param _ids     An array containing ids of each Token being transferred
    * @param _amounts An array containing amounts of each Token being transferred
@@ -138,7 +138,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
     // Number of entries to mint
     uint256 n_entries = 0; 
 
-    // Burn cards or store ARC
+    // Burn cards or store wDAI
     if (msg.sender == address(skyweaverAssets)) {
       
       // Validate IDs and count number of entries to mint
@@ -153,12 +153,12 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
       // Burn silver cards received
       skyweaverAssets.batchBurn(_ids, _amounts);
 
-    } else if (msg.sender == address(arcadeumCoin)) {
+    } else if (msg.sender == address(wDai)) {
       require(_ids.length == 1, "ConquestEntriesFactory#onERC1155BatchReceived: INVALID_ARRAY_LENGTH");
-      require(_ids[0] == arcadeumCoinID, "ConquestEntriesFactory#onERC1155BatchReceived: INVALID_ARC_ID");
-      n_entries = _amounts[0] / ARC_REQUIRED; 
+      require(_ids[0] == wDaiID, "ConquestEntriesFactory#onERC1155BatchReceived: INVALID_wDAI_ID");
+      n_entries = _amounts[0] / wDAI_REQUIRED; 
 
-      // Do nothing else. ARCs are stored until withdrawn
+      // Do nothing else. wDAIs are stored until withdrawn
 
     } else {
       revert("ConquestEntriesFactory#onERC1155BatchReceived: INVALID_TOKEN_ADDRESS");
@@ -175,14 +175,14 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Send current ARC balance of conquest contract to recipient
+   * @notice Send current wDAI balance of conquest contract to recipient
    * @param _recipient Address where the currency will be sent to
    * @param _data      Data to pass with transfer function
    */
   function withdraw(address _recipient, bytes calldata _data) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
     require(_recipient != address(0x0), "ConquestEntriesFactory#withdraw: INVALID_RECIPIENT");
-    uint256 this_balance = arcadeumCoin.balanceOf(address(this), arcadeumCoinID);
-    arcadeumCoin.safeTransferFrom(address(this), _recipient, arcadeumCoinID, this_balance, _data);
+    uint256 this_balance = wDai.balanceOf(address(this), wDaiID);
+    wDai.safeTransferFrom(address(this), _recipient, wDaiID, this_balance, _data);
   }
 
 

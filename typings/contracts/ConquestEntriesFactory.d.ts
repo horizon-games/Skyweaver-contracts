@@ -12,8 +12,6 @@ import {
 
 interface ConquestEntriesFactoryInterface extends Interface {
   functions: {
-    arcadeumCoinID: TypedFunctionDescription<{ encode([]: []): string }>;
-
     assignOwnership: TypedFunctionDescription<{
       encode([_address, _tier]: [string, BigNumberish]): string;
     }>;
@@ -54,6 +52,8 @@ interface ConquestEntriesFactoryInterface extends Interface {
       encode([interfaceID]: [Arrayish]): string;
     }>;
 
+    wDaiID: TypedFunctionDescription<{ encode([]: []): string }>;
+
     withdraw: TypedFunctionDescription<{
       encode([_recipient, _data]: [string, Arrayish]): string;
     }>;
@@ -87,8 +87,6 @@ export class ConquestEntriesFactory extends Contract {
   interface: ConquestEntriesFactoryInterface;
 
   functions: {
-    arcadeumCoinID(): Promise<BigNumber>;
-
     assignOwnership(
       _address: string,
       _tier: BigNumberish,
@@ -125,14 +123,14 @@ export class ConquestEntriesFactory extends Contract {
 
     supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
+    wDaiID(): Promise<BigNumber>;
+
     withdraw(
       _recipient: string,
       _data: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
   };
-
-  arcadeumCoinID(): Promise<BigNumber>;
 
   assignOwnership(
     _address: string,
@@ -170,6 +168,8 @@ export class ConquestEntriesFactory extends Contract {
 
   supportsInterface(interfaceID: Arrayish): Promise<boolean>;
 
+  wDaiID(): Promise<BigNumber>;
+
   withdraw(
     _recipient: string,
     _data: Arrayish,
@@ -185,8 +185,6 @@ export class ConquestEntriesFactory extends Contract {
   };
 
   estimate: {
-    arcadeumCoinID(): Promise<BigNumber>;
-
     assignOwnership(_address: string, _tier: BigNumberish): Promise<BigNumber>;
 
     conquestEntryID(): Promise<BigNumber>;
@@ -216,6 +214,8 @@ export class ConquestEntriesFactory extends Contract {
     skyweaverAssets(): Promise<BigNumber>;
 
     supportsInterface(interfaceID: Arrayish): Promise<BigNumber>;
+
+    wDaiID(): Promise<BigNumber>;
 
     withdraw(_recipient: string, _data: Arrayish): Promise<BigNumber>;
   };
