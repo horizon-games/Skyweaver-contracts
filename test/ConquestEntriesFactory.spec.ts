@@ -292,7 +292,7 @@ describe('ConquestEntriesFactory', () => {
 
                 it('should update recipient conquest entries balance', async () => {
                   let userBalance = await userSkyweaverAssetContract.functions.balanceOf(recipient, ticketID)
-                  expect(userBalance).to.be.eql(nWDAI.div(new BigNumber(10).pow(18)))
+                  expect(userBalance).to.be.eql(nWDAI.div(new BigNumber(10).pow(18)).mul(100))
                 })
               }
 

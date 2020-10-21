@@ -35,9 +35,8 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   uint256 immutable public conquestEntryID; 
 
   // Parameters
-  // Assumes cards and entries have the same number of decimals,
-  // uint256 constant internal CARD_DECIMALS = 2;                  // Number of decimals cards have
-  // uint256 constant internal ENTRIES_DECIMALS = 2;               // Number of decimals entries have
+  uint256 constant internal CARD_DECIMALS = 2;                     // Number of decimals cards have
+  uint256 constant internal ENTRIES_DECIMALS = 2;                  // Number of decimals entries have
   uint256 constant internal wDAI_DECIMALS = 18;                    // Number of decimals wDAI have
   uint256 constant internal wDAI_REQUIRED = 1 * 10**wDAI_DECIMALS; // 1 wDAI for 1 conquest entry (after decimals)
 
@@ -149,6 +148,8 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
         );
         n_entries = n_entries.add(_amounts[i]);
       }
+      // Account for cards decimals
+      n_entries = n_entries.div(10**CARD_DECIMALS);
 
       // Burn silver cards received
       skyweaverAssets.batchBurn(_ids, _amounts);
@@ -167,8 +168,8 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
     // If an address is specified in _data, use it as receiver, otherwise use _from address
     address receiver = _data.length > 0 ? abi.decode(_data, (address)) : _from;
 
-    // Mint conquest entries
-    skyweaverAssets.mint(receiver, conquestEntryID, n_entries, "");
+    // Mint conquest entries (with decimals)
+    skyweaverAssets.mint(receiver, conquestEntryID, n_entries*10**ENTRIES_DECIMALS, "");
 
     // Return success
     return IERC1155TokenReceiver.onERC1155BatchReceived.selector;
