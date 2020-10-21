@@ -78,7 +78,6 @@ contract FreemintFactory is TieredOwnable {
    * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
-    return  interfaceID == type(IERC165).interfaceId || 
-    interfaceID == type(IERC1155TokenReceiver).interfaceId;
+    return  interfaceID == type(IERC165).interfaceId;
   }
 }

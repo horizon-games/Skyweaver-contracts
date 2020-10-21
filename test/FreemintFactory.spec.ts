@@ -104,6 +104,10 @@ describe('FreemintFactory', () => {
         const support = await factoryContract.functions.supportsInterface('0x01ffc9a7')
         expect(support).to.be.eql(true)
       })
+      it('should return false for 0x4e2312e0 (ERC1155Receiver)', async () => {
+        const support = await factoryContract.functions.supportsInterface('0x4e2312e0')
+        expect(support).to.be.eql(false)
+      })
     })
   })
 
