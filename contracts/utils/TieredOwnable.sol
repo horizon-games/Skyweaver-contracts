@@ -33,7 +33,7 @@ contract TieredOwnable {
    * @param _address Address of the owner
    * @param _tier    Ownership tier assigned to owner
    */
-  function assignOwnership(address _address, uint256 _tier) public onlyOwnerTier(HIGHEST_OWNER_TIER) {
+  function assignOwnership(address _address, uint256 _tier) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
     require(_address != address(0), "TieredOwnable#assignOwnership: INVALID_ADDRESS");
     require(msg.sender != _address, "TieredOwnable#assignOwnership: UPDATING_SELF_TIER");
     emit OwnershipGranted(_address, ownerTier[_address], _tier);
@@ -44,7 +44,7 @@ contract TieredOwnable {
    * @notice Returns the ownership tier of provided owner
    * @param _owner Owner's address to query ownership tier
    */
-  function getOwnerTier(address _owner) public view returns (uint256) {
+  function getOwnerTier(address _owner) external view returns (uint256) {
     return ownerTier[_owner];
   }
 }

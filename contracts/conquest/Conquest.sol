@@ -94,9 +94,9 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
     address _from,
     uint256 _id, 
     uint256 _amount, 
-    bytes memory _data
+    bytes calldata _data
   )
-    public override returns(bytes4)
+    external override returns(bytes4)
   {
     // Convert payload to arrays to pass to onERC1155BatchReceived()
     uint256[] memory ids = new uint256[](1);
