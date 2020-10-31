@@ -3,7 +3,6 @@ pragma solidity 0.6.8;
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
-import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
  * This is a contract allowing owner to mint any tokens within a given
@@ -41,7 +40,7 @@ contract FreemintFactory is TieredOwnable {
    * @notice Will mint a bundle of tokens to users
    * @param _recipients Arrays of addresses to mint _amounts of _ids
    * @param _ids        Array of Tokens ID that are minted
-   * @param _amounts    Amount of Tokens id minted for each corresponding Token id in _tokenIds
+   * @param _amounts    Amount of Tokens id minted for each corresponding Token id in _ids
    */
   function batchMint(address[] calldata _recipients, uint256[] calldata _ids, uint256[] calldata _amounts)
     external onlyOwnerTier(1)
@@ -57,7 +56,7 @@ contract FreemintFactory is TieredOwnable {
   |__________________________________*/
 
   /**
-   * @notice Returns the address of the factory manager contract
+   * @notice Returns the address of the  skyweaver assets contract
    */
   function getSkyweaverAssets() external view returns (address) {
     return address(skyweaverAssets);
@@ -71,11 +70,9 @@ contract FreemintFactory is TieredOwnable {
   }
 
   /**
-   * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.
-   * @param  interfaceID The ERC-165 interface ID that is queried for support.s
-   * @dev This function MUST return true if it implements the ERC1155TokenReceiver interface and ERC-165 interface.
-   *      This function MUST NOT consume more than 5,000 gas.
-   * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
+   * @notice Indicates whether a contract implements a given interface.
+   * @param interfaceID The ERC-165 interface ID that is queried for support.
+   * @return True if contract interface is supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
     return  interfaceID == type(IERC165).interfaceId;

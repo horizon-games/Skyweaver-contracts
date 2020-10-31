@@ -134,6 +134,27 @@ describe('SkyweaverAssets', () => {
         expect(value[0]).to.be.eql(expected_issuance)
       })
     })
+
+
+    describe('Supports ERC165', () => {
+      describe('supportsInterface()', () => {
+        it('should return true for 0x01ffc9a7 (IERC165)', async () => {
+          const support = await SWAssetsContract.functions.supportsInterface('0x01ffc9a7')
+          expect(support).to.be.eql(true)
+        })
+
+        it('should return true for 0xd9b67a26 (IERC1155)', async () => {
+          const support = await SWAssetsContract.functions.supportsInterface('0xd9b67a26')
+          expect(support).to.be.eql(true)
+        })
+
+        it('should return true for 0x0e89341c (IERC1155Metadata)', async () => {
+          const returnedValue = await SWAssetsContract.functions.supportsInterface('0x0e89341c')
+          await expect(returnedValue).to.be.equal(true)
+        })  
+      })
+    })
+
   })
 
   describe('addMintPermission() function', () => {

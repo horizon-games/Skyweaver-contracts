@@ -60,6 +60,8 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "multi-token-standard": "^0.9.4"
+    "multi-token-standard": "^0.9.6",
+    "niftyswap": "^0.5.7",
+    "erc20-meta-token": "^0.3.8"
   }
 }

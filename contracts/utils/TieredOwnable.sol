@@ -15,6 +15,7 @@ contract TieredOwnable {
    * @dev _firstOwner First address to be a owner of this contract
    */
   constructor (address _firstOwner) internal {
+    require(_firstOwner != address(0), "TieredOwnable#constructor: INVALID_FIRST_OWNER");
     ownerTier[_firstOwner] = HIGHEST_OWNER_TIER;
     emit OwnershipGranted(_firstOwner, 0, HIGHEST_OWNER_TIER);
   }

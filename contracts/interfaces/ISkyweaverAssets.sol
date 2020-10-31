@@ -1,8 +1,6 @@
 pragma solidity 0.6.8;
 pragma experimental ABIEncoderV2;
 
-import "multi-token-standard/contracts/interfaces/IERC1155MintBurn.sol";
-
 interface ISkyweaverAssets {
 
   /***********************************|

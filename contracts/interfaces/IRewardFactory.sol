@@ -1,11 +1,4 @@
 pragma solidity 0.6.8;
-pragma experimental ABIEncoderV2;
-
-import "../utils/TieredOwnable.sol";
-import "../interfaces/ISkyweaverAssets.sol";
-import "multi-token-standard/contracts/utils/SafeMath.sol";
-import "multi-token-standard/contracts/interfaces/IERC165.sol";
-import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 
 /**
  * @notice This is a contract allowing contract owner to mint up to N

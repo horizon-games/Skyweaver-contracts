@@ -391,4 +391,17 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
   function logURIs(uint256[] calldata _tokenIDs) external onlyOwner() {
     _logURIs(_tokenIDs);
   }
+
+  /***********************************|
+  |          ERC165 Functions         |
+  |__________________________________*/
+
+  /**
+   * @notice Query if a contract implements an interface
+   * @param _interfaceID  The interface identifier, as specified in ERC-165
+   * @return `true` if the contract implements `_interfaceID`
+   */
+  function supportsInterface(bytes4 _interfaceID) public override(ERC1155PackedBalance, ERC1155Metadata) virtual pure returns (bool) {
+    return super.supportsInterface(_interfaceID);
+  }
 }

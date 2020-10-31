@@ -2001,6 +2001,13 @@ eol@^0.9.1:
   resolved "https://registry.yarnpkg.com/eol/-/eol-0.9.1.tgz#f701912f504074be35c6117a5c4ade49cd547acd"
   integrity sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==
 
+erc20-meta-token@^0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/erc20-meta-token/-/erc20-meta-token-0.3.8.tgz#dcab5a6e2d125d3b197c7b812fd022775f0a5561"
+  integrity sha512-dVl4d4sPX4/JTzHpQ2T809icc4WjUw0aXLflBmwTGcsdgNaMzQ1d6w4X7XC1UlOVRk97LcmUpyw2yxlx9QSeTw==
+  dependencies:
+    multi-token-standard "^0.9.6"
+
 errno@~0.1.1:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/errno/-/errno-0.1.7.tgz#4684d71779ad39af177e3f007996f7c67c852618"
@@ -4590,10 +4597,10 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-multi-token-standard@^0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-0.9.4.tgz#f9285c2bc6d50998ecbd176ed3db40f0e7784c7a"
-  integrity sha512-auy5WSd5XWbeasz8bk7c4ERuCQs0VBYvXqJqKA62HY9WFibisS7FNb5gd3ko5izDzDsOtoYxCk2beR68yiFLOw==
+multi-token-standard@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-0.9.6.tgz#8a6238b567e6ff069f6122ebfbfdcc71e0b641ce"
+  integrity sha512-i00XDym35De70g4gvify5v5J8mqKGFOdmWsCaMGH7UnE5jyPrH3DIjoLTC+6mVFx3N9/Ovm23QdUeKduYwvAkQ==
 
 multibase@^0.7.0:
   version "0.7.0"
@@ -4686,6 +4693,14 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+niftyswap@^0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/niftyswap/-/niftyswap-0.5.7.tgz#03233211a653e595a003f21629350bea5b19b4b0"
+  integrity sha512-2qwhqxoT8NaMJoRpaHTHv06EZBgnG+55hdJeXf8yI1MFIU7/LZqujps+KWbstkwLM8gN/dO0Pv2x7zJDoDJSnA==
+  dependencies:
+    erc20-meta-token "^0.3.8"
+    multi-token-standard "^0.9.6"
 
 node-addon-api@^2.0.0:
   version "2.0.2"

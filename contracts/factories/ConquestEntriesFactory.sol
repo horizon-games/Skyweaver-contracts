@@ -1,5 +1,4 @@
 pragma solidity 0.6.8;
-pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
@@ -9,11 +8,10 @@ import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * @notice Contract used  allowing players to convert their silver cards and Wrapped DAI (wDAI) to 
- * conquest entries.
- * 
+ * @notice Allows players to convert their silver cards and Wrapped DAI (wDAI) to conquest entries.
+ *
  * @dev Assumes both cards and entries have the same number of decimals, if not, need to change
- * the amount minted
+ * the amount minted.
  * 
  * @dev This contract should only be able to mint conquest entries.
  */
@@ -50,7 +48,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _firstOwner             Address of the first owner
    * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
    * @param _wDaiAddress            The address of the ERC-1155 Wrapped DAI
-   * @param _wDaiId                 Wrapped DAI token id
+   * @param _wDaiID                 Wrapped DAI token id
    * @param _conquestEntryTokenId   Conquest entry token id
    * @param _silverRangeMin         Minimum id for silver cards
    * @param _silverRangeMax         Maximum id for silver cards
@@ -59,7 +57,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
     address _firstOwner,
     address _skyweaverAssetsAddress,
     address _wDaiAddress,
-    uint256 _wDaiId,
+    uint256 _wDaiID,
     uint256 _conquestEntryTokenId,
     uint256 _silverRangeMin,
     uint256 _silverRangeMax
@@ -67,14 +65,15 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   {
     require(
       _skyweaverAssetsAddress != address(0) && 
-      _wDaiAddress != address(0),
-      "Conquest#constructor: INVALID_INPUT"
+      _wDaiAddress != address(0) &&
+      _silverRangeMin < _silverRangeMax,
+      "ConquestEntriesFactory#constructor: INVALID_INPUT"
     );
 
     // Assets
     skyweaverAssets = ISkyweaverAssets(_skyweaverAssetsAddress);
     wDai = IERC1155(_wDaiAddress);
-    wDaiID = _wDaiId;
+    wDaiID = _wDaiID;
     conquestEntryID = _conquestEntryTokenId;
     silverRangeMin = _silverRangeMin;
     silverRangeMax = _silverRangeMax;
@@ -176,7 +175,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Send current wDAI balance of conquest contract to recipient
+   * @notice Send current wDAI balance of this contract to recipient
    * @param _recipient Address where the currency will be sent to
    * @param _data      Data to pass with transfer function
    */
@@ -192,11 +191,9 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   |__________________________________*/
 
   /**
-   * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.
-   * @param  interfaceID The ERC-165 interface ID that is queried for support.s
-   * @dev This function MUST return true if it implements the ERC1155TokenReceiver interface and ERC-165 interface.
-   *      This function MUST NOT consume more than 5,000 gas.
-   * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
+   * @notice Indicates whether a contract implements a given interface.
+   * @param interfaceID The ERC-165 interface ID that is queried for support.
+   * @return True if contract interface is supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
     return  interfaceID == type(IERC165).interfaceId || 

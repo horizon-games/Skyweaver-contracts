@@ -1,16 +1,14 @@
 pragma solidity 0.6.8;
-pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
 import "multi-token-standard/contracts/utils/SafeMath.sol";
 import "multi-token-standard/contracts/interfaces/IERC165.sol";
-import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 
 /**
  * @notice This is a contract allowing contract owner to mint up to N 
  *         assets per period of 6 hours.
- * @dev This contract should only be able to mint some assets types
+ * @dev This contract should only be able to mint some asset types
  */
 contract RewardFactory is TieredOwnable {
   using SafeMath for uint256;
@@ -105,7 +103,7 @@ contract RewardFactory is TieredOwnable {
    * @dev Can only mint up to the periodMintLimit in a given 6hour period
    * @param _to      The address that receives the assets
    * @param _ids     Array of Tokens ID that are minted
-   * @param _amounts Amount of Tokens id minted for each corresponding Token id in _tokenIds
+   * @param _amounts Amount of Tokens id minted for each corresponding Token id in _ids
    * @param _data    Byte array passed to recipient if recipient is a contract
    */
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data)
@@ -156,11 +154,9 @@ contract RewardFactory is TieredOwnable {
   }
 
   /**
-   * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.
-   * @param  interfaceID The ERC-165 interface ID that is queried for support.s
-   * @dev This function MUST return true if it implements the ERC1155TokenReceiver interface and ERC-165 interface.
-   *      This function MUST NOT consume more than 5,000 gas.
-   * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
+   * @notice Indicates whether a contract implements a given interface.
+   * @param interfaceID The ERC-165 interface ID that is queried for support.
+   * @return True if contract interface is supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
     return  interfaceID == type(IERC165).interfaceId;

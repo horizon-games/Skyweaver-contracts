@@ -1,5 +1,4 @@
 pragma solidity 0.6.8;
-pragma experimental ABIEncoderV2;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
@@ -10,7 +9,9 @@ import "multi-token-standard/contracts/interfaces/IERC1155.sol";
 import "multi-token-standard/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
- * Keep track of players participation in Conquest and used to issue rewards.
+ * @notice Keep track of players participation in Conquest and used to issue rewards.
+ * @dev This contract must be at least a TIER 1 owner of the silverCardFactory and
+ *      goldCardFactory.
  */
 contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
@@ -44,7 +45,7 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   |__________________________________*/
 
   /**
-   * @notice Create factory, link skyweaver assets and store initial parameters
+   * @notice Link factories and skyweaver assets, store initial parameters
    * @param _firstOwner               Address of the first owner
    * @param _skyweaverAssetsAddress   The address of the ERC-1155 Assets Token contract
    * @param _silverCardFactoryAddress The address of the Silver Card Factory
@@ -79,7 +80,7 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   |__________________________________*/
 
   /**
-   * @notice Prevents receiving Ether or calls to unsuported methods
+   * @notice Prevents receiving Ether or calls to unsupported methods
    */
   fallback () external {
     revert("Conquest#_: UNSUPPORTED_METHOD");
@@ -197,8 +198,8 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
 
   /** 
    * @notice Will create an array of uint _value of length _length
-   * @param _length Number of ones in array
-   * @param _value  Value to put in array
+   * @param _length Number of elements in array
+   * @param _value  Value to put in array at each element
    */
   function array(uint256 _length, uint256 _value) internal pure returns (uint256[] memory) {
     uint256[] memory a = new uint256[](_length);
@@ -209,11 +210,9 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Indicates whether a contract implements the `ERC1155TokenReceiver` functions and so can accept ERC1155 token types.
-   * @param  interfaceID The ERC-165 interface ID that is queried for support.s
-   * @dev This function MUST return true if it implements the ERC1155TokenReceiver interface and ERC-165 interface.
-   *      This function MUST NOT consume more than 5,000 gas.
-   * @return Wheter ERC-165 or ERC1155TokenReceiver interfaces are supported.
+   * @notice Indicates whether a contract implements a given interface.
+   * @param interfaceID The ERC-165 interface ID that is queried for support.
+   * @return True if contract interface is supported.
    */
   function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
     return  interfaceID == type(IERC165).interfaceId || 
