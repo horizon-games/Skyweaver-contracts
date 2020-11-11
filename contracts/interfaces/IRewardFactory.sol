@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 
 /**
  * @notice This is a contract allowing contract owner to mint up to N

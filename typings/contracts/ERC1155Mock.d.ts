@@ -45,51 +45,8 @@ interface ERC1155MockInterface extends Interface {
       ]): string;
     }>;
 
-    getNonce: TypedFunctionDescription<{ encode([_signer]: [string]): string }>;
-
     isApprovedForAll: TypedFunctionDescription<{
       encode([_owner, _operator]: [string, string]): string;
-    }>;
-
-    isValidSignature: TypedFunctionDescription<{
-      encode([_signerAddress, _hash, _data, _sig]: [
-        string,
-        Arrayish,
-        Arrayish,
-        Arrayish
-      ]): string;
-    }>;
-
-    metaSafeBatchTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _ids, _amounts, _isGasFee, _data]: [
-        string,
-        string,
-        BigNumberish[],
-        BigNumberish[],
-        boolean,
-        Arrayish
-      ]): string;
-    }>;
-
-    metaSafeTransferFrom: TypedFunctionDescription<{
-      encode([_from, _to, _id, _amount, _isGasFee, _data]: [
-        string,
-        string,
-        BigNumberish,
-        BigNumberish,
-        boolean,
-        Arrayish
-      ]): string;
-    }>;
-
-    metaSetApprovalForAll: TypedFunctionDescription<{
-      encode([_owner, _operator, _approved, _isGasFee, _data]: [
-        string,
-        string,
-        boolean,
-        boolean,
-        Arrayish
-      ]): string;
     }>;
 
     mintMock: TypedFunctionDescription<{
@@ -139,10 +96,6 @@ interface ERC1155MockInterface extends Interface {
         string | null,
         null
       ]): string[];
-    }>;
-
-    NonceChange: TypedEventDescription<{
-      encodeTopics([signer, newNonce]: [string | null, null]): string[];
     }>;
 
     TransferBatch: TypedEventDescription<{
@@ -214,45 +167,7 @@ export class ERC1155Mock extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    getNonce(_signer: string): Promise<BigNumber>;
-
     isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
-
-    isValidSignature(
-      _signerAddress: string,
-      _hash: Arrayish,
-      _data: Arrayish,
-      _sig: Arrayish
-    ): Promise<boolean>;
-
-    metaSafeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    metaSafeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    metaSetApprovalForAll(
-      _owner: string,
-      _operator: string,
-      _approved: boolean,
-      _isGasFee: boolean,
-      _data: Arrayish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
 
     mintMock(
       _to: string,
@@ -317,45 +232,7 @@ export class ERC1155Mock extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  getNonce(_signer: string): Promise<BigNumber>;
-
   isApprovedForAll(_owner: string, _operator: string): Promise<boolean>;
-
-  isValidSignature(
-    _signerAddress: string,
-    _hash: Arrayish,
-    _data: Arrayish,
-    _sig: Arrayish
-  ): Promise<boolean>;
-
-  metaSafeBatchTransferFrom(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _amounts: BigNumberish[],
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  metaSafeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  metaSetApprovalForAll(
-    _owner: string,
-    _operator: string,
-    _approved: boolean,
-    _isGasFee: boolean,
-    _data: Arrayish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
 
   mintMock(
     _to: string,
@@ -400,8 +277,6 @@ export class ERC1155Mock extends Contract {
       _approved: null
     ): EventFilter;
 
-    NonceChange(signer: string | null, newNonce: null): EventFilter;
-
     TransferBatch(
       _operator: string | null,
       _from: string | null,
@@ -445,42 +320,7 @@ export class ERC1155Mock extends Contract {
       _value: BigNumberish
     ): Promise<BigNumber>;
 
-    getNonce(_signer: string): Promise<BigNumber>;
-
     isApprovedForAll(_owner: string, _operator: string): Promise<BigNumber>;
-
-    isValidSignature(
-      _signerAddress: string,
-      _hash: Arrayish,
-      _data: Arrayish,
-      _sig: Arrayish
-    ): Promise<BigNumber>;
-
-    metaSafeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _amounts: BigNumberish[],
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    metaSafeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
-
-    metaSetApprovalForAll(
-      _owner: string,
-      _operator: string,
-      _approved: boolean,
-      _isGasFee: boolean,
-      _data: Arrayish
-    ): Promise<BigNumber>;
 
     mintMock(
       _to: string,

@@ -2001,12 +2001,12 @@ eol@^0.9.1:
   resolved "https://registry.yarnpkg.com/eol/-/eol-0.9.1.tgz#f701912f504074be35c6117a5c4ade49cd547acd"
   integrity sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==
 
-erc20-meta-token@^0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/erc20-meta-token/-/erc20-meta-token-0.3.8.tgz#dcab5a6e2d125d3b197c7b812fd022775f0a5561"
-  integrity sha512-dVl4d4sPX4/JTzHpQ2T809icc4WjUw0aXLflBmwTGcsdgNaMzQ1d6w4X7XC1UlOVRk97LcmUpyw2yxlx9QSeTw==
+erc20-meta-token@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/erc20-meta-token/-/erc20-meta-token-1.0.0.tgz#642d30af1df3b1d556fdf06818b7a65f41691f3a"
+  integrity sha512-oV74EYsl+8r96BkY5a46AvlnivCD/JnlBODi31jhwest/3T+UEOuY4ENJX3HXlPrlaWFBHK9oY09VPQ9PJy/fg==
   dependencies:
-    multi-token-standard "^0.9.6"
+    multi-token-standard "1.0.0"
 
 errno@~0.1.1:
   version "0.1.7"
@@ -4597,10 +4597,15 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-multi-token-standard@^0.9.6:
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-0.9.6.tgz#8a6238b567e6ff069f6122ebfbfdcc71e0b641ce"
-  integrity sha512-i00XDym35De70g4gvify5v5J8mqKGFOdmWsCaMGH7UnE5jyPrH3DIjoLTC+6mVFx3N9/Ovm23QdUeKduYwvAkQ==
+multi-token-standard@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-1.0.0.tgz#74118cdb02b44ae57994a54c0885e112a74fc83d"
+  integrity sha512-C+kZsNDY9jfu/ZWyqMyUfbUUe9cT24mzJ+OlNLIMp1PYK7owBgQWrv3J6PB9rVMTF09CzHXhcGCkjKVp9Fx00A==
+
+multi-token-standard@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/multi-token-standard/-/multi-token-standard-1.0.1.tgz#cbc3651e9c96696afb3bef680cbb5a9525fffcfd"
+  integrity sha512-Ztf3HPWtmpktTA3tkdtUwu1NnDx5by8PGMkUE/MbmWV7kipW+9Uj6sJBOrkLdlhmy4ON6+Rn6FBY4EerxYjfvQ==
 
 multibase@^0.7.0:
   version "0.7.0"
@@ -4694,13 +4699,13 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-niftyswap@^0.5.7:
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/niftyswap/-/niftyswap-0.5.7.tgz#03233211a653e595a003f21629350bea5b19b4b0"
-  integrity sha512-2qwhqxoT8NaMJoRpaHTHv06EZBgnG+55hdJeXf8yI1MFIU7/LZqujps+KWbstkwLM8gN/dO0Pv2x7zJDoDJSnA==
+niftyswap@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/niftyswap/-/niftyswap-1.0.0.tgz#aa1255cb2ff7afe01874a69fcf6085aead774373"
+  integrity sha512-OyL2i460SNxfLRQpNUErMM9GmnQJhrUJ2NnamEu7CrpDIQBr/qABGCrV2TT1UO53lgbBQzwPa/MUys/N3ZX6eg==
   dependencies:
-    erc20-meta-token "^0.3.8"
-    multi-token-standard "^0.9.6"
+    erc20-meta-token "1.0.0"
+    multi-token-standard "1.0.1"
 
 node-addon-api@^2.0.0:
   version "2.0.2"

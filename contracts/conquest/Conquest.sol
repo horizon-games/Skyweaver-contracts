@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
@@ -133,12 +133,12 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
     require(_ids[0] == conquestEntryID, "Conquest#entry: INVALID_ENTRY_TOKEN_ID");
     require(_amounts[0] == 10**ENTRIES_DECIMALS, "Conquest#entry: INVALID_ENTRY_TOKEN_AMOUNT");
     require(!isActiveConquest[_from], "Conquest#entry: PLAYER_ALREADY_IN_CONQUEST");
-    require(nextConquestTime[_from] <= now, "Conquest#entry: NEW_CONQUEST_TOO_EARLY");
+    require(nextConquestTime[_from] <= block.timestamp, "Conquest#entry: NEW_CONQUEST_TOO_EARLY");
 
     // Mark player as playing
     isActiveConquest[_from] = true;
     conquestsEntered[_from] = conquestsEntered[_from].add(1);
-    nextConquestTime[_from] = now.add(TIME_BETWEEN_CONQUESTS);
+    nextConquestTime[_from] = block.timestamp.add(TIME_BETWEEN_CONQUESTS);
 
     // Burn tickets
     skyweaverAssets.burn(conquestEntryID, 10**ENTRIES_DECIMALS);

@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 
 import "../utils/TieredOwnable.sol";
 import "../interfaces/ISkyweaverAssets.sol";
@@ -150,7 +150,7 @@ contract RewardFactory is TieredOwnable {
    * @notice Calculate the current period
    */
   function livePeriod() public view returns (uint256) {
-    return now / PERIOD_LENGTH;
+    return block.timestamp / PERIOD_LENGTH;
   }
 
   /**

@@ -1,6 +1,6 @@
 {
   "name": "@horizongames/skyweaver-contracts",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "license": "none",
   "files": [
     "artifacts",
@@ -60,8 +60,8 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "multi-token-standard": "^0.9.6",
-    "niftyswap": "^0.5.7",
-    "erc20-meta-token": "^0.3.8"
+    "multi-token-standard": "1.0.1",
+    "niftyswap": "1.0.0",
+    "erc20-meta-token": "1.0.0"
   }
 }

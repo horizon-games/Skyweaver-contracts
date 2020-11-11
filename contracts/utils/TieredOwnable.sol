@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 
 /**
  * @notice The TieredOwnable can assign ownership tiers to addresses,
@@ -14,7 +14,7 @@ contract TieredOwnable {
    * @dev Sets the _firstOwner provided to highest owner tier
    * @dev _firstOwner First address to be a owner of this contract
    */
-  constructor (address _firstOwner) internal {
+  constructor (address _firstOwner) {
     require(_firstOwner != address(0), "TieredOwnable#constructor: INVALID_FIRST_OWNER");
     ownerTier[_firstOwner] = HIGHEST_OWNER_TIER;
     emit OwnershipGranted(_firstOwner, 0, HIGHEST_OWNER_TIER);

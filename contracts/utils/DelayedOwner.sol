@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 pragma experimental ABIEncoderV2;
 
 import "./Ownable.sol";
@@ -45,7 +45,7 @@ contract DelayedOwner is Ownable {
    * @param _firstOwner Address of the first owner
    * @param _delay Amount of time in seconds the delay will be
    */
-  constructor (address _firstOwner, uint256 _delay) Ownable(_firstOwner) public {
+  constructor (address _firstOwner, uint256 _delay) Ownable(_firstOwner) {
     EXECUTION_DELAY = _delay;
   }
 
@@ -62,7 +62,7 @@ contract DelayedOwner is Ownable {
     require(txHashes[_tx.id] == 0x0, "DelayedOwner#register: TX_ALREADY_REGISTERED");
 
     // Set trigger time and mark transaction as pending
-    _tx.triggerTime = now.add(EXECUTION_DELAY);
+    _tx.triggerTime = block.timestamp.add(EXECUTION_DELAY);
     _tx.status = Status.Pending;
 
     // Store transaction
@@ -91,7 +91,7 @@ contract DelayedOwner is Ownable {
    */
   function execute(Transaction memory _tx) onlyValidWitnesses(_tx) public {
     require(_tx.status == Status.Pending, "DelayedOwner#execute: TX_NOT_PENDING");
-    require(_tx.triggerTime <= now, "DelayedOwne#execute: TX_NOT_YET_EXECUTABLE");
+    require(_tx.triggerTime <= block.timestamp, "DelayedOwne#execute: TX_NOT_YET_EXECUTABLE");
 
     // Mark transaction as executed, preventing re-entrancy and replay
     _tx.status = Status.Executed;

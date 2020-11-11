@@ -1,4 +1,4 @@
-pragma solidity 0.6.8;
+pragma solidity 0.7.4;
 pragma experimental ABIEncoderV2;
 
 /**
@@ -15,7 +15,7 @@ contract Ownable {
    * @dev The Ownable constructor sets the original `owner` of the contract to the specied address
    * @param _firstOwner Address of the first owner
    */
-  constructor (address _firstOwner) internal {
+  constructor (address _firstOwner) {
     owner = _firstOwner;
     emit OwnershipTransferred(address(0), _firstOwner);
   }
