@@ -10,8 +10,9 @@ import {
 import * as utils from './utils'
 import { OwnableMock } from '../typings/contracts/OwnableMock'
 import { DelayedOwner } from '../typings/contracts/DelayedOwner'
-import { BigNumber } from 'ethers/utils';
-import { web3 } from '@nomiclabs/buidler'
+import { BigNumber } from 'ethers'
+//@ts-ignore
+import { web3 } from 'hardhat'
 
 // init test wallets from package.json mnemonic
 
@@ -27,7 +28,7 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 5)
 
-const getBig = (id: number) => new BigNumber(id);
+const getBig = (id: number) => BigNumber.from(id);
 
 describe('TieredOwnable', () => {
   let ownerAddress: string
@@ -41,11 +42,11 @@ describe('TieredOwnable', () => {
   let randomTargetContract: OwnableMock
 
   // Variables
-  const delay = new BigNumber(60).mul(60).mul(24) // 24h or 86,400 seconds
+  const delay = BigNumber.from(60).mul(60).mul(24) // 24h or 86,400 seconds
 
   let transaction = {
     status: 0,
-    triggerTime: new BigNumber(0),
+    triggerTime: BigNumber.from(0),
     target: ZERO_ADDRESS,
     id: 0,
     data: []
@@ -80,12 +81,12 @@ describe('TieredOwnable', () => {
   describe('register() function', () => {
 
     it('should PASS if caller is owner', async () => {
-      const tx = contract.functions.register(transaction)
+      const tx = contract.register(transaction)
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx1 = randomContract.functions.register(transaction)
+      const tx1 = randomContract.register(transaction)
       await expect(tx1).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
     })
 
@@ -93,7 +94,7 @@ describe('TieredOwnable', () => {
       let tx
       let blockTime;
       beforeEach(async () => {
-        tx = await contract.functions.register(transaction)
+        tx = await contract.register(transaction)
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx.hash)
         let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
         blockTime = block.timestamp
@@ -104,7 +105,7 @@ describe('TieredOwnable', () => {
 
       it('should not store the original transaction hash', async () => {
         transaction.status = 0
-        transaction.triggerTime = new BigNumber(0)
+        transaction.triggerTime = BigNumber.from(0)
         let isvalidHash = await contract.isValidWitness(transaction)
         expect(isvalidHash).to.be.equal(false)
       })
@@ -117,12 +118,12 @@ describe('TieredOwnable', () => {
       })
 
       it('should prevent registering the same transaction id', async () => {
-        let tx2 = contract.functions.register(transaction)
+        let tx2 = contract.register(transaction)
         await expect(tx2).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
 
         transaction.target = ownerAddress
 
-        let tx3 = contract.functions.register(transaction)
+        let tx3 = contract.register(transaction)
         await expect(tx3).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
       })
 
@@ -136,7 +137,7 @@ describe('TieredOwnable', () => {
         // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
         filterFromOperatorContract.fromBlock = 0;
         let logs = await ownerProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(contract.interface.events.TransactionRegistered.topic)
+        expect(logs[0].topics[0]).to.be.eql(contract.interface.getEventTopic(contract.interface.events["TransactionRegistered((uint8,uint256,address,uint256,bytes))"]))
       })
       
       describe('TransactionRegistered Event', () => {
@@ -166,7 +167,7 @@ describe('TieredOwnable', () => {
           const ev = receipt.events!.pop()!
 
           const args = ev.args! as any
-          expect(args.transaction[3]).to.be.eql(new BigNumber(0))
+          expect(args.transaction[3]).to.be.eql(BigNumber.from(0))
         })
         it('should have correct data as `tx.data` field', async () => {  
           const receipt = await tx.wait(1)
@@ -182,7 +183,7 @@ describe('TieredOwnable', () => {
   describe('cancel() function', () => {
 
     it('should REVERT if transaction is not registered', async () => {
-      const tx1 = contract.functions.cancel(transaction)
+      const tx1 = contract.cancel(transaction)
       await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#onlyValidWitnesses: INVALID_TX_WITNESS"))
     })
 
@@ -190,7 +191,7 @@ describe('TieredOwnable', () => {
       let tx
       let blockTime;
       beforeEach(async () => {
-        tx = await contract.functions.register(transaction)
+        tx = await contract.register(transaction)
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx.hash)
         let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
         blockTime = block.timestamp
@@ -200,12 +201,12 @@ describe('TieredOwnable', () => {
       })
     
       it('should PASS if caller is owner', async () => {
-        const tx = contract.functions.cancel(transaction)
+        const tx = contract.cancel(transaction)
         await expect(tx).to.be.fulfilled
       })
 
       it('should REVERT if caller is not owner', async () => {
-        const tx1 = randomContract.functions.cancel(transaction)
+        const tx1 = randomContract.cancel(transaction)
         await expect(tx1).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
       })
 
@@ -213,9 +214,9 @@ describe('TieredOwnable', () => {
         let snapshot = await ownerProvider.send('evm_snapshot', [])
         await ownerProvider.send("evm_increaseTime", [delay.toNumber()])
         await ownerProvider.send("evm_mine", [])
-        await contract.functions.execute(transaction)
+        await contract.execute(transaction)
         transaction.status = 2
-        const tx1 = contract.functions.cancel(transaction)
+        const tx1 = contract.cancel(transaction)
         await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#cancel: TX_NOT_PENDING"))
 
         await ownerProvider.send("evm_revert", [snapshot])
@@ -225,7 +226,7 @@ describe('TieredOwnable', () => {
         let tx
 
         beforeEach(async () => {
-          tx = await contract.functions.cancel(transaction)
+          tx = await contract.cancel(transaction)
           transaction.status = 3;
         })
 
@@ -243,17 +244,17 @@ describe('TieredOwnable', () => {
         })
 
         it('should prevent registering the same transaction id', async () => {
-          let tx2 = contract.functions.register(transaction)
+          let tx2 = contract.register(transaction)
           await expect(tx2).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
 
           transaction.target = ownerAddress
 
-          let tx3 = contract.functions.register(transaction)
+          let tx3 = contract.register(transaction)
           await expect(tx3).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
         })
 
         it('should prevent cancelling the same transaction id', async () => {
-          let tx2 = contract.functions.cancel(transaction)
+          let tx2 = contract.cancel(transaction)
           await expect(tx2).to.be.rejectedWith(RevertError("DelayedOwner#cancel: TX_NOT_PENDING"))
         })
 
@@ -261,7 +262,7 @@ describe('TieredOwnable', () => {
           let snapshot = await ownerProvider.send('evm_snapshot', [])
           await ownerProvider.send("evm_increaseTime", [delay.toNumber()])
           await ownerProvider.send("evm_mine", [])
-          const tx1 = contract.functions.execute(transaction)
+          const tx1 = contract.execute(transaction)
           await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#execute: TX_NOT_PENDING"))
           await ownerProvider.send("evm_revert", [snapshot])
         })
@@ -276,7 +277,7 @@ describe('TieredOwnable', () => {
           // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
           filterFromOperatorContract.fromBlock = 0;
           let logs = await ownerProvider.getLogs(filterFromOperatorContract);
-          expect(logs[0].topics[0]).to.be.eql(contract.interface.events.TransactionCancelled.topic)
+          expect(logs[0].topics[0]).to.be.eql(contract.interface.getEventTopic(contract.interface.events["TransactionCancelled((uint8,uint256,address,uint256,bytes))"]))
         })
         
         describe('TransactionCancelled Event', () => {
@@ -306,7 +307,7 @@ describe('TieredOwnable', () => {
             const ev = receipt.events!.pop()!
 
             const args = ev.args! as any
-            expect(args.transaction[3]).to.be.eql(new BigNumber(0))
+            expect(args.transaction[3]).to.be.eql(BigNumber.from(0))
           })
           it('should have correct data as `tx.data` field', async () => {  
             const receipt = await tx.wait(1)
@@ -323,12 +324,12 @@ describe('TieredOwnable', () => {
   describe('execute() function', () => {
 
     it('should REVERT if transaction is not registered', async () => {
-      const tx1 = contract.functions.execute(transaction)
+      const tx1 = contract.execute(transaction)
       await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#onlyValidWitnesses: INVALID_TX_WITNESS"))
     })
 
     it('should REVERT if delay is not passed', async () => {
-      let tx = await contract.functions.register(transaction)
+      let tx = await contract.register(transaction)
       let receipt = await ownerWallet.provider.getTransactionReceipt(tx.hash!)
       let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
       let blockTime = block.timestamp
@@ -340,7 +341,7 @@ describe('TieredOwnable', () => {
       await ownerProvider.send("evm_increaseTime", [delay.toNumber() - 60])
       await ownerProvider.send("evm_mine", [])
 
-      const tx1 = contract.functions.execute(transaction)
+      const tx1 = contract.execute(transaction)
       await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwne#execute: TX_NOT_YET_EXECUTABLE"))
       await ownerProvider.send("evm_revert", [snapshot])
     })
@@ -351,7 +352,7 @@ describe('TieredOwnable', () => {
       let blockTime
 
       beforeEach(async () => {
-        tx = await contract.functions.register(transaction)
+        tx = await contract.register(transaction)
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx.hash)
         let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
         blockTime = block.timestamp
@@ -369,18 +370,18 @@ describe('TieredOwnable', () => {
       })
     
       it('should PASS if caller is owner', async () => {
-        const tx = contract.functions.execute(transaction)
+        const tx = contract.execute(transaction)
         await expect(tx).to.be.fulfilled
       })
 
       it('should PASS if inner tx is successful', async () => {
         let transaction2 =  Object.assign({}, transaction)
-        let iface = new ethers.utils.Interface(targetContract.interface.abi); 
+        let iface = new ethers.utils.Interface(targetContract.interface.fragments); 
         
         //@ts-ignore
-        transaction2.data = iface.functions.call_anyone.encode([])
+        transaction2.data = iface.encodeFunctionData('call_anyone', [])
         transaction2.id = 1
-        let tx0 = await contract.functions.register(transaction2)
+        let tx0 = await contract.register(transaction2)
 
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx0.hash!)
         let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
@@ -392,18 +393,18 @@ describe('TieredOwnable', () => {
         await ownerProvider.send("evm_increaseTime", [delay.toNumber()])
         await ownerProvider.send("evm_mine", [])
 
-        const tx = contract.functions.execute(transaction2)
+        const tx = contract.execute(transaction2)
         await expect(tx).to.be.fulfilled
       })
 
       it('should REVERT if inner tx fails', async () => {
         let transaction2 =  Object.assign({}, transaction)
-        let iface = new ethers.utils.Interface(targetContract.interface.abi); 
+        let iface = new ethers.utils.Interface(targetContract.interface.fragments); 
         
         //@ts-ignore
-        transaction2.data = iface.functions.call_throw.encode([])
+        transaction2.data = iface.encodeFunctionData('call_throw', [])
         transaction2.id = 1
-        let tx0 = await contract.functions.register(transaction2)
+        let tx0 = await contract.register(transaction2)
 
         let receipt = await ownerWallet.provider.getTransactionReceipt(tx0.hash!)
         let block = await ownerWallet.provider.getBlock(receipt.blockNumber!)
@@ -415,20 +416,20 @@ describe('TieredOwnable', () => {
         await ownerProvider.send("evm_increaseTime", [delay.toNumber()])
         await ownerProvider.send("evm_mine", [])
 
-        const tx = contract.functions.execute(transaction2)
+        const tx = contract.execute(transaction2)
         await expect(tx).to.be.rejectedWith(RevertError("DelayedOwner#execute: TX_FAILED"))
       })
 
 
       it('should PASS if caller not owner', async () => {
-        const tx = randomContract.functions.execute(transaction)
+        const tx = randomContract.execute(transaction)
         await expect(tx).to.be.fulfilled
       })
 
       it('should REVERT if tx was cancelled', async () => {
-        await contract.functions.cancel(transaction)
+        await contract.cancel(transaction)
         transaction.status = 3
-        const tx1 = contract.functions.execute(transaction)
+        const tx1 = contract.execute(transaction)
         await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#execute: TX_NOT_PENDING"))
 
         await ownerProvider.send("evm_revert", [snapshot])
@@ -438,7 +439,7 @@ describe('TieredOwnable', () => {
         let tx
 
         beforeEach(async () => {
-          tx = await contract.functions.execute(transaction)
+          tx = await contract.execute(transaction)
           transaction.status = 2;
         })
 
@@ -456,22 +457,22 @@ describe('TieredOwnable', () => {
         })
 
         it('should prevent registering the same transaction id', async () => {
-          let tx2 = contract.functions.register(transaction)
+          let tx2 = contract.register(transaction)
           await expect(tx2).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
 
           transaction.target = ownerAddress
 
-          let tx3 = contract.functions.register(transaction)
+          let tx3 = contract.register(transaction)
           await expect(tx3).to.be.rejectedWith(RevertError("DelayedOwner#register: TX_ALREADY_REGISTERED"))
         })
 
         it('should prevent cancelling the same transaction id', async () => {
-          let tx2 = contract.functions.cancel(transaction)
+          let tx2 = contract.cancel(transaction)
           await expect(tx2).to.be.rejectedWith(RevertError("DelayedOwner#cancel: TX_NOT_PENDING"))
         })
 
         it('should not be executable again', async () => {
-          const tx1 = contract.functions.execute(transaction)
+          const tx1 = contract.execute(transaction)
           await expect(tx1).to.be.rejectedWith(RevertError("DelayedOwner#execute: TX_NOT_PENDING"))
         })
 
@@ -485,7 +486,7 @@ describe('TieredOwnable', () => {
           // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
           filterFromOperatorContract.fromBlock = 0;
           let logs = await ownerProvider.getLogs(filterFromOperatorContract);
-          expect(logs[0].topics[0]).to.be.eql(contract.interface.events.TransactionExecuted.topic)
+          expect(logs[0].topics[0]).to.be.eql(contract.interface.getEventTopic(contract.interface.events["TransactionExecuted((uint8,uint256,address,uint256,bytes))"]))
         })
         
         describe('TransactionExecuted Event', () => {
@@ -515,7 +516,7 @@ describe('TieredOwnable', () => {
             const ev = receipt.events!.pop()!
 
             const args = ev.args! as any
-            expect(args.transaction[3]).to.be.eql(new BigNumber(0))
+            expect(args.transaction[3]).to.be.eql(BigNumber.from(0))
           })
           it('should have correct data as `tx.data` field', async () => {  
             const receipt = await tx.wait(1)
