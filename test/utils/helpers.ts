@@ -1,5 +1,7 @@
 import * as ethers from 'ethers'
-import { BigNumber } from 'ethers/utils';
+import { BigNumber } from 'ethers'
+import { ExternalProvider, TransactionResponse } from '@ethersproject/providers'
+import { Networkish } from '@ethersproject/networks'
 
 export const UNIT_ETH = ethers.utils.parseEther('1')
 export const HIGH_GAS_LIMIT = { gasLimit: 6e9 }
@@ -26,7 +28,7 @@ export const createTestWallet = (web3: any, addressIndex: number = 0) => {
 // Check if tx was Reverted with specified message
 export function RevertError(errorMessage?: string) {
   let prefix = 'VM Exception while processing transaction: revert'
-  return errorMessage ? RegExp(`^${prefix + ' ' + errorMessage}$`) : RegExp(`^${prefix}$`)
+  return errorMessage ? RegExp(`${prefix + ' ' + errorMessage}`) : RegExp(`^${prefix}$`)
 }
 
 export interface JSONRPCRequest {
@@ -41,10 +43,10 @@ export class Web3DebugProvider extends ethers.providers.JsonRpcProvider {
   public reqCounter = 0
   public reqLog: JSONRPCRequest[] = []
 
-  readonly _web3Provider: ethers.providers.AsyncSendable
+  readonly _web3Provider: ExternalProvider
   private _sendAsync: (request: any, callback: (error: any, response: any) => void) => void
 
-  constructor(web3Provider: ethers.providers.AsyncSendable, network?: ethers.utils.Networkish) {
+  constructor(web3Provider: ExternalProvider, network?: Networkish) {
       // HTTP has a host; IPC has a path.
       super(web3Provider.host || web3Provider.path || '', network)
 
@@ -57,7 +59,7 @@ export class Web3DebugProvider extends ethers.providers.JsonRpcProvider {
       }
 
       if (!web3Provider || !this._sendAsync) {
-        ethers.errors.throwError(
+        ethers.logger.throwError(
           'invalid web3Provider',
           ethers.errors.INVALID_ARGUMENT,
           { arg: 'web3Provider', value: web3Provider }

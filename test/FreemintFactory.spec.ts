@@ -10,8 +10,9 @@ import {
 import * as utils from './utils'
 import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
 import { FreemintFactory } from '../typings/contracts/FreemintFactory'
-import { BigNumber } from 'ethers/utils';
-import { web3 } from '@nomiclabs/buidler'
+import { BigNumber } from 'ethers'
+//@ts-ignore
+import { web3 } from 'hardhat'
 
 // init test wallets from package.json mnemonic
 
@@ -55,8 +56,8 @@ describe('FreemintFactory', () => {
   let userFactoryContract: FreemintFactory
 
   // Range values 
-  const minRange = new BigNumber(1000000001);
-  const maxRange = new BigNumber(1000000500);
+  const minRange = BigNumber.from(1000000001);
+  const maxRange = BigNumber.from(1000000500);
 
   let factory;
 
@@ -87,25 +88,25 @@ describe('FreemintFactory', () => {
     factory = factoryContract.address
 
     // Activate factory and authorize it
-    await skyweaverAssetsContract.functions.activateFactory(factory);
-    await skyweaverAssetsContract.functions.addMintPermission(factory, minRange, maxRange);
+    await skyweaverAssetsContract.activateFactory(factory);
+    await skyweaverAssetsContract.addMintPermission(factory, minRange, maxRange);
   })
 
   describe('Getter functions', () => {
     describe('getSkyweaverAssets() function', () => {
       it('should return Factory manager contract address', async () => {
-        const manager = await factoryContract.functions.getSkyweaverAssets()
+        const manager = await factoryContract.getSkyweaverAssets()
         expect(manager).to.be.eql(skyweaverAssetsContract.address)
       })
     })
 
     describe('supportsInterface()', () => {
       it('should return true for 0x01ffc9a7 (ERC165)', async () => {
-        const support = await factoryContract.functions.supportsInterface('0x01ffc9a7')
+        const support = await factoryContract.supportsInterface('0x01ffc9a7')
         expect(support).to.be.eql(true)
       })
       it('should return false for 0x4e2312e0 (ERC1155Receiver)', async () => {
-        const support = await factoryContract.functions.supportsInterface('0x4e2312e0')
+        const support = await factoryContract.supportsInterface('0x4e2312e0')
         expect(support).to.be.eql(false)
       })
     })
@@ -121,26 +122,26 @@ describe('FreemintFactory', () => {
     })
 
     it('should PASS if caller is owner', async () => {
-      const tx = factoryContract.functions.batchMint(recipients, mintIds, mintAmounts)
+      const tx = factoryContract.batchMint(recipients, mintIds, mintAmounts)
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx = userFactoryContract.functions.batchMint(recipients, mintIds, mintAmounts)
+      const tx = userFactoryContract.batchMint(recipients, mintIds, mintAmounts)
       await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
     })
 
     context('When assets were minted', () => {
       beforeEach(async () => {
-        await factoryContract.functions.batchMint(recipients, mintIds, mintAmounts)
+        await factoryContract.batchMint(recipients, mintIds, mintAmounts)
       })
 
       it('should update user silver cards balance', async () => {
         let n_ids = mintIds.length
         let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
-        let userBalances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, mintIds)
+        let userBalances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, mintIds)
         for (let i = 0; i < n_ids; i++) {
-          expect(userBalances[i]).to.be.eql(new BigNumber(mintAmounts[i]))
+          expect(userBalances[i]).to.be.eql(BigNumber.from(mintAmounts[i]))
         }
       })
 
@@ -149,9 +150,9 @@ describe('FreemintFactory', () => {
         
         for (let r = 0; r < recipients.length; r++) {
           let user_addresses = new Array(n_ids).fill('').map((a, i) => recipients[r])
-          let balances = await userSkyweaverAssetContract.functions.balanceOfBatch(user_addresses, mintIds)
+          let balances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, mintIds)
           for (let i = 0; i < n_ids; i++) {
-            expect(balances[i]).to.be.eql(new BigNumber(mintAmounts[i]))
+            expect(balances[i]).to.be.eql(BigNumber.from(mintAmounts[i]))
           }
         }
       })

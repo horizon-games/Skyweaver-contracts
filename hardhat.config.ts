@@ -1,18 +1,21 @@
-import { usePlugin, BuidlerConfig } from '@nomiclabs/buidler/config'
+import { HardhatUserConfig } from 'hardhat/config'
 
-usePlugin('@nomiclabs/buidler-truffle5')
-usePlugin('buidler-gas-reporter')
-usePlugin('solidity-coverage')
+import '@nomiclabs/hardhat-truffle5'
+import "@nomiclabs/hardhat-web3"
+import 'hardhat-gas-reporter'
+import 'solidity-coverage'
 
-const config: BuidlerConfig = {
+const config: HardhatUserConfig = {
   paths: {
     artifacts: './artifacts'
   },
-  solc: {
+  solidity: {
     version: '0.7.4',
-    optimizer: {
-      enabled: true,
-      runs: 10000
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 10000
+      }
     }
   },
   networks: {
