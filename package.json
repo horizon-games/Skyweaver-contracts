@@ -25,7 +25,7 @@
     "ganache:stop": "ps aux | grep ganache-cli | grep -v grep | awk '{print $2}' | xargs kill -9"
   },
   "config": {
-    "mnemonic": "concert load couple harbor equip island argue ramp clarify fence smart topic",
+    "mnemonic": "test test test test test test test test test test test junk",
     "ganacheNetworkID": 127001,
     "ganachePort": 8545,
     "ganacheGasLimit": "0xfffffffffff",
