@@ -8,8 +8,8 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
-import { RewardFactory } from '../typings/contracts/RewardFactory'
+import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
+import { RewardFactory } from 'typings/contracts/RewardFactory'
 import { BigNumber } from 'ethers'
 //@ts-ignore
 import { web3 } from 'hardhat'

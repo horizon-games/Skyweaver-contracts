@@ -9,9 +9,9 @@ import {
 
 import * as utils from './utils'
 
-import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
-import { ERC1155Mock } from '../typings/contracts/ERC1155Mock'
-import { FactoryMock } from '../typings/contracts/FactoryMock'
+import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
+import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
+import { FactoryMock } from 'typings/contracts/FactoryMock'
 
 import { BigNumber } from 'ethers'
 //@ts-ignore

@@ -7,9 +7,10 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "noImplicitAny": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "baseUrl": "."
   },
-  "include": ["tests", "typings"],
+  "include": ["test", "typings"],
   "files": [
     "./hardhat.config.ts",
   ]
