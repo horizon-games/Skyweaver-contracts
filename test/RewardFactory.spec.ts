@@ -8,8 +8,8 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { RewardFactory } from 'typings/contracts/RewardFactory'
+import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
+import { RewardFactory } from '../typings/contracts/RewardFactory'
 import { BigNumber } from 'ethers'
 //@ts-ignore
 import { web3 } from 'hardhat'
@@ -79,6 +79,7 @@ describe('RewardFactory', () => {
 
   // Base Token Param
   const periodMintLimit = BigNumber.from(100000)
+  const periodLength = BigNumber.from(60).mul(60).mul(6) // 6 hours
 
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
@@ -106,6 +107,7 @@ describe('RewardFactory', () => {
     factoryContract = await factoryAbstract.deploy(ownerWallet, [
       ownerAddress,
       skyweaverAssetsContract.address,
+      periodLength,
       periodMintLimit
     ]) as RewardFactory
     userFactoryContract = await factoryContract.connect(userSigner) as RewardFactory

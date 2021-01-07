@@ -8,10 +8,10 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { RewardFactory } from 'typings/contracts/RewardFactory'
-import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
-import { Conquest } from 'typings/contracts/Conquest'
+import { SkyweaverAssets } from '../typings/contracts/SkyweaverAssets'
+import { RewardFactory } from '../typings/contracts/RewardFactory'
+import { ERC1155Mock } from '../typings/contracts/ERC1155Mock'
+import { Conquest } from '../typings/contracts/Conquest'
 import { BigNumber, constants } from 'ethers'
 //@ts-ignore
 import { web3 } from 'hardhat'
@@ -80,6 +80,7 @@ describe('Conquest', () => {
   const DELAY = BigNumber.from(2).mul(60) // 2 minutes
   const MAX_REWARDS = BigNumber.from(200)
   const PERIOD_MINT_LIMIT = BigNumber.from(1000).mul(10).pow(2)
+  const PERIOD_LENGTH = BigNumber.from(60).mul(60).mul(6) // 6 hours
   
   // Range values 
   const silver_minRange = BigNumber.from(1);
@@ -116,12 +117,14 @@ describe('Conquest', () => {
     silverFactory = await rewardFactoryAbstract.deploy(ownerWallet, [
       ownerAddress,
       skyweaverAssetsContract.address,
+      PERIOD_LENGTH,
       PERIOD_MINT_LIMIT
     ]) as RewardFactory
 
     goldFactory = await rewardFactoryAbstract.deploy(ownerWallet, [
       ownerAddress,
       skyweaverAssetsContract.address,
+      PERIOD_LENGTH,
       PERIOD_MINT_LIMIT.div(5)
     ]) as RewardFactory
 
