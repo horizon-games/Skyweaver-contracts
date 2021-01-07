@@ -21,10 +21,10 @@ contract RewardFactory is TieredOwnable {
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver assets contract
 
   // Period variables
-  uint256 internal period;                           // Current period
-  uint256 internal availableSupply;                  // Amount of assets that can currently be minted
-  uint256 public periodMintLimit;                    // Amount that can be minted within 6h
-  uint256 constant internal PERIOD_LENGTH = 6 hours; // Length of each mint periods
+  uint256 internal period;                // Current period
+  uint256 internal availableSupply;       // Amount of assets that can currently be minted
+  uint256 public periodMintLimit;         // Amount that can be minted within 6h
+  uint256 immutable public PERIOD_LENGTH; // Length of each mint periods in seconds
 
   // Event
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
@@ -37,15 +37,18 @@ contract RewardFactory is TieredOwnable {
    * @notice Create factory, link skyweaver assets and store initial parameters
    * @param _firstOwner       Address of the first owner
    * @param _assetsAddr       The address of the ERC-1155 Assets Token contract
+   * @param _periodLength     Number of seconds each period lasts
    * @param _periodMintLimit  Can only mint N assets per period
    */
   constructor(
     address _firstOwner,
     address _assetsAddr,
+    uint256 _periodLength,
     uint256 _periodMintLimit
   ) TieredOwnable(_firstOwner) public {
     require(
       _assetsAddr != address(0) &&
+      _periodLength > 0 &&
       _periodMintLimit > 0,
       "RewardFactory#constructor: INVALID_INPUT"
     );
@@ -53,8 +56,11 @@ contract RewardFactory is TieredOwnable {
     // Assets
     skyweaverAssets = ISkyweaverAssets(_assetsAddr);
 
+    // Set Period length
+    PERIOD_LENGTH = _periodLength;
+
     // Set current period
-    period = livePeriod();
+    period = block.timestamp / _periodLength; // From livePeriod()
     availableSupply = _periodMintLimit;
 
     // Rewards parameters
