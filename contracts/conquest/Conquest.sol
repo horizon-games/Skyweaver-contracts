@@ -21,7 +21,7 @@ contract Conquest is IERC1155TokenReceiver, TieredOwnable {
   |__________________________________*/
 
   // Parameters
-  uint256 constant internal TIME_BETWEEN_CONQUESTS = 2 minutes; // Seconds that must elapse between two conquest
+  uint256 constant internal TIME_BETWEEN_CONQUESTS = 1 seconds; // Seconds that must elapse between two conquest
   uint256 constant internal ENTRIES_DECIMALS = 2;               // Amount of decimals conquest entries have
   uint256 constant internal CARDS_DECIMALS = 2;                 // Number of decimals cards have
 
