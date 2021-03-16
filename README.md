@@ -1,38 +1,47 @@
-This repository includes smart contracts that are specific to Skyweaver. These contracts depend on the ERC-1155 token implementation that can be found [here](https://github.com/arcadeum/multi-token-standard).
+Skyweaver Card Contracts
+========================
 
-# Instructions
+Skyweaver trading card smart contracts built on Ethereum. Skyweaver cards follow the [ERC-1155 token standard](https://github.com/0xsequence/erc-1155).
 
-## For testing
-1. `yarn install`
-2. `yarn build`
-4. `yarn ganache`
-5. (Different terminal) `yarn test`
+## Install
 
-# SkyWeaver's Smart Contracts Environment
-This is a overview of all the smart contracts in this repository. 
+`yarn add @horizongames/skyweaver-contracts` or `npm install @horizongames/skyweaver-contracts`
+
+
+## Overview
 
 ### 1 Asset Contracts
-[SkyWeaverAssets.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/tokens/SkyweaverAssets.sol): Implementation of [ERC-1155](https://github.com/ethereum/eips/issues/1155) that keeps track of all the users' Skyweaver asset balance and contains all the token functions. Assets can include cards, cosmetics, etc.
 
-[SkyweaverCurrencies.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/tokens/SkyweaverCurrencies.sol): Implementation of [ERC-1155](https://github.com/ethereum/eips/issues/1155) that keeps track of all the users' Skyweaver currencies. Currencies could be Weave for example.
+* [SkyWeaverAssets.sol](https://github.com/horizon-games/Skyweaver-contracts/blob/master/contracts/tokens/SkyweaverAssets.sol): Implementation of [ERC-1155](https://github.com/ethereum/eips/issues/1155) that keeps track of all the users' Skyweaver asset balance and contains all the token functions. Assets can include cards, cosmetics, etc.
 
 
 ### 2 Asset Supply Manager
-[SWSupplyManager.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SWSupplyManager.sol): This contract controls the tokens minting permissions and supply parameters. The supply manager keeps track of which factory contract can which which token id and what if the maximum supply of a given token id, if any. Factories can be added or removed and they can be granted permissions to mint some token ids. 
 
-## 3. Factories
+* [SWSupplyManager.sol](https://github.com/horizon-games/Skyweaver-contracts/blob/master/contracts/shop/SWSupplyManager.sol): This contract controls the tokens minting permissions and supply parameters. The supply manager keeps track of which factory contract can which which token id and what if the maximum supply of a given token id, if any. Factories can be added or removed and they can be granted permissions to mint some token ids. 
+
+### 3. Factories
+
 Factories are contracts that will submit minting request to the Asset Supply Manager. Factories contain the minting logic for different token ids.
 
-[SilverCardsFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverCardsFactory.sol): Allows players to purchase any silver card for a fixed price.
+* [SilverCardsFactory.sol](https://github.com/horizon-games/Skyweaver-contracts/blob/master/contracts/shop/SilverCardsFactory.sol): Allows players to purchase any silver card for a fixed price.
 
-[EternalHeroesFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/EternalHeroesFactory.sol): Allows players to purchase Eternal Heroes for a given price depending on its current price tier. The price of an Eternal Hero will increase every N copies sold, until the maximum supply is reached for that Eternal Hero.
-
-[WeaveFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/WeaveFactory.sol): Allows owner of the factory to mint a given number of weave as a function of time. Curent target is to allow for 1m Weave to be mintable per week.
-
-[GoldCardsFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/GoldCardsFactory.sol): Allows players to convert weave into a random gold card. Players first have to commit their weave (deposit) and have to mint the gold card in a subsequent transaction, after N blocks have passed. Anyone can execute the second transaction on behalf of a user.
-
-[SilverConquestFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows players to burn silver cards or send ARC to Horizon in exchange for off-chain conquest entries. Horizon can only mint silver cards up to the amount of silver cards burnt and ARC recived. Since the value of these assets is low, the RNG is handled off-chain.
-
-[FreemintFactory.sol](https://github.com/horizon-games/SkyWeaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows owner to mint any tokens within a given range. This factory will be 
+* [FreemintFactory.sol](https://github.com/horizon-games/Skyweaver-contracts/blob/master/contracts/shop/SilverConquestFactory.sol): Allows owner to mint any tokens within a given range. This factory will be 
 used to mint communiy related assets, special even assets that are meant to be given away.
 
+
+## Dev env & release
+
+This repository is configured as a yarn workspace, and has multiple pacakge.json files. Specifically,
+we have the root ./package.json for the development environment, contract compilation and testing. Contract
+source code and distribution files are packaged in "src/package.json".
+
+To release a new version, make sure to bump the version, tag it, and run `yarn release`. The `release` command
+will publish the `@horizongames/skyweaver-contracts` package in the "src/" folder, separate from the root package. The advantage
+here is that application developers who consume `@horizongames/skyweaver-contracts` aren't required to install any of the devDependencies
+in their toolchains as our build and contract packages are separated.
+
+## LICENSE
+
+Copyright (c) 2017-present [Horizon Blockchain Games Inc](https://horizon.io).
+
+Licensed under [Apache-2.0](./LICENSE)

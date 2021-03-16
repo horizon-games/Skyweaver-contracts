@@ -6,9 +6,6 @@ import 'hardhat-gas-reporter'
 import 'solidity-coverage'
 
 const config: HardhatUserConfig = {
-  paths: {
-    artifacts: './artifacts'
-  },
   solidity: {
     version: '0.7.4',
     settings: {
@@ -21,6 +18,10 @@ const config: HardhatUserConfig = {
         }
       }
     }
+  },
+  paths: {
+    root: 'src',
+    tests: '../tests'
   },
   networks: {
     ganache: {

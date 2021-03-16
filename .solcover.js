@@ -1,6 +1,15 @@
 module.exports = {
-  client: require('ganache-cli'),
+  norpc: true,
+  testCommand: 'yarn test',
+  compileCommand: 'yarn compile',
+  skipFiles: [
+    'mocks',
+  ],
   providerOptions: {
-    mnemonic: "concert load couple harbor equip island argue ramp clarify fence smart topic"
+    default_balance_ether: '10000000000000000000000000',
+  },
+  mocha: {
+    fgrep: '[skip-on-coverage]',
+    invert: true
   }
 }
