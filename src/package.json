@@ -1,6 +1,6 @@
 {
   "name": "@horizongames/skyweaver-contracts",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Skyweaver trading card smart contracts",
   "repository": "https://github.com/horizon-games/Skyweaver-contracts",
   "homepage": "https://www.skyweaver.net",
@@ -17,7 +17,7 @@
     "Ethereum"
   ],
   "dependencies": {
-    "@0xsequence/erc-1155": "^3.0.2"
+    "@0xsequence/erc-1155": "^3.0.3"
   },
   "devDependencies": {
   }
