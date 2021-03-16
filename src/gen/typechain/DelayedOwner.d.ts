@@ -518,7 +518,7 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }
+      }, {}
     >;
 
     TransactionExecuted(
@@ -541,7 +541,7 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }
+      }, {}
     >;
 
     TransactionRegistered(
@@ -564,7 +564,7 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }
+      }, {}
     >;
   };
 

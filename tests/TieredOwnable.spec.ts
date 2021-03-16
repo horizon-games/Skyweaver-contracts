@@ -8,9 +8,9 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { TieredOwnableMock } from 'typings/contracts/TieredOwnableMock'
+import { TieredOwnableMock } from 'src/gen/typechain'
 import { BigNumber, constants } from 'ethers'
-//@ts-ignore
+
 import { web3 } from 'hardhat'
 
 // init test wallets from package.json mnemonic

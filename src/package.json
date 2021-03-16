@@ -1,12 +1,12 @@
 {
   "name": "@horizongames/skyweaver-contracts",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Skyweaver trading card smart contracts",
   "repository": "https://github.com/horizon-games/Skyweaver-contracts",
   "homepage": "https://www.skyweaver.net",
   "license": "Apache-2.0",
-  "source": "typings/contracts/index.ts",
-  "types": "typings/contracts/index.ts",
+  "main": "gen/adapter/index.js",
+  "types": "gen/typechain/index.ts",
   "scripts": {
   },
   "keywords": [
@@ -16,8 +16,11 @@
     "Collectibles",
     "Ethereum"
   ],
+  "peerDependencies": {
+    "ethers": "^5.0.32"
+  },
   "dependencies": {
-    "@0xsequence/erc-1155": "^3.0.3"
+    "@0xsequence/erc-1155": "^3.0.4"
   },
   "devDependencies": {
   }

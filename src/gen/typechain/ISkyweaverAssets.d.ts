@@ -720,7 +720,7 @@ export class ISkyweaverAssets extends Contract {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }
+      }, {}
     >;
 
     MintPermissionRemoved(
@@ -737,7 +737,7 @@ export class ISkyweaverAssets extends Contract {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }
+      }, {}
     >;
   };
 

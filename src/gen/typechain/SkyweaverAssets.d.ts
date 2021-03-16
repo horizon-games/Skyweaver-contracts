@@ -1372,7 +1372,7 @@ export class SkyweaverAssets extends Contract {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }
+      }, {}
     >;
 
     MintPermissionRemoved(
@@ -1389,7 +1389,7 @@ export class SkyweaverAssets extends Contract {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }
+      }, {}
     >;
 
     OwnershipTransferred(
@@ -1408,7 +1408,7 @@ export class SkyweaverAssets extends Contract {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }
+      }, {}
     >;
 
     TransferBatch(

@@ -9,12 +9,14 @@ import {
 
 import * as utils from './utils'
 
-import { SkyweaverAssets } from 'typings/contracts/SkyweaverAssets'
-import { ERC1155Mock } from 'typings/contracts/ERC1155Mock'
-import { FactoryMock } from 'typings/contracts/FactoryMock'
+import { 
+  SkyweaverAssets,
+  ERC1155Mock,
+  FactoryMock
+} from 'src/gen/typechain'
 
 import { BigNumber } from 'ethers'
-//@ts-ignore
+
 import { web3 } from 'hardhat'
 
 // init test wallets from package.json mnemonic

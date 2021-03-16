@@ -8,10 +8,14 @@ import {
 } from './utils'
 
 import * as utils from './utils'
-import { OwnableMock } from 'typings/contracts/OwnableMock'
-import { DelayedOwner } from 'typings/contracts/DelayedOwner'
+
+import { 
+  OwnableMock,
+  DelayedOwner
+} from 'src/gen/typechain'
+
 import { BigNumber } from 'ethers'
-//@ts-ignore
+
 import { web3 } from 'hardhat'
 
 // init test wallets from package.json mnemonic
