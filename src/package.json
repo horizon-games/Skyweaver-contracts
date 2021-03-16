@@ -1,10 +1,12 @@
 {
   "name": "@horizongames/skyweaver-contracts",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Skyweaver trading card smart contracts",
   "repository": "https://github.com/horizon-games/Skyweaver-contracts",
   "homepage": "https://www.skyweaver.net",
   "license": "Apache-2.0",
+  "source": "typings/contracts/index.ts",
+  "types": "typings/contracts/index.ts",
   "scripts": {
   },
   "keywords": [
