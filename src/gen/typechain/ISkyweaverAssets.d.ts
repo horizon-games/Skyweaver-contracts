@@ -710,34 +710,28 @@ export class ISkyweaverAssets extends Contract {
       factory: string | null,
       new_range: null
     ): TypedEventFilter<
-      [
-        string,
-        [BigNumber, BigNumber],
-        { minID: BigNumber; maxID: BigNumber }
-      ] & {
+      [string, [BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber }],
+      {
         factory: string;
         new_range: [BigNumber, BigNumber] & {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }, {}
+      }
     >;
 
     MintPermissionRemoved(
       factory: string | null,
       deleted_range: null
     ): TypedEventFilter<
-      [
-        string,
-        [BigNumber, BigNumber],
-        { minID: BigNumber; maxID: BigNumber }
-      ] & {
+      [string, [BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber }],
+      {
         factory: string;
         deleted_range: [BigNumber, BigNumber] & {
           minID: BigNumber;
           maxID: BigNumber;
         };
-      }, {}
+      }
     >;
   };
 

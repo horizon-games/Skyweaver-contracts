@@ -681,10 +681,10 @@
     strip-indent "^2.0.0"
     super-split "^1.1.0"
 
-"@typechain/ethers-v5@^6.0.3":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@typechain/ethers-v5/-/ethers-v5-6.0.3.tgz#7111864ccdb2f3b1efd27283cc2f14999b05e5f0"
-  integrity sha512-Ut2arLNddngPTPboSP8EYiPRGWOTCLY3Iu0BU9CAXVEsABdx+n0XE5q+0YaGkq+0zus2D++WIz0U7Z0wHT6kTA==
+"@typechain/ethers-v5@^6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@typechain/ethers-v5/-/ethers-v5-6.0.4.tgz#b9bb2da36fcb4e10b8249dfb4408667151277010"
+  integrity sha512-m6mLwkwBtjmTfrMdvB+sZgbKSsMkfTCV5g2aqxZJFMyX1b9vLNPyqStmUQ8LaNs6ipCkG6+Q7erXJEkdjoDBSA==
 
 "@types/bignumber.js@^5.0.0":
   version "5.0.0"

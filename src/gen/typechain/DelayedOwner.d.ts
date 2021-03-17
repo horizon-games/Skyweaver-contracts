@@ -502,15 +502,15 @@ export class DelayedOwner extends Contract {
       transaction: null
     ): TypedEventFilter<
       [
-        [number, BigNumber, string, BigNumber, string],
-        {
+        [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
           target: string;
           id: BigNumber;
           data: string;
         }
-      ] & {
+      ],
+      {
         transaction: [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
@@ -518,22 +518,22 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }, {}
+      }
     >;
 
     TransactionExecuted(
       transaction: null
     ): TypedEventFilter<
       [
-        [number, BigNumber, string, BigNumber, string],
-        {
+        [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
           target: string;
           id: BigNumber;
           data: string;
         }
-      ] & {
+      ],
+      {
         transaction: [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
@@ -541,22 +541,22 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }, {}
+      }
     >;
 
     TransactionRegistered(
       transaction: null
     ): TypedEventFilter<
       [
-        [number, BigNumber, string, BigNumber, string],
-        {
+        [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
           target: string;
           id: BigNumber;
           data: string;
         }
-      ] & {
+      ],
+      {
         transaction: [number, BigNumber, string, BigNumber, string] & {
           status: number;
           triggerTime: BigNumber;
@@ -564,7 +564,7 @@ export class DelayedOwner extends Contract {
           id: BigNumber;
           data: string;
         };
-      }, {}
+      }
     >;
   };
 
