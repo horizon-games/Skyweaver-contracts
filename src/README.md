@@ -12,6 +12,9 @@ For more information see, [github.com/horizon-games/Skyweaver-contracts](https:/
 
 `yarn add @horizongames/skyweaver-contracts` or `npm install @horizongames/skyweaver-contracts`
 
+### Contract Verification
+
+`yarn verify --network {NETWORK_NAME} "{CONTRACT_NAME}={CONTRACT_ADDRESS}"`
 
 ## NOTES
 
