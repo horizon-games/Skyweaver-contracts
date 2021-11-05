@@ -5,6 +5,7 @@ import "../utils/Ownable.sol";
 
 import "@0xsequence/erc-1155/contracts/tokens/ERC1155PackedBalance/ERC1155MintBurnPackedBalance.sol";
 import "@0xsequence/erc-1155/contracts/tokens/ERC1155/ERC1155Metadata.sol";
+import "@0xsequence/erc-1155/contracts/tokens/ERC2981/ERC2981Global.sol";
 import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
 
 
@@ -17,7 +18,7 @@ import "@0xsequence/erc-1155/contracts/utils/SafeMath.sol";
  *      could be minting large numbers of NFTs or be built
  *      with granular, but efficient permission checks.
  */
-contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownable {
+contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, ERC2981Global, Ownable {
   using SafeMath for uint256;
 
   /***********************************|
@@ -35,8 +36,10 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
 
   // Struct for mint ID ranges permissions
   struct AssetRange {
-    uint256 minID;
-    uint256 maxID;
+    uint64 minID;     // Minimum value the ID need to be to fall in the range
+    uint64 maxID;     // Maximum value the ID need to be to fall in the range
+    uint64 startTime; // Timestamp when the range becomes valid
+    uint64 endTime;   // Timestamp after which the range is no longer valid 
   }
 
   /***********************************|
@@ -55,7 +58,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
   |             Constuctor            |
   |__________________________________*/
   
-  constructor (address _firstOwner) Ownable(_firstOwner) public {}
+  constructor (address _firstOwner) ERC1155Metadata("Skyweaver", "") Ownable(_firstOwner) public {}
 
 
   /***********************************|
@@ -82,13 +85,16 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
 
   /**
    * @notice Will allow a factory to mint some token ids
-   * @param _factory  Address of the factory to update permission
-   * @param _minRange Minimum ID (inclusive) in id range that factory will be able to mint
-   * @param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint
+   * @param _factory   Address of the factory to update permission
+   * @param _minRange  Minimum ID (inclusive) in id range that factory will be able to mint
+   * @param _maxRange  Maximum ID (inclusive) in id range that factory will be able to mint
+   * @param _startTime Timestamp when the range becomes valid
+   * @param _endTime   Timestamp after which the range is no longer valid 
    */
-  function addMintPermission(address _factory, uint256 _minRange, uint256 _maxRange) external onlyOwner() {
+  function addMintPermission(address _factory, uint64 _minRange, uint64 _maxRange, uint64 _startTime, uint64 _endTime) external onlyOwner() {
     require(_maxRange > 0, "SkyweaverAssets#addMintPermission: NULL_RANGE");
     require(_minRange <= _maxRange, "SkyweaverAssets#addMintPermission: INVALID_RANGE");
+    require(_startTime < _endTime, "SkyweaverAssets#addMintPermission: START_TIME_IS_NOT_LESSER_THEN_END_TIME");
 
     // Check if new range has an overlap with locked ranges.
     // lockedRanges is expected to be a small array
@@ -101,7 +107,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
     }
 
     // Create and store range struct for _factory
-    AssetRange memory range = AssetRange(_minRange, _maxRange);
+    AssetRange memory range = AssetRange(_minRange, _maxRange, _startTime, _endTime);
     mintAccessRanges[_factory].push(range);
     emit MintPermissionAdded(_factory, range);
   }
@@ -169,6 +175,20 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
     }
 
     emit MaxIssuancesChanged(_ids, _newMaxIssuances);
+  }
+
+  /***********************************|
+  |    Royalty Management Methods     |
+  |__________________________________*/
+
+  /**
+   * @notice Will set the basis point and royalty recipient that is applied to all Skyweaver assets
+   * @param _receiver Fee recipient that will receive the royalty payments
+   * @param _royaltyBasisPoints Basis points with 3 decimals representing the fee %
+   *        e.g. a fee of 2% would be 20 (i.e. 20 / 1000 == 0.02, or 2%)
+   */
+  function setGlobalRoyaltyInfo(address _receiver, uint256 _royaltyBasisPoints) external onlyOwner() {
+    _setGlobalRoyaltyInfo(_receiver, _royaltyBasisPoints);
   }
 
   /***********************************|
@@ -260,7 +280,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
       // If ID is out of current range, move to next range, else skip.
       // This function only moves forwards in the AssetRange array,
       // hence if _ids are not sorted correctly, the call will fail.
-      while (id < range.minID || range.maxID < id) {
+      while (block.timestamp < range.startTime || block.timestamp > range.endTime || id < range.minID || range.maxID < id) {
         range_index += 1;
 
         // Load next range. If none left, ID is assumed to be out of all ranges
@@ -401,7 +421,7 @@ contract SkyweaverAssets is ERC1155MintBurnPackedBalance, ERC1155Metadata, Ownab
    * @param _interfaceID  The interface identifier, as specified in ERC-165
    * @return `true` if the contract implements `_interfaceID`
    */
-  function supportsInterface(bytes4 _interfaceID) public override(ERC1155PackedBalance, ERC1155Metadata) virtual pure returns (bool) {
+  function supportsInterface(bytes4 _interfaceID) public override(ERC1155PackedBalance, ERC1155Metadata, ERC2981Global) virtual pure returns (bool) {
     return super.supportsInterface(_interfaceID);
   }
 }
