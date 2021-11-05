@@ -49,6 +49,7 @@ describe('SkyweaverAssets', () => {
 
   let ownerAddress: string
   let userAddress: string
+  let randomAddress: string
   let skyweaverAssetsAbstract: AbstractContract
   let wDaiCoinAbstract: AbstractContract
   let factoryAbstract: AbstractContract
@@ -69,6 +70,8 @@ describe('SkyweaverAssets', () => {
   // Range values 
   const minRange = BigNumber.from(1);
   const maxRange = BigNumber.from(500);
+  const startTime = BigNumber.from(Math.floor(Date.now() / 1000))
+  const endTime = BigNumber.from(startTime.add(60*60)) // 1 hour from now
 
   // Base Token Param
   const baseTokenID = 666;
@@ -84,6 +87,7 @@ describe('SkyweaverAssets', () => {
   before(async () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
+    randomAddress = await randomWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     wDaiCoinAbstract = await AbstractContract.fromArtifactName('ERC1155Mock')
     factoryAbstract = await AbstractContract.fromArtifactName('FactoryMock')
@@ -129,7 +133,7 @@ describe('SkyweaverAssets', () => {
         const expected_issuance = BigNumber.from(3)
         await SWAssetsContract.setMaxIssuances([id], [maxIssuance])
         await SWAssetsContract.activateFactory(factory)
-        await SWAssetsContract.addMintPermission(factory, minRange, maxRange)
+        await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
         await factoryContract.batchMint(userAddress, [id], [expected_issuance], [])
         const value = await SWAssetsContract.getCurrentIssuances([id])
         expect(value[0]).to.be.eql(expected_issuance)
@@ -161,29 +165,34 @@ describe('SkyweaverAssets', () => {
   describe('addMintPermission() function', () => {
 
     it('should REVERT if maxRange is 0', async () => {
-      let tx = SWAssetsContract.addMintPermission(factory, minRange, 0);
+      let tx = SWAssetsContract.addMintPermission(factory, minRange, 0, startTime, endTime);
       await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: NULL_RANGE") )
     })
 
     it('should REVERT if minRange is lower than maxRange', async () => {
-      let tx = SWAssetsContract.addMintPermission(factory, maxRange.add(1), maxRange);
+      let tx = SWAssetsContract.addMintPermission(factory, maxRange.add(1), maxRange, startTime, endTime);
       await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: INVALID_RANGE") )
     })
 
+    it('should REVERT if startTime is higher or equal to endTime', async () => {
+      let tx = SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, startTime);
+      await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: START_TIME_IS_NOT_LESSER_THEN_END_TIME") )
+    })
+
     it('should PASS if range is valid', async () => {
-      const tx = SWAssetsContract.addMintPermission(factory, minRange, maxRange)
+      const tx = SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
       await expect(tx).to.be.fulfilled
     })
 
     it('should REVERT if caller is not owner', async () => {
-      const tx =  userSWAssetsContract.addMintPermission(factory, minRange, maxRange)
+      const tx =  userSWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
       await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
     })
 
     context('When mint permission was given', () => {
       let tx;
       beforeEach(async () => {
-        tx = await SWAssetsContract.addMintPermission(factory, minRange, maxRange);
+        tx = await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime);
       })
       
       it("should update factory's mint access range", async () => {
@@ -202,7 +211,7 @@ describe('SkyweaverAssets', () => {
         // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
         filterFromOperatorContract.fromBlock = 0;
         let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["MintPermissionAdded(address,(uint256,uint256))"]))
+        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["MintPermissionAdded(address,(uint64,uint64,uint64,uint64))"]))
       })
       
       describe('MintPermissionAdded Event', () => {
@@ -218,7 +227,7 @@ describe('SkyweaverAssets', () => {
           const receipt = await tx.wait(1)
           const ev = receipt.events!.pop()!
           const args = ev.args! as any
-          expect(args.new_range).to.be.eql([minRange, maxRange])
+          expect(args.new_range).to.be.eql([minRange, maxRange, startTime, endTime])
         })
       })
 
@@ -228,7 +237,7 @@ describe('SkyweaverAssets', () => {
         const maxRange2 = minRange2.add(123);
 
         beforeEach(async () => {
-          tx = await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2);
+          tx = await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime);
         })
 
         it("should update factory's mint access range correctly", async () => {
@@ -242,39 +251,39 @@ describe('SkyweaverAssets', () => {
     })
 
     it('should REVERT if range overlaps with locked range', async () => {
-      let range: AssetRange = {minID: minRange, maxID: maxRange}
+      let range: AssetRange = {minID: minRange, maxID: maxRange, startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
       await SWAssetsContract.lockRangeMintPermissions(range)
 
-      let tx = SWAssetsContract.addMintPermission(factory, maxRange, maxRange.add(100))
+      let tx = SWAssetsContract.addMintPermission(factory, maxRange, maxRange.add(100), startTime, endTime)
       await expect(tx).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
-      let tx2 = SWAssetsContract.addMintPermission(factory, 0, minRange)
+      let tx2 = SWAssetsContract.addMintPermission(factory, 0, minRange, startTime, endTime)
       await expect(tx2).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
-      let tx3 = SWAssetsContract.addMintPermission(factory, minRange, maxRange)
+      let tx3 = SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
       await expect(tx3).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
 
-      let tx4 = SWAssetsContract.addMintPermission(factory, 0, minRange.add(10))
+      let tx4 = SWAssetsContract.addMintPermission(factory, 0, minRange.add(10), startTime, endTime)
       await expect(tx4).to.be.rejectedWith( RevertError("SkyweaverAssets#addMintPermission: OVERLAP_WITH_LOCKED_RANGE") )
     })
 
     it('should pass if range does not overlap with locked range', async () => {
-      let range: AssetRange = {minID: minRange.add(1), maxID: maxRange.add(1)}
+      let range: AssetRange = {minID: minRange.add(1), maxID: maxRange.add(1), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
       await SWAssetsContract.lockRangeMintPermissions(range)
 
-      let range2: AssetRange = {minID: maxRange.mul(3), maxID: maxRange.mul(3).add(100)}
+      let range2: AssetRange = {minID: maxRange.mul(3), maxID: maxRange.mul(3).add(100), startTime: BigNumber.from(Date.now()), endTime: BigNumber.from(Date.now() + 1000000)}
       await SWAssetsContract.lockRangeMintPermissions(range2)
       
       // Before first
-      let tx = SWAssetsContract.addMintPermission(factory, 0, 1)
+      let tx = SWAssetsContract.addMintPermission(factory, 0, 1, startTime, endTime)
       await expect(tx).to.be.fulfilled
 
       // After last
-      let tx2 = SWAssetsContract.addMintPermission(factory, maxRange.mul(3).add(101), maxRange.mul(3).add(102))
+      let tx2 = SWAssetsContract.addMintPermission(factory, maxRange.mul(3).add(101), maxRange.mul(3).add(102), startTime, endTime)
       await expect(tx2).to.be.fulfilled
 
       // Between two
-      let tx3 = SWAssetsContract.addMintPermission(factory, maxRange.add(2), maxRange.add(101))
+      let tx3 = SWAssetsContract.addMintPermission(factory, maxRange.add(2), maxRange.add(101), startTime, endTime)
       await expect(tx3).to.be.fulfilled
     })
 
@@ -290,7 +299,7 @@ describe('SkyweaverAssets', () => {
     context('When mint permission was given', () => {
       let tx;
       beforeEach(async () => {
-        tx = await SWAssetsContract.addMintPermission(factory, minRange, maxRange);
+        tx = await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime);
       })
 
       it('should PASS if range exists', async () => {
@@ -333,7 +342,7 @@ describe('SkyweaverAssets', () => {
           // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
           filterFromOperatorContract.fromBlock = 0;
           let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-          expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["MintPermissionRemoved(address,(uint256,uint256))"]))
+          expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["MintPermissionRemoved(address,(uint64,uint64,uint64,uint64))"]))
         })
         
         describe('MintPermissionRemoved Event', () => {
@@ -350,7 +359,7 @@ describe('SkyweaverAssets', () => {
             const receipt = await tx.wait(1)
             const ev = receipt.events!.pop()!
             const args = ev.args! as any
-            expect(args.deleted_range).to.be.eql([minRange, maxRange])
+            expect(args.deleted_range).to.be.eql([minRange, maxRange, startTime, endTime])
           })
         })
       })
@@ -362,7 +371,7 @@ describe('SkyweaverAssets', () => {
         const maxRange3 = minRange3.add(444);
 
         beforeEach(async () => {
-          await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2);
+          await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime);
         })
 
         it('should have correct range in `range` field', async () => {
@@ -370,7 +379,7 @@ describe('SkyweaverAssets', () => {
           const receipt = await tx.wait(1)
           const ev = receipt.events!.pop()!
           const args = ev.args! as any
-          expect(args.deleted_range).to.be.eql([minRange, maxRange])
+          expect(args.deleted_range).to.be.eql([minRange, maxRange, startTime, endTime])
         })
 
         it("should remove the correct range", async () => {
@@ -390,32 +399,32 @@ describe('SkyweaverAssets', () => {
         })
 
         it("should move last range to removed range, if different", async () => {
-          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3);
+          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime);
 
           tx = await SWAssetsContract.removeMintPermission(factory, 0);
           const range = await SWAssetsContract.getFactoryAccessRanges(factory)
-          expect(range[0]).to.be.eql([minRange3, maxRange3])
-          expect(range[1]).to.be.eql([minRange2, maxRange2])
+          expect(range[0]).to.be.eql([minRange3, maxRange3, startTime, endTime])
+          expect(range[1]).to.be.eql([minRange2, maxRange2, startTime, endTime])
           expect(range.length).to.be.eql(2)
         })
 
         it("should move last range to removed range, if different (#2)", async () => {
-          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3);
+          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime);
 
           tx = await SWAssetsContract.removeMintPermission(factory, 1);
           const range = await SWAssetsContract.getFactoryAccessRanges(factory)
-          expect(range[0]).to.be.eql([minRange, maxRange])
-          expect(range[1]).to.be.eql([minRange3, maxRange3])
+          expect(range[0]).to.be.eql([minRange, maxRange, startTime, endTime])
+          expect(range[1]).to.be.eql([minRange3, maxRange3, startTime, endTime])
           expect(range.length).to.be.eql(2)
         })
 
         it("should simply delete last element if range is last", async () => {
-          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3);
+          tx = await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime);
 
           tx = await SWAssetsContract.removeMintPermission(factory, 2);
           const range = await SWAssetsContract.getFactoryAccessRanges(factory)
-          expect(range[0]).to.be.eql([minRange, maxRange])
-          expect(range[1]).to.be.eql([minRange2, maxRange2])
+          expect(range[0]).to.be.eql([minRange, maxRange, startTime, endTime])
+          expect(range[1]).to.be.eql([minRange2, maxRange2, startTime, endTime])
           expect(range.length).to.be.eql(2)
         })
 
@@ -425,14 +434,14 @@ describe('SkyweaverAssets', () => {
           const rangePre = await SWAssetsContract.getFactoryAccessRanges(factory)
           expect(rangePre.length).to.be.eql(0)
 
-          await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3);
-          await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2);
-          await SWAssetsContract.addMintPermission(factory, minRange, maxRange);
+          await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime);
+          await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime);
+          await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime);
           const rangePost = await SWAssetsContract.getFactoryAccessRanges(factory)
           expect(rangePost.length).to.be.eql(3)
-          expect(rangePost[0]).to.be.eql([minRange3, maxRange3])
-          expect(rangePost[1]).to.be.eql([minRange2, maxRange2])
-          expect(rangePost[2]).to.be.eql([minRange, maxRange])
+          expect(rangePost[0]).to.be.eql([minRange3, maxRange3, startTime, endTime])
+          expect(rangePost[1]).to.be.eql([minRange2, maxRange2, startTime, endTime])
+          expect(rangePost[2]).to.be.eql([minRange, maxRange, startTime, endTime])
         })
       })
 
@@ -542,7 +551,7 @@ describe('SkyweaverAssets', () => {
 
   describe('lockRangeMintPermissions() function', () => {
 
-    let range: AssetRange = {minID: minRange, maxID: maxRange}
+    let range: AssetRange = {minID: minRange, maxID: maxRange, startTime, endTime}
 
     it('should PASS if caller is owner', async () => {
       const tx = SWAssetsContract.lockRangeMintPermissions(range)
@@ -579,16 +588,16 @@ describe('SkyweaverAssets', () => {
         // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
         filterFromOperatorContract.fromBlock = 0;
         let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["RangeLocked((uint256,uint256))"]))
+        expect(logs[0].topics[0]).to.be.eql(SWAssetsContract.interface.getEventTopic(SWAssetsContract.interface.events["RangeLocked((uint64,uint64,uint64,uint64))"]))
       })
       
       describe('RangeLocked Event', () => {
         it('should have correct range as `range` field', async () => {  
           const receipt = await tx.wait(1)
           const ev = receipt.events!.pop()!
-
           const args = ev.args! as any
-          expect(args.locked_range).to.be.eql([minRange, maxRange])
+
+          expect(args.locked_range).to.be.eql([minRange, maxRange, startTime, endTime])
         })
       })
     })
@@ -652,7 +661,7 @@ describe('SkyweaverAssets', () => {
 
     beforeEach(async () => {
       await SWAssetsContract.activateFactory(factory)
-      await SWAssetsContract.addMintPermission(factory, minRange, maxRange)
+      await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
     })
 
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
@@ -671,8 +680,8 @@ describe('SkyweaverAssets', () => {
       await expect(tx_2).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
 
       let invalid_ids_high_2 = new Array(nTokenTypes).fill('').map((a, i) => maxRange2.add(a+1))
       const tx3 = factoryContract.batchMint(userAddress, invalid_ids_high_2, amounts, [])
@@ -696,12 +705,32 @@ describe('SkyweaverAssets', () => {
       await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
+    it('should REVERT if id ranges are not authorized for factory', async () => {
+      await SWAssetsContract.removeMintPermission(factory, 0)
+      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejected;
+    })
+
     it('should REVERT if exceeds max issuance', async () => {
       const max_issuance = nTokensPerType - 1
       const id = nTokenTypes - 1
       await SWAssetsContract.setMaxIssuances([id], [max_issuance])
       const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
       await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: MAX_ISSUANCE_EXCEEDED"))
+    })
+
+    it('should REVERT if startTime of range has not started', async () => {
+      await SWAssetsContract.removeMintPermission(factory, 0)
+      await SWAssetsContract.addMintPermission(factory, minRange, maxRange, endTime, endTime.add(1))
+      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
+    })
+
+    it('should REVERT if endTime of range is passed', async () => {
+      await SWAssetsContract.removeMintPermission(factory, 0)
+      await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime.sub(100), startTime.sub(99))
+      const tx = factoryContract.batchMint(userAddress, ids, amounts, [])
+      await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
 
     it('should PASS if reach exact max issuance', async () => {
@@ -738,51 +767,51 @@ describe('SkyweaverAssets', () => {
     })
 
     it('should PASS if id is in a later range', async () => {
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       const tx = factoryContract.batchMint(userAddress, ids2, amounts, [])
       await expect(tx).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx2 = factoryContract.batchMint(userAddress, ids3, amounts, [])
       await expect(tx2).to.be.fulfilled
     })
 
     it('should PASS if some ids are in different ranges', async () => {
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       const tx = factoryContract.batchMint(userAddress, ids.concat(ids2), amounts.concat(amounts), [])
       await expect(tx).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx2 = factoryContract.batchMint(userAddress, ids.concat(ids3), amounts.concat(amounts), [])
       await expect(tx2).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx3 = factoryContract.batchMint(userAddress, [maxRange, maxRange2, maxRange3], [2,2,2], [])
       await expect(tx3).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx4 = factoryContract.batchMint(userAddress, [minRange, minRange2, minRange3], [2,2,2], [])
       await expect(tx4).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx5 = factoryContract.batchMint(userAddress, [maxRange, maxRange3], [2,2], [])
       await expect(tx5).to.be.fulfilled
     })
 
     it('should REVERT if some ids in different ranges are not sorted', async () => {
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       const tx = factoryContract.batchMint(userAddress, ids2.concat(ids), amounts.concat(amounts), [])
       await expect(tx).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       const tx2 = factoryContract.batchMint(userAddress, ids.concat(ids3).concat(ids2), amounts.concat(amounts).concat(amounts), [])
       await expect(tx2).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx3 = factoryContract.batchMint(userAddress, [maxRange, maxRange3, maxRange2], [2,2,2], [])
       await expect(tx3).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx4 = factoryContract.batchMint(userAddress, [minRange, minRange3, minRange2], [2,2,2], [])
       await expect(tx4).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
     })
@@ -816,7 +845,7 @@ describe('SkyweaverAssets', () => {
 
     beforeEach(async () => {
       await SWAssetsContract.activateFactory(factory)
-      await SWAssetsContract.addMintPermission(factory, minRange, maxRange)
+      await SWAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime)
     })
 
     it('should REVERT if called by inactive factory, but authorized IDs', async () => {
@@ -835,8 +864,8 @@ describe('SkyweaverAssets', () => {
       await expect(tx1).to.be.rejectedWith(RevertError("SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE"))
 
       // With mltiple ranges
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
 
       let invalid_ids_high_2 = maxRange2.add(1)
       const tx2 = factoryContract.mint(userAddress, invalid_ids_high_2, amount, [])
@@ -889,11 +918,11 @@ describe('SkyweaverAssets', () => {
     })
 
     it('should PASS if id is in a later range', async () => {
-      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2)
+      await SWAssetsContract.addMintPermission(factory, minRange2, maxRange2, startTime, endTime)
       const tx = factoryContract.mint(userAddress, id2, amount, [])
       await expect(tx).to.be.fulfilled
 
-      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3)
+      await SWAssetsContract.addMintPermission(factory, minRange3, maxRange3, startTime, endTime)
       const tx2 = factoryContract.mint(userAddress, id3, amount, [])
       await expect(tx2).to.be.fulfilled
     })
@@ -906,6 +935,49 @@ describe('SkyweaverAssets', () => {
       it('should mint tokens to recipient', async () => {
         const balance = await SWAssetsContract.balanceOf(userAddress, id);
         expect(balance).to.be.eql(BigNumber.from(amount))
+      })
+    })
+  })
+
+  describe('setGlobalRoyaltyInfo() function', () => {
+    const basisFee = 50 // 5%
+
+    it('should PASS if caller is owner', async () => {
+      const tx = SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('should REVERT if caller is not owner', async () => {
+      const tx =  userSWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+      await expect(tx).to.be.rejectedWith(RevertError("Ownable#onlyOwner: SENDER_IS_NOT_OWNER"))
+    })
+
+    context('When global royalty info was set', () => {
+      it('should update globalRoyaltyInfo when successful', async () => {
+        const pre_info = await SWAssetsContract.globalRoyaltyInfo()
+        expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
+        expect(pre_info.feeBasisPoints).to.be.eql(BigNumber.from(0))
+
+        await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+
+        const info = await SWAssetsContract.globalRoyaltyInfo()
+        expect(info.receiver).to.be.eql(randomAddress)
+        expect(info.feeBasisPoints).to.be.eql(BigNumber.from(basisFee))
+      })
+
+      it('should return the correct fee amount', async () => {
+        const cost = BigNumber.from(1337).mul(BigNumber.from(10).pow(18))
+        const expected_fee = cost.mul(basisFee).div(1000)
+
+        const pre_info = await SWAssetsContract.royaltyInfo(123123, cost)
+        expect(pre_info.receiver).to.be.eql(ethers.constants.AddressZero)
+        expect(pre_info.royaltyAmount).to.be.eql(BigNumber.from(0))
+
+        await SWAssetsContract.setGlobalRoyaltyInfo(randomAddress, basisFee)
+
+        const info = await SWAssetsContract.royaltyInfo(123123, cost)
+        expect(info.receiver).to.be.eql(randomAddress)
+        expect(info.royaltyAmount).to.be.eql(BigNumber.from(expected_fee))
       })
     })
   })

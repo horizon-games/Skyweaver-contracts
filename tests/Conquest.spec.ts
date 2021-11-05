@@ -76,6 +76,7 @@ describe('Conquest', () => {
   const nTokenTypes    = BigNumber.from(2) 
   const nTokensPerType = BigNumber.from(100)
 
+
   // Ticket token Param
   const ticketID = BigNumber.from(555);
   const ticketAmount = BigNumber.from(10).mul(100);
@@ -92,6 +93,9 @@ describe('Conquest', () => {
 
   const gold_minRange = BigNumber.from(1).add(GOLD_SPACE)
   const gold_maxRange = BigNumber.from(500).add(GOLD_SPACE);
+
+  const startTime = BigNumber.from(Math.floor(Date.now() / 1000))
+  const endTime = BigNumber.from(startTime.add(60*60)) // 1 hour from now
 
   // Arrays
   const silver_ids = [77]
@@ -152,12 +156,12 @@ describe('Conquest', () => {
     // Activate gold and silver factories and authorize them
     await skyweaverAssetsContract.activateFactory(silverFactory.address);
     await skyweaverAssetsContract.activateFactory(goldFactory.address);
-    await skyweaverAssetsContract.addMintPermission(silverFactory.address, silver_minRange, silver_maxRange);
-    await skyweaverAssetsContract.addMintPermission(goldFactory.address, gold_minRange, gold_maxRange);
+    await skyweaverAssetsContract.addMintPermission(silverFactory.address, silver_minRange, silver_maxRange, startTime, endTime);
+    await skyweaverAssetsContract.addMintPermission(goldFactory.address, gold_minRange, gold_maxRange, startTime, endTime);
 
     // Let owner be a "factory" to mint silver cards to test conquest
     await skyweaverAssetsContract.activateFactory(ownerAddress);
-    await skyweaverAssetsContract.addMintPermission(ownerAddress, ticketID, ticketID);
+    await skyweaverAssetsContract.addMintPermission(ownerAddress, ticketID, ticketID, startTime, endTime);
 
     // Mint Ticket tokens to owner and user
     await skyweaverAssetsContract.batchMint(ownerAddress, [ticketID], [ticketAmount] , [])
@@ -220,7 +224,7 @@ describe('Conquest', () => {
         let invalid_id = ticketID.sub(1)
 
         await skyweaverAssetsContract.activateFactory(ownerAddress);
-        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id);
+        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
         
         await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
 
@@ -269,7 +273,7 @@ describe('Conquest', () => {
         let invalid_id = ticketID.sub(1)
 
         await skyweaverAssetsContract.activateFactory(ownerAddress);
-        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id);
+        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
 
         await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
 

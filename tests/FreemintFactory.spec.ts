@@ -62,6 +62,8 @@ describe('FreemintFactory', () => {
   // Range values 
   const minRange = BigNumber.from(1000000001);
   const maxRange = BigNumber.from(1000000500);
+  const startTime = BigNumber.from(Math.floor(Date.now() / 1000))
+  const endTime = BigNumber.from(startTime.add(60*60)) // 1 hour from now
 
   let factory;
 
@@ -93,7 +95,7 @@ describe('FreemintFactory', () => {
 
     // Activate factory and authorize it
     await skyweaverAssetsContract.activateFactory(factory);
-    await skyweaverAssetsContract.addMintPermission(factory, minRange, maxRange);
+    await skyweaverAssetsContract.addMintPermission(factory, minRange, maxRange, startTime, endTime);
   })
 
   describe('Getter functions', () => {
