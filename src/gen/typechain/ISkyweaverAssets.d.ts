@@ -22,7 +22,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface ISkyweaverAssetsInterface extends ethers.utils.Interface {
   functions: {
     "activateFactory(address)": FunctionFragment;
-    "addMintPermission(address,uint256,uint256)": FunctionFragment;
+    "addMintPermission(address,uint64,uint64,uint64,uint64)": FunctionFragment;
     "batchBurn(uint256[],uint256[])": FunctionFragment;
     "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
     "burn(uint256,uint256)": FunctionFragment;
@@ -43,7 +43,7 @@ interface ISkyweaverAssetsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addMintPermission",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "batchBurn",
@@ -210,13 +210,17 @@ export class ISkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -379,13 +383,17 @@ export class ISkyweaverAssets extends Contract {
     _factory: string,
     _minRange: BigNumberish,
     _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "addMintPermission(address,uint256,uint256)"(
+  "addMintPermission(address,uint64,uint64,uint64,uint64)"(
     _factory: string,
     _minRange: BigNumberish,
     _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -545,13 +553,17 @@ export class ISkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -750,13 +762,17 @@ export class ISkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -916,13 +932,17 @@ export class ISkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

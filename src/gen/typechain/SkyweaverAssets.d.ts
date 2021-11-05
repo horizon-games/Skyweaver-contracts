@@ -22,9 +22,10 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface SkyweaverAssetsInterface extends ethers.utils.Interface {
   functions: {
     "activateFactory(address)": FunctionFragment;
-    "addMintPermission(address,uint256,uint256)": FunctionFragment;
+    "addMintPermission(address,uint64,uint64,uint64,uint64)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "baseURI()": FunctionFragment;
     "batchBurn(uint256[],uint256[])": FunctionFragment;
     "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
     "burn(uint256,uint256)": FunctionFragment;
@@ -36,15 +37,19 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     "getMaxIssuances(uint256[])": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getValueInBin(uint256,uint256)": FunctionFragment;
+    "globalRoyaltyInfo()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "lockRangeMintPermissions(tuple)": FunctionFragment;
     "logURIs(uint256[])": FunctionFragment;
     "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "name()": FunctionFragment;
     "removeMintPermission(address,uint256)": FunctionFragment;
+    "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseMetadataURI(string)": FunctionFragment;
+    "setGlobalRoyaltyInfo(address,uint256)": FunctionFragment;
     "setMaxIssuances(uint256[],uint256[])": FunctionFragment;
     "shutdownFactory(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -58,7 +63,7 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addMintPermission",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -68,6 +73,7 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     functionFragment: "balanceOfBatch",
     values: [string[], BigNumberish[]]
   ): string;
+  encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "batchBurn",
     values: [BigNumberish[], BigNumberish[]]
@@ -110,12 +116,23 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "globalRoyaltyInfo",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "lockRangeMintPermissions",
-    values: [{ minID: BigNumberish; maxID: BigNumberish }]
+    values: [
+      {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      }
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "logURIs",
@@ -125,9 +142,14 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     functionFragment: "mint",
     values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeMintPermission",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "royaltyInfo",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -144,6 +166,10 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setBaseMetadataURI",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setGlobalRoyaltyInfo",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxIssuances",
@@ -176,6 +202,7 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "batchBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
@@ -209,6 +236,10 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "globalRoyaltyInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
@@ -218,8 +249,13 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "logURIs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeMintPermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "royaltyInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -236,6 +272,10 @@ interface SkyweaverAssetsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setBaseMetadataURI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setGlobalRoyaltyInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -341,13 +381,17 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -374,6 +418,10 @@ export class SkyweaverAssets extends Contract {
       _ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    baseURI(overrides?: CallOverrides): Promise<[string]>;
+
+    "baseURI()"(overrides?: CallOverrides): Promise<[string]>;
 
     batchBurn(
       _ids: BigNumberish[],
@@ -429,14 +477,28 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]]
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
     >;
 
     "getFactoryAccessRanges(address)"(
       _factory: string,
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]]
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
     >;
 
     getFactoryStatus(
@@ -462,13 +524,27 @@ export class SkyweaverAssets extends Contract {
     getLockedRanges(
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]]
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
     >;
 
     "getLockedRanges()"(
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]]
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        })[]
+      ]
     >;
 
     getMaxIssuances(
@@ -497,6 +573,18 @@ export class SkyweaverAssets extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    globalRoyaltyInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+    >;
+
+    "globalRoyaltyInfo()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+    >;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -510,12 +598,22 @@ export class SkyweaverAssets extends Contract {
     ): Promise<[boolean] & { isOperator: boolean }>;
 
     lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "lockRangeMintPermissions((uint256,uint256))"(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -545,6 +643,10 @@ export class SkyweaverAssets extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
+
     removeMintPermission(
       _factory: string,
       _rangeIndex: BigNumberish,
@@ -556,6 +658,22 @@ export class SkyweaverAssets extends Contract {
       _rangeIndex: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
+
+    "royaltyInfo(uint256,uint256)"(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       _from: string,
@@ -612,6 +730,18 @@ export class SkyweaverAssets extends Contract {
 
     "setBaseMetadataURI(string)"(
       _newBaseMetadataURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setGlobalRoyaltyInfo(address,uint256)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -679,13 +809,17 @@ export class SkyweaverAssets extends Contract {
     _factory: string,
     _minRange: BigNumberish,
     _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "addMintPermission(address,uint256,uint256)"(
+  "addMintPermission(address,uint64,uint64,uint64,uint64)"(
     _factory: string,
     _minRange: BigNumberish,
     _maxRange: BigNumberish,
+    _startTime: BigNumberish,
+    _endTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -712,6 +846,10 @@ export class SkyweaverAssets extends Contract {
     _ids: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  baseURI(overrides?: CallOverrides): Promise<string>;
+
+  "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
   batchBurn(
     _ids: BigNumberish[],
@@ -767,14 +905,24 @@ export class SkyweaverAssets extends Contract {
     _factory: string,
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
   >;
 
   "getFactoryAccessRanges(address)"(
     _factory: string,
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
   >;
 
   getFactoryStatus(
@@ -800,13 +948,23 @@ export class SkyweaverAssets extends Contract {
   getLockedRanges(
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
   >;
 
   "getLockedRanges()"(
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      minID: BigNumber;
+      maxID: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+    })[]
   >;
 
   getMaxIssuances(
@@ -835,6 +993,18 @@ export class SkyweaverAssets extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  globalRoyaltyInfo(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+  >;
+
+  "globalRoyaltyInfo()"(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+  >;
+
   isApprovedForAll(
     _owner: string,
     _operator: string,
@@ -848,12 +1018,22 @@ export class SkyweaverAssets extends Contract {
   ): Promise<boolean>;
 
   lockRangeMintPermissions(
-    _range: { minID: BigNumberish; maxID: BigNumberish },
+    _range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+      startTime: BigNumberish;
+      endTime: BigNumberish;
+    },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "lockRangeMintPermissions((uint256,uint256))"(
-    _range: { minID: BigNumberish; maxID: BigNumberish },
+  "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+    _range: {
+      minID: BigNumberish;
+      maxID: BigNumberish;
+      startTime: BigNumberish;
+      endTime: BigNumberish;
+    },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -883,6 +1063,10 @@ export class SkyweaverAssets extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
+  "name()"(overrides?: CallOverrides): Promise<string>;
+
   removeMintPermission(
     _factory: string,
     _rangeIndex: BigNumberish,
@@ -894,6 +1078,22 @@ export class SkyweaverAssets extends Contract {
     _rangeIndex: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  royaltyInfo(
+    arg0: BigNumberish,
+    _saleCost: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  >;
+
+  "royaltyInfo(uint256,uint256)"(
+    arg0: BigNumberish,
+    _saleCost: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  >;
 
   safeBatchTransferFrom(
     _from: string,
@@ -950,6 +1150,18 @@ export class SkyweaverAssets extends Contract {
 
   "setBaseMetadataURI(string)"(
     _newBaseMetadataURI: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setGlobalRoyaltyInfo(
+    _receiver: string,
+    _royaltyBasisPoints: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setGlobalRoyaltyInfo(address,uint256)"(
+    _receiver: string,
+    _royaltyBasisPoints: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1011,13 +1223,17 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1044,6 +1260,10 @@ export class SkyweaverAssets extends Contract {
       _ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    baseURI(overrides?: CallOverrides): Promise<string>;
+
+    "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
     batchBurn(
       _ids: BigNumberish[],
@@ -1099,14 +1319,24 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
     >;
 
     "getFactoryAccessRanges(address)"(
       _factory: string,
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
     >;
 
     getFactoryStatus(
@@ -1132,13 +1362,23 @@ export class SkyweaverAssets extends Contract {
     getLockedRanges(
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
     >;
 
     "getLockedRanges()"(
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        minID: BigNumber;
+        maxID: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+      })[]
     >;
 
     getMaxIssuances(
@@ -1167,6 +1407,18 @@ export class SkyweaverAssets extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    globalRoyaltyInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+    >;
+
+    "globalRoyaltyInfo()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; feeBasisPoints: BigNumber }
+    >;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -1180,12 +1432,22 @@ export class SkyweaverAssets extends Contract {
     ): Promise<boolean>;
 
     lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "lockRangeMintPermissions((uint256,uint256))"(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1215,6 +1477,10 @@ export class SkyweaverAssets extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    name(overrides?: CallOverrides): Promise<string>;
+
+    "name()"(overrides?: CallOverrides): Promise<string>;
+
     removeMintPermission(
       _factory: string,
       _rangeIndex: BigNumberish,
@@ -1226,6 +1492,22 @@ export class SkyweaverAssets extends Contract {
       _rangeIndex: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
+
+    "royaltyInfo(uint256,uint256)"(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+    >;
 
     safeBatchTransferFrom(
       _from: string,
@@ -1282,6 +1564,18 @@ export class SkyweaverAssets extends Contract {
 
     "setBaseMetadataURI(string)"(
       _newBaseMetadataURI: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setGlobalRoyaltyInfo(address,uint256)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1362,12 +1656,22 @@ export class SkyweaverAssets extends Contract {
       factory: string | null,
       new_range: null
     ): TypedEventFilter<
-      [string, [BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber }],
-      {
-        factory: string;
-        new_range: [BigNumber, BigNumber] & {
+      [
+        string,
+        [BigNumber, BigNumber, BigNumber, BigNumber] & {
           minID: BigNumber;
           maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        }
+      ],
+      {
+        factory: string;
+        new_range: [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
         };
       }
     >;
@@ -1376,12 +1680,22 @@ export class SkyweaverAssets extends Contract {
       factory: string | null,
       deleted_range: null
     ): TypedEventFilter<
-      [string, [BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber }],
-      {
-        factory: string;
-        deleted_range: [BigNumber, BigNumber] & {
+      [
+        string,
+        [BigNumber, BigNumber, BigNumber, BigNumber] & {
           minID: BigNumber;
           maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        }
+      ],
+      {
+        factory: string;
+        deleted_range: [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
         };
       }
     >;
@@ -1397,11 +1711,20 @@ export class SkyweaverAssets extends Contract {
     RangeLocked(
       locked_range: null
     ): TypedEventFilter<
-      [[BigNumber, BigNumber] & { minID: BigNumber; maxID: BigNumber }],
-      {
-        locked_range: [BigNumber, BigNumber] & {
+      [
+        [BigNumber, BigNumber, BigNumber, BigNumber] & {
           minID: BigNumber;
           maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
+        }
+      ],
+      {
+        locked_range: [BigNumber, BigNumber, BigNumber, BigNumber] & {
+          minID: BigNumber;
+          maxID: BigNumber;
+          startTime: BigNumber;
+          endTime: BigNumber;
         };
       }
     >;
@@ -1461,13 +1784,17 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1494,6 +1821,10 @@ export class SkyweaverAssets extends Contract {
       _ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "baseURI()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     batchBurn(
       _ids: BigNumberish[],
@@ -1605,6 +1936,10 @@ export class SkyweaverAssets extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    globalRoyaltyInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "globalRoyaltyInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -1618,12 +1953,22 @@ export class SkyweaverAssets extends Contract {
     ): Promise<BigNumber>;
 
     lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "lockRangeMintPermissions((uint256,uint256))"(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1653,6 +1998,10 @@ export class SkyweaverAssets extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     removeMintPermission(
       _factory: string,
       _rangeIndex: BigNumberish,
@@ -1663,6 +2012,18 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _rangeIndex: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "royaltyInfo(uint256,uint256)"(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
@@ -1720,6 +2081,18 @@ export class SkyweaverAssets extends Contract {
 
     "setBaseMetadataURI(string)"(
       _newBaseMetadataURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setGlobalRoyaltyInfo(address,uint256)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1788,13 +2161,17 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "addMintPermission(address,uint256,uint256)"(
+    "addMintPermission(address,uint64,uint64,uint64,uint64)"(
       _factory: string,
       _minRange: BigNumberish,
       _maxRange: BigNumberish,
+      _startTime: BigNumberish,
+      _endTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1821,6 +2198,10 @@ export class SkyweaverAssets extends Contract {
       _ids: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "baseURI()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     batchBurn(
       _ids: BigNumberish[],
@@ -1934,6 +2315,12 @@ export class SkyweaverAssets extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    globalRoyaltyInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "globalRoyaltyInfo()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       _owner: string,
       _operator: string,
@@ -1947,12 +2334,22 @@ export class SkyweaverAssets extends Contract {
     ): Promise<PopulatedTransaction>;
 
     lockRangeMintPermissions(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "lockRangeMintPermissions((uint256,uint256))"(
-      _range: { minID: BigNumberish; maxID: BigNumberish },
+    "lockRangeMintPermissions((uint64,uint64,uint64,uint64))"(
+      _range: {
+        minID: BigNumberish;
+        maxID: BigNumberish;
+        startTime: BigNumberish;
+        endTime: BigNumberish;
+      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1982,6 +2379,10 @@ export class SkyweaverAssets extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     removeMintPermission(
       _factory: string,
       _rangeIndex: BigNumberish,
@@ -1992,6 +2393,18 @@ export class SkyweaverAssets extends Contract {
       _factory: string,
       _rangeIndex: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    royaltyInfo(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "royaltyInfo(uint256,uint256)"(
+      arg0: BigNumberish,
+      _saleCost: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
@@ -2049,6 +2462,18 @@ export class SkyweaverAssets extends Contract {
 
     "setBaseMetadataURI(string)"(
       _newBaseMetadataURI: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setGlobalRoyaltyInfo(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setGlobalRoyaltyInfo(address,uint256)"(
+      _receiver: string,
+      _royaltyBasisPoints: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -124,14 +124,24 @@ var _abi = [
                 type: "address"
             },
             {
-                internalType: "uint256",
+                internalType: "uint64",
                 name: "_minRange",
-                type: "uint256"
+                type: "uint64"
             },
             {
-                internalType: "uint256",
+                internalType: "uint64",
                 name: "_maxRange",
-                type: "uint256"
+                type: "uint64"
+            },
+            {
+                internalType: "uint64",
+                name: "_startTime",
+                type: "uint64"
+            },
+            {
+                internalType: "uint64",
+                name: "_endTime",
+                type: "uint64"
             },
         ],
         name: "addMintPermission",
