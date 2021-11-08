@@ -36,11 +36,13 @@ interface ISkyweaverAssets {
 
   /**
    * @notice Will allow a factory to mint some token ids
-   * @param _factory  Address of the factory to update permission
-   * @param _minRange Minimum ID (inclusive) in id range that factory will be able to mint
-   * @param _maxRange Maximum ID (inclusive) in id range that factory will be able to mint
+   * @param _factory   Address of the factory to update permission
+   * @param _minRange  Minimum ID (inclusive) in id range that factory will be able to mint
+   * @param _maxRange  Maximum ID (inclusive) in id range that factory will be able to mint
+   * @param _startTime Timestamp when the range becomes valid
+   * @param _endTime   Timestamp after which the range is no longer valid 
    */
-  function addMintPermission(address _factory, uint256 _minRange, uint256 _maxRange) external;
+  function addMintPermission(address _factory, uint64 _minRange, uint64 _maxRange, uint64 _startTime, uint64 _endTime) external;
 
   /**
    * @notice Will remove the permission a factory has to mint some token ids

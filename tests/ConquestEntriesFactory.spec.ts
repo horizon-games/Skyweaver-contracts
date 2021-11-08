@@ -85,6 +85,9 @@ describe('ConquestEntriesFactory', () => {
   const silverMinRange = BigNumber.from(1);
   const silverMaxRange = BigNumber.from(500);
 
+  const startTime = BigNumber.from(Math.floor(Date.now() / 1000))
+  const endTime = BigNumber.from(startTime.add(60*60)) // 1 hour from now
+
   // wDAI Param
   const wDaiID = BigNumber.from(2);
   const baseTokenAmount = BigNumber.from(10000000).mul(BigNumber.from(10).pow(18))
@@ -133,11 +136,11 @@ describe('ConquestEntriesFactory', () => {
 
     // Activate factory and authorize it
     await skyweaverAssetsContract.activateFactory(factory);
-    await skyweaverAssetsContract.addMintPermission(factory, ticketID, ticketID);
+    await skyweaverAssetsContract.addMintPermission(factory, ticketID, ticketID, startTime, endTime);
 
     // Let owner be a "factory" to mint silver cards to test conquest
     await skyweaverAssetsContract.activateFactory(ownerAddress);
-    await skyweaverAssetsContract.addMintPermission(ownerAddress, silverMinRange, silverMaxRange.add(100));
+    await skyweaverAssetsContract.addMintPermission(ownerAddress, silverMinRange, silverMaxRange.add(100), startTime, endTime);
 
     // Mint cards tokens to user
     await skyweaverAssetsContract.batchMint(userAddress, ids, amounts , [])

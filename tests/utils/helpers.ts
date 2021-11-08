@@ -10,6 +10,8 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export type AssetRange = {
   minID: BigNumber;
   maxID: BigNumber;
+  startTime: BigNumber;
+  endTime: BigNumber;
 }
 
 // createTestWallet creates a new wallet
