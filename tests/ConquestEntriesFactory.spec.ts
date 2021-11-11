@@ -76,7 +76,8 @@ describe('ConquestEntriesFactory', () => {
   const nTokenTypes    = BigNumber.from(30) 
   const nTokensPerType = BigNumber.from(100).mul(100)
 
-  const nWDAI = BigNumber.from(5).mul(BigNumber.from(10).pow(18))
+  const unitPrice = BigNumber.from(15).mul(BigNumber.from(10).pow(17)) //1.5 WDAI
+  const nWDAI = BigNumber.from(5).mul(unitPrice)
 
   // Ticket token Param
   const ticketID = BigNumber.from(555);
@@ -176,8 +177,8 @@ describe('ConquestEntriesFactory', () => {
     let conditions = [
       'safeTransferFrom() with Silver Cards',
       'safeBatchTransferFrom() with Silver Cards',
-      'safeTransferFrom() with ARC',
-      'safeBatchTransferFrom() with ARC'
+      'safeTransferFrom() with WDAI',
+      'safeBatchTransferFrom() with WDAI'
     ]
 
     let recipientConditions =  [
@@ -299,7 +300,7 @@ describe('ConquestEntriesFactory', () => {
 
                 it('should update recipient conquest entries balance', async () => {
                   let userBalance = await userSkyweaverAssetContract.balanceOf(recipient, ticketID)
-                  expect(userBalance).to.be.eql(nWDAI.div(BigNumber.from(10).pow(18)).mul(100))
+                  expect(userBalance).to.be.eql(nWDAI.div(unitPrice).mul(100))
                 })
               }
 
@@ -337,17 +338,17 @@ describe('ConquestEntriesFactory', () => {
         await expect(tx).to.be.rejectedWith(RevertError("ConquestEntriesFactory#withdraw: INVALID_RECIPIENT"))
       })
 
-      context('When ARC is withdrawn', () => {
+      context('When WDAI is withdrawn', () => {
         beforeEach(async () => {
           await factoryContract.withdraw(recipient, data)
         })
 
-        it('should update factory ARC balance', async () => {
+        it('should update factory WDAI balance', async () => {
           let factory_balance = await wDaiContract.balanceOf(factory, wDaiID)
           expect(factory_balance).to.be.eql(constants.Zero)
         })
   
-        it('should update recipient ARC balance', async () => {
+        it('should update recipient WDAI balance', async () => {
           let recipient_balance = await wDaiContract.balanceOf(recipient, wDaiID)
           expect(recipient_balance).to.be.eql(nWDAI)
         })
