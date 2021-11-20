@@ -35,7 +35,7 @@ contract ConquestEntriesFactory is IERC1155TokenReceiver, TieredOwnable {
   // Parameters
   uint256 constant internal CARD_DECIMALS = 2;                     // Number of decimals cards have
   uint256 constant internal ENTRIES_DECIMALS = 2;                  // Number of decimals entries have
-  uint256 constant internal wDAI_DECIMALS = 18;                    // Number of decimals wDAI have
+  uint256 constant internal wDAI_DECIMALS = 6;                    // Number of decimals wDAI have
   uint256 constant internal wDAI_REQUIRED = 15 * 10**(wDAI_DECIMALS-1); // 1.5 wDAI for 1 conquest entry (after decimals)
 
 

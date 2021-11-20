@@ -76,7 +76,7 @@ describe('ConquestEntriesFactory', () => {
   const nTokenTypes    = BigNumber.from(30) 
   const nTokensPerType = BigNumber.from(100).mul(100)
 
-  const unitPrice = BigNumber.from(15).mul(BigNumber.from(10).pow(17)) //1.5 WDAI
+  const unitPrice = BigNumber.from(15).mul(BigNumber.from(10).pow(5)) //1.5 WDAI
   const nWDAI = BigNumber.from(5).mul(unitPrice)
 
   // Ticket token Param
@@ -91,7 +91,7 @@ describe('ConquestEntriesFactory', () => {
 
   // wDAI Param
   const wDaiID = BigNumber.from(2);
-  const baseTokenAmount = BigNumber.from(10000000).mul(BigNumber.from(10).pow(18))
+  const baseTokenAmount = BigNumber.from(10000000).mul(BigNumber.from(10).pow(6))
 
   // Arrays
   const ids = new Array(nTokenTypes.toNumber()).fill('').map((a, i) => getBig(i+1))
