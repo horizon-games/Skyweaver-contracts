@@ -26,8 +26,14 @@ contract RewardFactory is TieredOwnable {
   uint256 public periodMintLimit;         // Amount that can be minted within 6h
   uint256 immutable public PERIOD_LENGTH; // Length of each mint periods in seconds
 
+  // Whitelist
+  bool internal immutable MINT_WHITELIST_ONLY;
+  mapping(uint256 => bool) public mintWhitelist;
+
   // Event
   event PeriodMintLimitChanged(uint256 oldMintingLimit, uint256 newMintingLimit);
+  event AssetsEnabled(uint256[] enabledIds);
+  event AssetsDisabled(uint256[] disabledIds);
   
   /***********************************|
   |            Constructor            |
@@ -35,16 +41,18 @@ contract RewardFactory is TieredOwnable {
 
   /**
    * @notice Create factory, link skyweaver assets and store initial parameters
-   * @param _firstOwner       Address of the first owner
-   * @param _assetsAddr       The address of the ERC-1155 Assets Token contract
-   * @param _periodLength     Number of seconds each period lasts
-   * @param _periodMintLimit  Can only mint N assets per period
+   * @param _firstOwner      Address of the first owner
+   * @param _assetsAddr      The address of the ERC-1155 Assets Token contract
+   * @param _periodLength    Number of seconds each period lasts
+   * @param _periodMintLimit Can only mint N assets per period
+   * @param _whitelistOnly   Whether this factory uses a mint whitelist or not
    */
   constructor(
     address _firstOwner,
     address _assetsAddr,
     uint256 _periodLength,
-    uint256 _periodMintLimit
+    uint256 _periodMintLimit,
+    bool _whitelistOnly
   ) TieredOwnable(_firstOwner) public {
     require(
       _assetsAddr != address(0) &&
@@ -58,6 +66,9 @@ contract RewardFactory is TieredOwnable {
 
     // Set Period length
     PERIOD_LENGTH = _periodLength;
+
+    // Set whether this factory uses a mint whitelist or not
+    MINT_WHITELIST_ONLY = _whitelistOnly;
 
     // Set current period
     period = block.timestamp / _periodLength; // From livePeriod()
@@ -86,6 +97,28 @@ contract RewardFactory is TieredOwnable {
 
     emit PeriodMintLimitChanged(periodMintLimit, _newPeriodMintLimit);
     periodMintLimit = _newPeriodMintLimit;
+  }
+
+  /**
+   * @notice Will enable these tokens to be minted by this factory
+   * @param _enabledIds IDs this factory can mint
+   */
+  function enableMint(uint256[] calldata _enabledIds) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
+    for (uint256 i = 0; i < _enabledIds.length; i++) {
+      mintWhitelist[_enabledIds[i]] = true;
+    }
+    emit AssetsEnabled(_enabledIds);
+  }
+
+  /**
+   * @notice Will prevent these ids from being minted by this factory
+   * @param _disabledIds IDs this factory can mint
+   */
+  function disableMint(uint256[] calldata _disabledIds) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
+    for (uint256 i = 0; i < _disabledIds.length; i++) {
+      mintWhitelist[_disabledIds[i]] = false;
+    }
+    emit AssetsDisabled(_disabledIds);
   }
 
 
@@ -131,6 +164,9 @@ contract RewardFactory is TieredOwnable {
     // If there is an insufficient available supply, this will revert
     for (uint256 i = 0; i < _ids.length; i++) {
       available_supply = available_supply.sub(_amounts[i]);
+      if (MINT_WHITELIST_ONLY) {
+        require(mintWhitelist[_ids[i]], "RewardFactory#batchMint: ID_IS_NOT_WHITELISTED");
+      }
     }
 
     // Store available supply
