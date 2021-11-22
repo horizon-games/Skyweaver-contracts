@@ -24,9 +24,12 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     "PERIOD_LENGTH()": FunctionFragment;
     "assignOwnership(address,uint256)": FunctionFragment;
     "batchMint(address,uint256[],uint256[],bytes)": FunctionFragment;
+    "disableMint(uint256[])": FunctionFragment;
+    "enableMint(uint256[])": FunctionFragment;
     "getAvailableSupply()": FunctionFragment;
     "getOwnerTier(address)": FunctionFragment;
     "livePeriod()": FunctionFragment;
+    "mintWhitelist(uint256)": FunctionFragment;
     "periodMintLimit()": FunctionFragment;
     "skyweaverAssets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -46,6 +49,14 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     values: [string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "disableMint",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enableMint",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAvailableSupply",
     values?: undefined
   ): string;
@@ -56,6 +67,10 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "livePeriod",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintWhitelist",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "periodMintLimit",
@@ -84,6 +99,11 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "disableMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "enableMint", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "getAvailableSupply",
     data: BytesLike
   ): Result;
@@ -92,6 +112,10 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "livePeriod", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintWhitelist",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "periodMintLimit",
     data: BytesLike
@@ -110,10 +134,14 @@ interface RewardFactoryInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "AssetsDisabled(uint256[])": EventFragment;
+    "AssetsEnabled(uint256[])": EventFragment;
     "OwnershipGranted(address,uint256,uint256)": EventFragment;
     "PeriodMintLimitChanged(uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AssetsDisabled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AssetsEnabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PeriodMintLimitChanged"): EventFragment;
 }
@@ -194,6 +222,26 @@ export class RewardFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    disableMint(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "disableMint(uint256[])"(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    enableMint(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "enableMint(uint256[])"(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getAvailableSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -211,6 +259,16 @@ export class RewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    mintWhitelist(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "mintWhitelist(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     periodMintLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -273,6 +331,26 @@ export class RewardFactory extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  disableMint(
+    _disabledIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "disableMint(uint256[])"(
+    _disabledIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  enableMint(
+    _enabledIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "enableMint(uint256[])"(
+    _enabledIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -287,6 +365,16 @@ export class RewardFactory extends Contract {
   livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  mintWhitelist(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "mintWhitelist(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   periodMintLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -349,6 +437,26 @@ export class RewardFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    disableMint(
+      _disabledIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "disableMint(uint256[])"(
+      _disabledIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    enableMint(
+      _enabledIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "enableMint(uint256[])"(
+      _enabledIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -363,6 +471,16 @@ export class RewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintWhitelist(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "mintWhitelist(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     periodMintLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -394,6 +512,14 @@ export class RewardFactory extends Contract {
   };
 
   filters: {
+    AssetsDisabled(
+      disabledIds: null
+    ): TypedEventFilter<[BigNumber[]], { disabledIds: BigNumber[] }>;
+
+    AssetsEnabled(
+      enabledIds: null
+    ): TypedEventFilter<[BigNumber[]], { enabledIds: BigNumber[] }>;
+
     OwnershipGranted(
       owner: string | null,
       previousTier: BigNumberish | null,
@@ -445,6 +571,26 @@ export class RewardFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    disableMint(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "disableMint(uint256[])"(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    enableMint(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "enableMint(uint256[])"(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getAvailableSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getAvailableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -459,6 +605,16 @@ export class RewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintWhitelist(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "mintWhitelist(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     periodMintLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -522,6 +678,26 @@ export class RewardFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    disableMint(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "disableMint(uint256[])"(
+      _disabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enableMint(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "enableMint(uint256[])"(
+      _enabledIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getAvailableSupply(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -543,6 +719,16 @@ export class RewardFactory extends Contract {
     livePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "livePeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mintWhitelist(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "mintWhitelist(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     periodMintLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
