@@ -53,7 +53,7 @@ const {
 
 const getBig = (id: number) => BigNumber.from(id);
 
-describe.only('RewardFactory', () => {
+describe('RewardFactory', () => {
   let ownerAddress: string
   let subOwnerAddress: string
   let userAddress: string
