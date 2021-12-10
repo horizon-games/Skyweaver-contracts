@@ -7,7 +7,7 @@ Skyweaver trading card smart contracts built on Ethereum. Skyweaver cards follow
 
 Skyweaver assets and market are in production on the Polygon mainnet as of Nov 25, 2021. The production contract address are:
 
-* **Skyweaver Assets:** [0x631998e91476DA5B870D741192fc5Cbc55F5a52E](https://polygonscan.com/address/0x631998e91476DA5B870D741192fc5Cbc55F5a52E#tokentxns)
+* **Skyweaver Assets (aka the Skyweaver cards):** [0x631998e91476DA5B870D741192fc5Cbc55F5a52E](https://polygonscan.com/address/0x631998e91476DA5B870D741192fc5Cbc55F5a52E#tokentxns)
 * **Skyweaver Niftyswap Exchange (aka Skyweaver Market):** [0x9B609Bf3A3977Ee7254210E0A0D835251540c4D5](https://polygonscan.com/address/0x9B609Bf3A3977Ee7254210E0A0D835251540c4D5#tokentxns)
 
 
