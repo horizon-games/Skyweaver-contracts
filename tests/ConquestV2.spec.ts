@@ -486,4 +486,94 @@ describe.only('ConquestV2', () => {
       })
     })
   })
+
+  describe('when old conquest has a state', () => {
+    let amount = 100; // ticket amount
+
+    // enterConquest
+
+    it('enter should PASS if old conquest is not in conquest and conquest is not synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      await oldConquestContract.exitConquest(userAddress, [], [])
+
+      const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('enter should REVERT on enter if old conquest is in conquest and conquest is not synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+     
+      const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+      await expect(tx).to.be.rejectedWith(RevertError('ConquestV2#entry: PLAYER_ALREADY_IN_CONQUEST'));
+    })
+
+    // exitConquest
+
+    it('exit should PASS if old conquest is in conquest and conquest is not synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      
+      const tx = conquestV2Contract.exitConquest(userAddress, 1, [], [])
+      await expect(tx).to.be.fulfilled
+    })
+
+    it('exit should REVERT on enter if old conquest is NOT in conquest and conquest is not synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      await oldConquestContract.exitConquest(userAddress, [], [])
+      
+      const tx = conquestV2Contract.exitConquest(userAddress, 1, [], [])
+      await expect(tx).to.be.rejectedWith(RevertError('ConquestV2#exitConquest: USER_IS_NOT_IN_CONQUEST'));
+    })
+
+    // isActiveConquest()
+
+    it('isActiveConquest() should return old status if conquest is not synced', async () => {
+      const status0 = await conquestV2Contract.isActiveConquest(userAddress)
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      const status1 = await conquestV2Contract.isActiveConquest(userAddress)
+      await expect(status0).to.be.eql(false)
+      await expect(status1).to.be.eql(true)
+    })
+
+    it('isActiveConquest() should return new status if conquest is synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      const oldStatus0 = await oldConquestContract.isActiveConquest(userAddress)
+      const newStatus0 = await conquestV2Contract.isActiveConquest(userAddress)
+
+      await conquestV2Contract.exitConquest(userAddress, 1, [], [])
+      const oldStatus1 = await oldConquestContract.isActiveConquest(userAddress)
+      const newStatus1 = await conquestV2Contract.isActiveConquest(userAddress)
+
+      await expect(oldStatus0).to.be.eql(true)
+      await expect(newStatus0).to.be.eql(true)
+      await expect(oldStatus1).to.be.eql(true)
+      await expect(newStatus1).to.be.eql(false)
+    })
+
+    // conquestsEntered()
+
+    it('conquestsEntered() should return old status if conquest is not synced', async () => {
+      const status0 = await conquestV2Contract.conquestsEntered(userAddress)
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      const status1 = await conquestV2Contract.conquestsEntered(userAddress)
+      await expect(status0).to.be.eql(BigNumber.from(0))
+      await expect(status1).to.be.eql(BigNumber.from(1))
+    })
+
+    it('conquestsEntered() should return new status if conquest is synced', async () => {
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, oldConquestContract.address, ticketID, amount, [], TX_PARAM)
+      await conquestV2Contract.exitConquest(userAddress, 1, [], [])
+      const oldStatus0 = await oldConquestContract.conquestsEntered(userAddress)
+      const newStatus0 = await conquestV2Contract.conquestsEntered(userAddress)
+
+      await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+      const oldStatus1 = await oldConquestContract.conquestsEntered(userAddress)
+      const newStatus1 = await conquestV2Contract.conquestsEntered(userAddress)
+
+      await expect(oldStatus0).to.be.eql(BigNumber.from(1))
+      await expect(newStatus0).to.be.eql(BigNumber.from(1))
+      await expect(oldStatus1).to.be.eql(BigNumber.from(1))
+      await expect(newStatus1).to.be.eql(BigNumber.from(2))
+    })
+
+  })
 })
