@@ -2,6 +2,7 @@ import * as ethers from 'ethers'
 
 import { 
   AbstractContract, 
+  delay, 
   expect,
   RevertError,
   ZERO_ADDRESS
@@ -199,14 +200,15 @@ describe('ConquestV2', () => {
       let expectedNonce
 
       beforeEach( async () => {
-        if (condition == condition[0]) {
+        if (condition == conditions[0]) {
           expectedNonce = 1
         } else {
           expectedNonce = 3
-          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [100], [], TX_PARAM)
-          await conquestV2Contract.exitConquest(userAddress, 1, [], [])
-          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [100], [], TX_PARAM)
-          await conquestV2Contract.exitConquest(userAddress, 2, [], [])
+          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, oldConquestContract.address, [ticketID], [100], [], TX_PARAM)
+          await oldConquestContract.exitConquest(userAddress, [], [])
+          await delay(2000)
+          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, oldConquestContract.address, [ticketID], [100], [], TX_PARAM)
+          await oldConquestContract.exitConquest(userAddress, [], [])
         }
       })
 
@@ -385,7 +387,7 @@ describe('ConquestV2', () => {
               expect(args.user).to.be.eql(userAddress)
             })
             it('should have correct time value as `tx.nConquests` field', async () => {  
-              expect(args.nConquests).to.be.eql(BigNumber.from(1))
+              expect(args.nConquests).to.be.eql(BigNumber.from(expectedNonce))
             })
           })
         })

@@ -40,6 +40,14 @@ export interface JSONRPCRequest {
   params: any
 }
 
+export async function delay(ms: number) {
+  return new Promise(resolve =>
+    setTimeout(() => {
+      resolve(undefined)
+    }, ms)
+  )
+}
+
 export class Web3DebugProvider extends ethers.providers.JsonRpcProvider {
 
   public reqCounter = 0
