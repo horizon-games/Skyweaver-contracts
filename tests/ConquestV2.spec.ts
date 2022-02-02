@@ -48,7 +48,7 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 4)
 
-describe.only('ConquestV2', () => {
+describe('ConquestV2', () => {
   let ownerAddress: string
   let userAddress: string
   let randomAddress: string
@@ -189,297 +189,321 @@ describe.only('ConquestV2', () => {
     await skyweaverAssetsContract.shutdownFactory(ownerAddress);
   })
 
-  describe('Getter functions', () => {
-    describe('skyweaverAssets() function', () => {
-      it('should return Factory manager contract address', async () => {
-        const manager = await conquestV2Contract.skyweaverAssets()
-        expect(manager).to.be.eql(skyweaverAssetsContract.address)
-      })
-    })
+  let conditions = [
+    'user never used old conquest',
+    'user has nonce 2 in old conquest',
+  ]
 
-    describe('supportsInterface()', () => {
-      it('should return true for 0x01ffc9a7 (ERC165)', async () => {
-        const support = await conquestV2Contract.supportsInterface('0x01ffc9a7')
-        expect(support).to.be.eql(true)
-      })
+  conditions.forEach(function(condition) { 
+    context(condition as string, () => {
+      let expectedNonce
 
-      it('should return true for 0x4e2312e0 (ERC1155Receiver)', async () => {
-        const support = await conquestV2Contract.supportsInterface('0x4e2312e0')
-        expect(support).to.be.eql(true)
-      })
-    })
-  })
-
-  describe('Conquest', () => {
-    let amount = BigNumber.from(100)
-
-    context('Using safeBatchTransferFrom', () => {
-      it('should PASS if caller sends 100 ticket', async () => {
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
-        await expect(tx).to.be.fulfilled
+      beforeEach( async () => {
+        if (condition == condition[0]) {
+          expectedNonce = 1
+        } else {
+          expectedNonce = 3
+          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [100], [], TX_PARAM)
+          await conquestV2Contract.exitConquest(userAddress, 1, [], [])
+          await userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [100], [], TX_PARAM)
+          await conquestV2Contract.exitConquest(userAddress, 2, [], [])
+        }
       })
 
-      it('should REVERT if token address is not ticket', async () => {
-        let fakeTicketContract = await ticketAbstract.deploy(ownerWallet) as ERC1155Mock
-        let userFakeTicketContract = fakeTicketContract.connect(userWallet)
-        await fakeTicketContract.mintMock(userAddress, ticketID, ticketAmount , [])
 
-        const tx = userFakeTicketContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ADDRESS"))
-      })
-
-      it('should REVERT if ids length is more than 1', async () => {
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID, ticketID], [amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
-      })
-
-      it('should REVERT if amounts length is more than 1', async () => {
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount, amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
-      })
-
-      it('should REVERT if ID is not ticket', async () => {
-        let invalid_id = ticketID.sub(1)
-
-        await skyweaverAssetsContract.activateFactory(ownerAddress);
-        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
-        
-        await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
-
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [invalid_id], [amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ID"))
-      })
-
-      it('should REVERT if sent more than 1 ticket', async () => {
-        let invalid_amount = 99
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [invalid_amount], [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
-      })
-
-      it('should REVERT if caller is already in a conquest', async () => {
-        const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
-        await expect(tx).to.be.fulfilled
-
-        const tx2 = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
-        await expect(tx2).to.be.rejectedWith(RevertError("ConquestV2#entry: PLAYER_ALREADY_IN_CONQUEST"))
-      })
-    })
-
-    context('Using safeTransferFrom', () => {
-      it('should PASS if caller sends 100 ticket', async () => {
-        const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-        await expect(tx).to.be.fulfilled
-      })
-
-      it('should REVERT if token address is not ticket', async () => {
-        let fakeTicketContract = await ticketAbstract.deploy(ownerWallet) as ERC1155Mock
-        let userFakeTicketContract = fakeTicketContract.connect(userWallet)
-        await fakeTicketContract.mintMock(userAddress, ticketID, ticketAmount , [])
-
-        const tx = userFakeTicketContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ADDRESS"))
-      })
-
-      it('should REVERT if ID is not ticket', async () => {
-        let invalid_id = ticketID.sub(1)
-
-        await skyweaverAssetsContract.activateFactory(ownerAddress);
-        await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
-
-        await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
-
-        const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, invalid_id, amount, [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ID"))
-      })
-
-      it('should REVERT if sent more than 1 ticket', async () => {
-        let invalid_amount = 101
-        const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, invalid_amount, [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
-      })
-
-      it('should REVERT if caller is already in a conquest', async () => {
-        await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-        const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-        await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: PLAYER_ALREADY_IN_CONQUEST"))
-      })
-    })
-
-    context('When ticket was sent to factory', () => {
-      let tx;
-      beforeEach(async () => {
-        tx = await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-      })
-
-      it('should burn entry sent balance', async () => {
-        let factory_balance = await skyweaverAssetsContract.balanceOf(factory, ticketID)
-        expect(factory_balance).to.be.eql(constants.Zero)
-      })
-
-      it('should update user ticket balance', async () => {
-        let user_balance = await skyweaverAssetsContract.balanceOf(userAddress, ticketID)
-        expect(user_balance).to.be.eql(ticketAmount.sub(amount))
-      })
-
-      it('should set user as being in conquest', async () => {
-        let value = await conquestV2Contract.isActiveConquest(userAddress)
-        expect(value).to.be.eql(true)
-      })
-
-      it('should update user conquest count', async () => {
-        let value = await conquestV2Contract.conquestsEntered(userAddress)
-        expect(value).to.be.eql(BigNumber.from(1))
-      })
-
-      it('should emit ConquestEntered event', async () => {
-        let filterFromOperatorContract: ethers.ethers.EventFilter
-
-        // Get event filter to get internal tx event
-        filterFromOperatorContract = conquestV2Contract.filters.ConquestEntered(null, null);
-
-        // Get logs from internal transaction event
-        // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-        filterFromOperatorContract.fromBlock = 0;
-        let logs = await ownerProvider.getLogs(filterFromOperatorContract);
-        expect(logs[0].topics[0]).to.be.eql(conquestV2Contract.interface.getEventTopic(conquestV2Contract.interface.events["ConquestEntered(address,uint256)"]))
-      })
-      
-      describe('ConquestEntered Event', () => {
-        let args;
-        beforeEach(async () => {
-          let filterFromOperatorContract: ethers.ethers.EventFilter
-
-          // Get event filter to get internal tx event
-          filterFromOperatorContract = conquestV2Contract.filters.ConquestEntered(null, null);
-  
-          // Get logs from internal transaction event
-          // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
-          filterFromOperatorContract.fromBlock = 0;
-          let logs = await operatorProvider.getLogs(filterFromOperatorContract);
-          args = conquestV2Contract.interface.decodeEventLog(conquestV2Contract.interface.events["ConquestEntered(address,uint256)"],logs[0].data, logs[0].topics)
+      describe('Getter functions', () => {
+        describe('skyweaverAssets() function', () => {
+          it('should return Factory manager contract address', async () => {
+            const manager = await conquestV2Contract.skyweaverAssets()
+            expect(manager).to.be.eql(skyweaverAssetsContract.address)
+          })
         })
 
-        it('should have user address as `tx.user` field', async () => {  
-          expect(args.user).to.be.eql(userAddress)
-        })
-        it('should have correct time value as `tx.nConquests` field', async () => {  
-          expect(args.nConquests).to.be.eql(BigNumber.from(1))
+        describe('supportsInterface()', () => {
+          it('should return true for 0x01ffc9a7 (ERC165)', async () => {
+            const support = await conquestV2Contract.supportsInterface('0x01ffc9a7')
+            expect(support).to.be.eql(true)
+          })
+
+          it('should return true for 0x4e2312e0 (ERC1155Receiver)', async () => {
+            const support = await conquestV2Contract.supportsInterface('0x4e2312e0')
+            expect(support).to.be.eql(true)
+          })
         })
       })
-    })
-  })
 
-  describe('exitConquest()', () => {
-    let amount = 100; // ticket amount
-    let silverRewardIds;
-    let goldRewardIds;
+      describe('Conquest', () => {
+        let amount = BigNumber.from(100)
 
-    let conditions = [
-      [ [...silver_ids], [...gold_ids], 'With rewards'],
-      [ [], [], 'No rewards']
-    ]
+        context('Using safeBatchTransferFrom', () => {
+          it('should PASS if caller sends 100 ticket', async () => {
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+            await expect(tx).to.be.fulfilled
+          })
 
-    it('should REVERT if caller is not in conquest', async () => {
-      const tx = conquestV2Contract.exitConquest(userAddress, 1, silver_ids, gold_ids)
-      await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: USER_IS_NOT_IN_CONQUEST"))
-    })
+          it('should REVERT if token address is not ticket', async () => {
+            let fakeTicketContract = await ticketAbstract.deploy(ownerWallet) as ERC1155Mock
+            let userFakeTicketContract = fakeTicketContract.connect(userWallet)
+            await fakeTicketContract.mintMock(userAddress, ticketID, ticketAmount , [])
 
-    context("When user is in conquest", () => {
-      conditions.forEach(function(condition) {
-        context(condition[2] as string, () => {
-          beforeEach(async () => {
+            const tx = userFakeTicketContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ADDRESS"))
+          })
+
+          it('should REVERT if ids length is more than 1', async () => {
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID, ticketID], [amount], [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
+          })
+
+          it('should REVERT if amounts length is more than 1', async () => {
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount, amount], [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ERC1155PackedBalance#_safeBatchTransferFrom: INVALID_ARRAYS_LENGTH"))
+          })
+
+          it('should REVERT if ID is not ticket', async () => {
+            let invalid_id = ticketID.sub(1)
+
+            await skyweaverAssetsContract.activateFactory(ownerAddress);
+            await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
+            
+            await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
+
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [invalid_id], [amount], [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ID"))
+          })
+
+          it('should REVERT if sent more than 1 ticket', async () => {
+            let invalid_amount = 99
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [invalid_amount], [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
+          })
+
+          it('should REVERT if caller is already in a conquest', async () => {
+            const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+            await expect(tx).to.be.fulfilled
+
+            const tx2 = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [ticketID], [amount], [], TX_PARAM)
+            await expect(tx2).to.be.rejectedWith(RevertError("ConquestV2#entry: PLAYER_ALREADY_IN_CONQUEST"))
+          })
+        })
+
+        context('Using safeTransferFrom', () => {
+          it('should PASS if caller sends 100 ticket', async () => {
+            const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+            await expect(tx).to.be.fulfilled
+          })
+
+          it('should REVERT if token address is not ticket', async () => {
+            let fakeTicketContract = await ticketAbstract.deploy(ownerWallet) as ERC1155Mock
+            let userFakeTicketContract = fakeTicketContract.connect(userWallet)
+            await fakeTicketContract.mintMock(userAddress, ticketID, ticketAmount , [])
+
+            const tx = userFakeTicketContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ADDRESS"))
+          })
+
+          it('should REVERT if ID is not ticket', async () => {
+            let invalid_id = ticketID.sub(1)
+
+            await skyweaverAssetsContract.activateFactory(ownerAddress);
+            await skyweaverAssetsContract.addMintPermission(ownerAddress, invalid_id, invalid_id, startTime, endTime);
+
+            await skyweaverAssetsContract.batchMint(userAddress, [invalid_id], [amount], [])
+
+            const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, invalid_id, amount, [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_ID"))
+          })
+
+          it('should REVERT if sent more than 1 ticket', async () => {
+            let invalid_amount = 101
+            const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, invalid_amount, [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: INVALID_ENTRY_TOKEN_AMOUNT"))
+          })
+
+          it('should REVERT if caller is already in a conquest', async () => {
             await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
-            silverRewardIds = condition[0]
-            goldRewardIds = condition[1]
+            const tx = userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+            await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#entry: PLAYER_ALREADY_IN_CONQUEST"))
+          })
+        })
+
+        context('When ticket was sent to factory', () => {
+          let tx;
+          beforeEach(async () => {
+            tx = await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
           })
 
-          it('should PASS if caller is owner', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, silverRewardIds, goldRewardIds)
-            await expect(tx).to.be.fulfilled
+          it('should burn entry sent balance', async () => {
+            let factory_balance = await skyweaverAssetsContract.balanceOf(factory, ticketID)
+            expect(factory_balance).to.be.eql(constants.Zero)
           })
 
-          it('should PASS if rewards are duplicates', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, [23, 23], [])
-            await expect(tx).to.be.fulfilled
+          it('should update user ticket balance', async () => {
+            let user_balance = await skyweaverAssetsContract.balanceOf(userAddress, ticketID)
+            expect(user_balance).to.be.eql(ticketAmount.sub(amount.mul(expectedNonce)))
           })
 
-          it('should PASS if rewards are unsorted', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, [7, 1], [])
-            await expect(tx).to.be.fulfilled
+          it('should set user as being in conquest', async () => {
+            let value = await conquestV2Contract.isActiveConquest(userAddress)
+            expect(value).to.be.eql(true)
           })
 
-
-          it('should REVERT if silver reward is not silver', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, [GOLD_SPACE], [])
-            await expect(tx).to.be.rejectedWith(RevertError('SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE'))
+          it('should update user conquest count', async () => {
+            let value = await conquestV2Contract.conquestsEntered(userAddress)
+            expect(value).to.be.eql(BigNumber.from(expectedNonce))
           })
 
-          it('should REVERT if gold reward is not gold', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, [1], [GOLD_SPACE.sub(1)])
-            await expect(tx).to.be.rejectedWith(RevertError('SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE'))
+          it('should emit ConquestEntered event', async () => {
+            let filterFromOperatorContract: ethers.ethers.EventFilter
+
+            // Get event filter to get internal tx event
+            filterFromOperatorContract = conquestV2Contract.filters.ConquestEntered(null, null);
+
+            // Get logs from internal transaction event
+            // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+            filterFromOperatorContract.fromBlock = 0;
+            let logs = await ownerProvider.getLogs(filterFromOperatorContract);
+            expect(logs[0].topics[0]).to.be.eql(conquestV2Contract.interface.getEventTopic(conquestV2Contract.interface.events["ConquestEntered(address,uint256)"]))
           })
-
-          it('should PASS if rewards are unsorted', async () => {
-            const tx = conquestV2Contract.exitConquest(userAddress, 1, [7, 1], [])
-            await expect(tx).to.be.fulfilled
-          })
-      
-          it('should REVERT if caller is not owner', async () => {
-            const tx = userConquestV2Contract.exitConquest(userAddress, 1, silverRewardIds, goldRewardIds)
-            await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
-          })
-      
-          it('should REVERT if trying to mint more than possible amount', async () => {
-            const tx4 = conquestV2Contract.exitConquest(userAddress, 1, [1, 2, 3], [])
-            await expect(tx4).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
-
-            const tx1 = conquestV2Contract.exitConquest(userAddress, 1, [1], [GOLD_SPACE.add(1), GOLD_SPACE.add(2)])
-            await expect(tx1).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
-
-            const tx2 = conquestV2Contract.exitConquest(userAddress, 1, [1, 2], [GOLD_SPACE.add(1)])
-            await expect(tx2).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
-
-            const tx3 = conquestV2Contract.exitConquest(userAddress, 1, [], [GOLD_SPACE.add(1)])
-            await expect(tx3).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
-
-            const tx5 = conquestV2Contract.exitConquest(userAddress, 1, [1], [GOLD_SPACE.add(1)])
-            await expect(tx5).to.be.fulfilled
-          })
-      
-          context('When exitConquest was called', () => {
+          
+          describe('ConquestEntered Event', () => {
+            let args;
             beforeEach(async () => {
-              await conquestV2Contract.exitConquest(userAddress, 1, silverRewardIds, goldRewardIds)
-            })
+              let filterFromOperatorContract: ethers.ethers.EventFilter
+
+              // Get event filter to get internal tx event
+              filterFromOperatorContract = conquestV2Contract.filters.ConquestEntered(null, null);
       
-            it('should update user conquest status', async () => {
-              let value = await conquestV2Contract.isActiveConquest(userAddress)
-              expect(value).to.be.eql(false)
-            })
-      
-            it('should update user silver cards balance', async () => {
-              let n_ids = silver_ids.length
-              let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
-              let userBalances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, silver_ids)
-              for (let i = 0; i < n_ids; i++) {
-                if (silverRewardIds.length == 0) {
-                  expect(userBalances[i]).to.be.eql(BigNumber.from(0))
-                } else {
-                  expect(userBalances[i]).to.be.eql(BigNumber.from(100))
-                }
-              }
+              // Get logs from internal transaction event
+              // @ts-ignore (https://github.com/ethers-io/ethers.js/issues/204#issuecomment-427059031)
+              filterFromOperatorContract.fromBlock = 0;
+              let logs = await operatorProvider.getLogs(filterFromOperatorContract);
+              args = conquestV2Contract.interface.decodeEventLog(conquestV2Contract.interface.events["ConquestEntered(address,uint256)"],logs[0].data, logs[0].topics)
             })
 
-            it('should update user gold cards balance', async () => {
-              let n_ids = gold_ids.length
-              let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
-              let userBalances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, gold_ids)
-              for (let i = 0; i < n_ids; i++) {
-                if (goldRewardIds.length == 0) {
-                  expect(userBalances[i]).to.be.eql(BigNumber.from(0))
-                } else {
-                  expect(userBalances[i]).to.be.eql(BigNumber.from(100))
-                }
-              }
+            it('should have user address as `tx.user` field', async () => {  
+              expect(args.user).to.be.eql(userAddress)
+            })
+            it('should have correct time value as `tx.nConquests` field', async () => {  
+              expect(args.nConquests).to.be.eql(BigNumber.from(1))
+            })
+          })
+        })
+      })
+
+      describe('exitConquest()', () => {
+        let amount = 100; // ticket amount
+        let silverRewardIds;
+        let goldRewardIds;
+
+        let conditions = [
+          [ [...silver_ids], [...gold_ids], 'With rewards'],
+          [ [], [], 'No rewards']
+        ]
+
+        it('should REVERT if caller is not in conquest', async () => {
+          const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, silver_ids, gold_ids)
+          await expect(tx).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: USER_IS_NOT_IN_CONQUEST"))
+        })
+
+        context("When user is in conquest", () => {
+          conditions.forEach(function(condition) {
+            context(condition[2] as string, () => {
+              beforeEach(async () => {
+                await userSkyweaverAssetContract.safeTransferFrom(userAddress, factory, ticketID, amount, [], TX_PARAM)
+                silverRewardIds = condition[0]
+                goldRewardIds = condition[1]
+              })
+
+              it('should PASS if caller is owner', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, silverRewardIds, goldRewardIds)
+                await expect(tx).to.be.fulfilled
+              })
+
+              it('should PASS if rewards are duplicates', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, [23, 23], [])
+                await expect(tx).to.be.fulfilled
+              })
+
+              it('should PASS if rewards are unsorted', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, [7, 1], [])
+                await expect(tx).to.be.fulfilled
+              })
+
+
+              it('should REVERT if silver reward is not silver', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, [GOLD_SPACE], [])
+                await expect(tx).to.be.rejectedWith(RevertError('SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE'))
+              })
+
+              it('should REVERT if gold reward is not gold', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, [1], [GOLD_SPACE.sub(1)])
+                await expect(tx).to.be.rejectedWith(RevertError('SkyweaverAssets#_validateMints: ID_OUT_OF_RANGE'))
+              })
+
+              it('should PASS if rewards are unsorted', async () => {
+                const tx = conquestV2Contract.exitConquest(userAddress, expectedNonce, [7, 1], [])
+                await expect(tx).to.be.fulfilled
+              })
+          
+              it('should REVERT if caller is not owner', async () => {
+                const tx = userConquestV2Contract.exitConquest(userAddress, expectedNonce, silverRewardIds, goldRewardIds)
+                await expect(tx).to.be.rejectedWith(RevertError("TieredOwnable#onlyOwnerTier: OWNER_TIER_IS_TOO_LOW"))
+              })
+          
+              it('should REVERT if trying to mint more than possible amount', async () => {
+                const tx4 = conquestV2Contract.exitConquest(userAddress, expectedNonce, [1, 2, 3], [])
+                await expect(tx4).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
+
+                const tx1 = conquestV2Contract.exitConquest(userAddress, expectedNonce, [1], [GOLD_SPACE.add(1), GOLD_SPACE.add(2)])
+                await expect(tx1).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
+
+                const tx2 = conquestV2Contract.exitConquest(userAddress, expectedNonce, [1, 2], [GOLD_SPACE.add(1)])
+                await expect(tx2).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
+
+                const tx3 = conquestV2Contract.exitConquest(userAddress, expectedNonce, [], [GOLD_SPACE.add(1)])
+                await expect(tx3).to.be.rejectedWith(RevertError("ConquestV2#exitConquest: INVALID_REWARDS"))
+
+                const tx5 = conquestV2Contract.exitConquest(userAddress, expectedNonce, [1], [GOLD_SPACE.add(1)])
+                await expect(tx5).to.be.fulfilled
+              })
+          
+              context('When exitConquest was called', () => {
+                beforeEach(async () => {
+                  await conquestV2Contract.exitConquest(userAddress, expectedNonce, silverRewardIds, goldRewardIds)
+                })
+          
+                it('should update user conquest status', async () => {
+                  let value = await conquestV2Contract.isActiveConquest(userAddress)
+                  expect(value).to.be.eql(false)
+                })
+          
+                it('should update user silver cards balance', async () => {
+                  let n_ids = silver_ids.length
+                  let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
+                  let userBalances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, silver_ids)
+                  for (let i = 0; i < n_ids; i++) {
+                    if (silverRewardIds.length == 0) {
+                      expect(userBalances[i]).to.be.eql(BigNumber.from(0))
+                    } else {
+                      expect(userBalances[i]).to.be.eql(BigNumber.from(100))
+                    }
+                  }
+                })
+
+                it('should update user gold cards balance', async () => {
+                  let n_ids = gold_ids.length
+                  let user_addresses = new Array(n_ids).fill('').map((a, i) => userAddress)
+                  let userBalances = await userSkyweaverAssetContract.balanceOfBatch(user_addresses, gold_ids)
+                  for (let i = 0; i < n_ids; i++) {
+                    if (goldRewardIds.length == 0) {
+                      expect(userBalances[i]).to.be.eql(BigNumber.from(0))
+                    } else {
+                      expect(userBalances[i]).to.be.eql(BigNumber.from(100))
+                    }
+                  }
+                })
+              })
             })
           })
         })
