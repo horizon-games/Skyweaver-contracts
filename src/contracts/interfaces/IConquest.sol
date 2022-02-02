@@ -1,41 +1,12 @@
 pragma solidity 0.7.4;
+import "@0xsequence/erc-1155/contracts/interfaces/IERC1155TokenReceiver.sol";
 
 /**
  * @notice Keep track of players participation in Conquest and used to issue rewards.
  * @dev This contract must be at least a TIER 1 owner of the silverCardFactory and
  *      goldCardFactory.
  */
-interface IConquest {
-
-  /***********************************|
-  |      Receiver Method Handler      |
-  |__________________________________*/
-
-  /**
-   * @notice Players entering conquest with conquest entry token
-   * @dev Payload is passed to and verified by onERC1155BatchReceived()
-   */
-  function onERC1155Received(
-    address _operator,
-    address _from,
-    uint256 _id, 
-    uint256 _amount, 
-    bytes calldata _data
-  ) external returns(bytes4);
-
-  /**
-   * @notice Conquest entry point. Will mark user as having entered conquest if valid entry.
-   * @param _from    Address who sent the token
-   * @param _ids     An array containing ids of each Token being transferred
-   * @param _amounts An array containing amounts of each Token being transferred
-   */
-  function onERC1155BatchReceived(
-    address, // _operator
-    address _from,
-    uint256[] memory _ids,
-    uint256[] memory _amounts,
-    bytes memory // _data
-  ) external returns(bytes4);
+interface IConquest is IERC1155TokenReceiver {
 
   /***********************************|
   |         Minting Functions         |

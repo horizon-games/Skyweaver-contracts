@@ -68,7 +68,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "",
+          "name": "_operator",
           "type": "address"
         },
         {
@@ -88,7 +88,7 @@
         },
         {
           "internalType": "bytes",
-          "name": "",
+          "name": "_data",
           "type": "bytes"
         }
       ],
