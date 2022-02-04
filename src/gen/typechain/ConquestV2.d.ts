@@ -213,13 +213,13 @@ export class ConquestV2 extends Contract {
 
     conquestsEntered(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     "conquestsEntered(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     exitConquest(
       _user: string,
@@ -253,13 +253,13 @@ export class ConquestV2 extends Contract {
 
     isActiveConquest(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     "isActiveConquest(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     oldConquest(overrides?: CallOverrides): Promise<[string]>;
 
@@ -338,13 +338,13 @@ export class ConquestV2 extends Contract {
 
   conquestsEntered(
     _user: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   "conquestsEntered(address)"(
     _user: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   exitConquest(
     _user: string,
@@ -373,15 +373,12 @@ export class ConquestV2 extends Contract {
 
   "goldCardFactory()"(overrides?: CallOverrides): Promise<string>;
 
-  isActiveConquest(
-    _user: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  isActiveConquest(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isActiveConquest(address)"(
     _user: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   oldConquest(overrides?: CallOverrides): Promise<string>;
 
@@ -602,12 +599,12 @@ export class ConquestV2 extends Contract {
 
     conquestsEntered(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "conquestsEntered(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     exitConquest(
@@ -639,12 +636,12 @@ export class ConquestV2 extends Contract {
 
     isActiveConquest(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "isActiveConquest(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     oldConquest(overrides?: CallOverrides): Promise<BigNumber>;
@@ -727,12 +724,12 @@ export class ConquestV2 extends Contract {
 
     conquestsEntered(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "conquestsEntered(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     exitConquest(
@@ -769,12 +766,12 @@ export class ConquestV2 extends Contract {
 
     isActiveConquest(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isActiveConquest(address)"(
       _user: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     oldConquest(overrides?: CallOverrides): Promise<PopulatedTransaction>;

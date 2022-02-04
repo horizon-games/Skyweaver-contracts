@@ -161,20 +161,20 @@ export class IConquest extends Contract {
     ): Promise<[boolean]>;
 
     onERC1155BatchReceived(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -239,20 +239,20 @@ export class IConquest extends Contract {
   ): Promise<boolean>;
 
   onERC1155BatchReceived(
-    arg0: string,
+    _operator: string,
     _from: string,
     _ids: BigNumberish[],
     _amounts: BigNumberish[],
-    arg4: BytesLike,
+    _data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
-    arg0: string,
+    _operator: string,
     _from: string,
     _ids: BigNumberish[],
     _amounts: BigNumberish[],
-    arg4: BytesLike,
+    _data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -320,20 +320,20 @@ export class IConquest extends Contract {
     ): Promise<boolean>;
 
     onERC1155BatchReceived(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -404,20 +404,20 @@ export class IConquest extends Contract {
     ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -486,20 +486,20 @@ export class IConquest extends Contract {
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
-      arg0: string,
+      _operator: string,
       _from: string,
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
-      arg4: BytesLike,
+      _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

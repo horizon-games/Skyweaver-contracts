@@ -80,7 +80,7 @@ var _abi = [
         inputs: [
             {
                 internalType: "address",
-                name: "",
+                name: "_operator",
                 type: "address"
             },
             {
@@ -100,7 +100,7 @@ var _abi = [
             },
             {
                 internalType: "bytes",
-                name: "",
+                name: "_data",
                 type: "bytes"
             },
         ],
