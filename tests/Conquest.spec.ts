@@ -126,14 +126,16 @@ describe('Conquest', () => {
       ownerAddress,
       skyweaverAssetsContract.address,
       PERIOD_LENGTH,
-      PERIOD_MINT_LIMIT
+      PERIOD_MINT_LIMIT,
+      false
     ]) as RewardFactory
 
     goldFactory = await rewardFactoryAbstract.deploy(ownerWallet, [
       ownerAddress,
       skyweaverAssetsContract.address,
       PERIOD_LENGTH,
-      PERIOD_MINT_LIMIT.div(5)
+      PERIOD_MINT_LIMIT.div(5),
+      false
     ]) as RewardFactory
 
     // Deploy silver card factory
@@ -142,7 +144,8 @@ describe('Conquest', () => {
       skyweaverAssetsContract.address,
       silverFactory.address,
       goldFactory.address,
-      ticketID
+      ticketID,
+
     ]) as Conquest
     userFactoryContract = await factoryContract.connect(userSigner) as Conquest
 
