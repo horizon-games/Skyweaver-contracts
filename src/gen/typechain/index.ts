@@ -3,6 +3,7 @@
 /* eslint-disable */
 export type { Conquest } from "./Conquest";
 export type { ConquestV2 } from "./ConquestV2";
+export type { ConquestV3 } from "./ConquestV3";
 export type { ConquestEntriesFactory } from "./ConquestEntriesFactory";
 export type { FreemintFactory } from "./FreemintFactory";
 export type { RewardFactory } from "./RewardFactory";
@@ -20,6 +21,7 @@ export type { TieredOwnable } from "./TieredOwnable";
 
 export { Conquest__factory } from "./factories/Conquest__factory";
 export { ConquestV2__factory } from "./factories/ConquestV2__factory";
+export { ConquestV3__factory } from "./factories/ConquestV3__factory";
 export { ConquestEntriesFactory__factory } from "./factories/ConquestEntriesFactory__factory";
 export { FreemintFactory__factory } from "./factories/FreemintFactory__factory";
 export { RewardFactory__factory } from "./factories/RewardFactory__factory";
