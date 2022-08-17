@@ -7,9 +7,11 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
     o[k2] = m[k];
 }));
 exports.__esModule = true;
-exports.TieredOwnable__factory = exports.Ownable__factory = exports.DelayedOwner__factory = exports.SkyweaverAssets__factory = exports.TieredOwnableMock__factory = exports.OwnableMock__factory = exports.FactoryMock__factory = exports.ERC1155Mock__factory = exports.ISkyweaverAssets__factory = exports.IRewardFactory__factory = exports.IConquest__factory = exports.RewardFactory__factory = exports.FreemintFactory__factory = exports.ConquestEntriesFactory__factory = exports.ConquestV3__factory = exports.ConquestV2__factory = exports.Conquest__factory = void 0;
+exports.TieredOwnable__factory = exports.Ownable__factory = exports.DelayedOwner__factory = exports.SkyweaverAssets__factory = exports.TieredOwnableMock__factory = exports.OwnableMock__factory = exports.FactoryMock__factory = exports.ERC20MintMock__factory = exports.ERC1155Mock__factory = exports.ISkyweaverAssets__factory = exports.IRewardFactory__factory = exports.IConquest__factory = exports.RewardFactory__factory = exports.FreemintFactory__factory = exports.ConquestEntriesFactory__factory = exports.ConquestV3__factory = exports.ConquestV2__factory = exports.ConquestPayment__factory = exports.Conquest__factory = void 0;
 var Conquest__factory_1 = require("./factories/Conquest__factory");
 __createBinding(exports, Conquest__factory_1, "Conquest__factory");
+var ConquestPayment__factory_1 = require("./factories/ConquestPayment__factory");
+__createBinding(exports, ConquestPayment__factory_1, "ConquestPayment__factory");
 var ConquestV2__factory_1 = require("./factories/ConquestV2__factory");
 __createBinding(exports, ConquestV2__factory_1, "ConquestV2__factory");
 var ConquestV3__factory_1 = require("./factories/ConquestV3__factory");
@@ -28,6 +30,8 @@ var ISkyweaverAssets__factory_1 = require("./factories/ISkyweaverAssets__factory
 __createBinding(exports, ISkyweaverAssets__factory_1, "ISkyweaverAssets__factory");
 var ERC1155Mock__factory_1 = require("./factories/ERC1155Mock__factory");
 __createBinding(exports, ERC1155Mock__factory_1, "ERC1155Mock__factory");
+var ERC20MintMock__factory_1 = require("./factories/ERC20MintMock__factory");
+__createBinding(exports, ERC20MintMock__factory_1, "ERC20MintMock__factory");
 var FactoryMock__factory_1 = require("./factories/FactoryMock__factory");
 __createBinding(exports, FactoryMock__factory_1, "FactoryMock__factory");
 var OwnableMock__factory_1 = require("./factories/OwnableMock__factory");
