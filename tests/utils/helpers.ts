@@ -14,6 +14,30 @@ export type AssetRange = {
   endTime: BigNumber;
 }
 
+export type MintTokenRequest = {
+  recipient: string
+  itemsBoughtIDs: number[] | string[] | BigNumber[]
+  itemsBoughtAmounts: number[] | string[] | BigNumber[]
+  maxUSDC: number | string | BigNumber
+}
+
+export const MintTokenRequestType = `tuple(
+  address recipient,
+  uint256[] itemsBoughtIDs,
+  uint256[] itemsBoughtAmounts,
+  uint256 maxUSDC
+)`
+
+export const getMintTokenRequestData = (
+  recipient: string,
+  itemsBoughtIDs: number[] | BigNumber[], 
+  itemsBoughtAmounts: number[] | BigNumber[],
+  maxUSDC: number | BigNumber
+) => {
+  const request: MintTokenRequest = { recipient, itemsBoughtIDs, itemsBoughtAmounts, maxUSDC }
+  return ethers.utils.defaultAbiCoder.encode([MintTokenRequestType], [request])
+}
+
 // createTestWallet creates a new wallet
 export const createTestWallet = (web3: any, addressIndex: number = 0) => {
   const provider = new Web3DebugProvider(web3.currentProvider)
