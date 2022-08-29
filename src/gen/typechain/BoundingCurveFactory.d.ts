@@ -23,6 +23,7 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   functions: {
     "assignOwnership(address,uint256)": FunctionFragment;
     "getMintingCost(uint256[],uint256[])": FunctionFragment;
+    "getMintingTotalCost(uint256[],uint256[])": FunctionFragment;
     "getOwnerTier(address)": FunctionFragment;
     "itemRangeMax()": FunctionFragment;
     "itemRangeMin()": FunctionFragment;
@@ -40,6 +41,10 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMintingCost",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMintingTotalCost",
     values: [BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
@@ -82,6 +87,10 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getMintingCost",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMintingTotalCost",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -185,11 +194,23 @@ export class BoundingCurveFactory extends Contract {
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
+    "getMintingCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
+    getMintingTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { nItems: BigNumber; nUSDC: BigNumber }
     >;
 
-    "getMintingCost(uint256[],uint256[])"(
+    "getMintingTotalCost(uint256[],uint256[])"(
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
@@ -298,9 +319,21 @@ export class BoundingCurveFactory extends Contract {
     _ids: BigNumberish[],
     _amounts: BigNumberish[],
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { nItems: BigNumber; nUSDC: BigNumber }>;
+  ): Promise<[BigNumber[], BigNumber[]]>;
 
   "getMintingCost(uint256[],uint256[])"(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<[BigNumber[], BigNumber[]]>;
+
+  getMintingTotalCost(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { nItems: BigNumber; nUSDC: BigNumber }>;
+
+  "getMintingTotalCost(uint256[],uint256[])"(
     _ids: BigNumberish[],
     _amounts: BigNumberish[],
     overrides?: CallOverrides
@@ -404,11 +437,23 @@ export class BoundingCurveFactory extends Contract {
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
+    "getMintingCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
+    getMintingTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { nItems: BigNumber; nUSDC: BigNumber }
     >;
 
-    "getMintingCost(uint256[],uint256[])"(
+    "getMintingTotalCost(uint256[],uint256[])"(
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
@@ -534,6 +579,18 @@ export class BoundingCurveFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getMintingTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getMintingTotalCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getOwnerTier(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getOwnerTier(address)"(
@@ -636,6 +693,18 @@ export class BoundingCurveFactory extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "getMintingCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMintingTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getMintingTotalCost(uint256[],uint256[])"(
       _ids: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides

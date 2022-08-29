@@ -145,7 +145,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     req = abi.decode(_data, (MintTokenRequest));
 
     // Calculate cost
-    (uint256 costItems, uint256 costUSDC) = getMintingCost(req.itemsBoughtIDs, req.itemsBoughtAmounts);
+    (uint256 costItems, uint256 costUSDC) = getMintingTotalCost(req.itemsBoughtIDs, req.itemsBoughtAmounts);
 
     // Calculate # of items sent
     uint256 nItemsReceived = _paidItemAmount(_ids, _amounts);
@@ -198,11 +198,11 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Get item and usdc cost of a minting order
+   * @notice Get item and usdc cost of all items a minting order
    * @param _ids      Ids of items to mint
    * @param _amounts  Amount of each item to be minted
    */
-  function getMintingCost(uint256[] memory _ids, uint256[] memory _amounts) view public returns (uint256 nItems, uint256 nUSDC) {
+  function getMintingTotalCost(uint256[] memory _ids, uint256[] memory _amounts) view public returns (uint256 nItems, uint256 nUSDC) {
     nItems = 0; // Number of items to be burnt
     nUSDC = 0;  // Number of USDC to be sent
 
@@ -215,6 +215,30 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
       uint256 nMint = _amounts[i];
       nItems = nItems.add(nMint.mul(itemCost));
       nUSDC = nUSDC.add(nMint.mul(usdcCost));   // TODO replace by curve
+    }
+
+    return (nItems, nUSDC);
+  }
+
+    /**
+   * @notice Get item and usdc cost of each item in an order
+   * @param _ids      Ids of items to mint
+   * @param _amounts  Amount of each item to be minted
+   */
+  function getMintingCost(uint256[] memory _ids, uint256[] memory _amounts) view public returns (uint256[] memory, uint256[] memory) {
+    // Initialize return arrays
+    uint256[] memory nItems = new uint256[](_ids.length);
+    uint256[] memory nUSDC = new uint256[](_ids.length);
+
+    // Load in memory because Solidity is dumb
+    uint256 itemCost = costInItems;
+    uint256 usdcCost = costInUSDC;
+
+    // Count how many valid items were sent in total
+    for (uint256 i = 0; i < _ids.length; i++) {
+      uint256 nMint = _amounts[i];
+      nItems[i] = nMint.mul(itemCost);
+      nUSDC[i] = nMint.mul(usdcCost);   // TODO replace by id specific curve
     }
 
     return (nItems, nUSDC);
