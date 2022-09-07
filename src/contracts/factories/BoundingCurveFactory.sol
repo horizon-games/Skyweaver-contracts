@@ -65,9 +65,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   {
     require(
       _skyweaverAssetsAddress != address(0) && 
-      _itemRangeMin < _itemRangeMax &&
-      (_costInItems > 100 || _costInItems == 0) &&  // To ensure decimals are ok
-      (_costInUSDC > 100000 || _costInUSDC == 0),   // To ensure decimals are ok
+      _itemRangeMin < _itemRangeMax,
       "BoundingCurveFactory#constructor: INVALID_INPUT"
     );
 

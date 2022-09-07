@@ -77,8 +77,8 @@ describe('BoundingCurveFactory ', () => {
   const nTokensPerType = BigNumber.from(100).mul(100)
 
   // Minting costs 10 golds and 15 USDC
-  const unitPriceItem = BigNumber.from(10).mul(100) // 10 golds
-  const unitPriceUSDC = BigNumber.from(15).mul(BigNumber.from(10).pow(6)) //15 USDC
+  const unitPriceItem = BigNumber.from(10) // 10 golds
+  const unitPriceUSDC = BigNumber.from(15).mul(BigNumber.from(10).pow(6)).div(100) //15 USDC per 100 unit
 
   // Ticket token Param
   const ticketID = BigNumber.from(555);
@@ -192,9 +192,10 @@ describe('BoundingCurveFactory ', () => {
         let data;
         let recipient;
         const ids_to_mint = [1001, 1007]
-        const amounts_to_mint = [1, 2]
+        const amounts_to_mint = [100, 200]
         const ids_to_send = [1, 2, 3, 4, 5]
         const amounts_to_send = [500, 500, 500, 500, 1000] // Total of 30 items
+        const usdc_total_cost = unitPriceUSDC.mul(300)
 
         beforeEach(() => {
           if (condition == recipientConditions[0]) {
@@ -202,7 +203,7 @@ describe('BoundingCurveFactory ', () => {
           } else {
             recipient = randomAddress
           }
-          data = getMintTokenRequestData(recipient, ids_to_mint, amounts_to_mint, unitPriceUSDC.mul(3))
+          data = getMintTokenRequestData(recipient, ids_to_mint, amounts_to_mint, usdc_total_cost)
         })
 
         it('should PASS if caller sends assets', async () => {
@@ -211,7 +212,7 @@ describe('BoundingCurveFactory ', () => {
         })
 
         it('should PASS if receiver is 0x0', async () => {
-          data = getMintTokenRequestData(ethers.constants.AddressZero, ids_to_mint, amounts_to_mint, unitPriceUSDC.mul(3))
+          data = getMintTokenRequestData(ethers.constants.AddressZero, ids_to_mint, amounts_to_mint, usdc_total_cost)
           let tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
           await expect(tx).to.be.fulfilled
 
@@ -236,14 +237,14 @@ describe('BoundingCurveFactory ', () => {
         })
 
         it('should REVERT if USDC needed exceeds maxUSDC', async () => {
-          data = getMintTokenRequestData(userAddress, ids_to_mint, amounts_to_mint, unitPriceUSDC.mul(3).sub(1))
+          data = getMintTokenRequestData(userAddress, ids_to_mint, amounts_to_mint, usdc_total_cost.sub(1))
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
           await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#constructor: INSUFFICIENT USDC"))
         })
 
         it('should REVERT if user doesnt have enough usdc', async () => {
           const usdc_balance = await usdcContract.balanceOf(userAddress)
-          await userUsdcContract.transfer(randomAddress, usdc_balance.sub(unitPriceUSDC.mul(3).sub(1)))
+          await userUsdcContract.transfer(randomAddress, usdc_balance.sub(usdc_total_cost.sub(1)))
           let tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
           await expect(tx).to.be.rejectedWith(RevertError("SafeMath#sub: UNDERFLOW"))
         })
@@ -279,12 +280,12 @@ describe('BoundingCurveFactory ', () => {
 
           it('should update the factory USDC balance', async () => {
             let balance = await usdcContract.balanceOf(factory)
-            expect(balance).to.be.eql(unitPriceUSDC.mul(3))
+            expect(balance).to.be.eql(usdc_total_cost)
           })
 
           it('should update the user USDC balance', async () => {
             let balance = await usdcContract.balanceOf(userAddress)
-            expect(balance).to.be.eql( baseTokenAmount.sub(unitPriceUSDC.mul(3)))
+            expect(balance).to.be.eql( baseTokenAmount.sub(usdc_total_cost))
           })
 
           describe('withdrawERC20() function', () => {
@@ -318,7 +319,7 @@ describe('BoundingCurveFactory ', () => {
                 if (condition == recipientConditions[0]) {
                   expect(recipient_balance).to.be.eql(baseTokenAmount)
                 } else {
-                  expect(recipient_balance).to.be.eql(unitPriceUSDC.mul(3))
+                  expect(recipient_balance).to.be.eql(usdc_total_cost)
                 }
               })
             })
