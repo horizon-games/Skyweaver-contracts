@@ -87,9 +87,9 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
 
     // Parameters
     COST_IN_ITEMS = _costInItems;
-    USDC_CURVE_CONSTANT = _usdcCurveConstant; // 35 * 100;  // Starting X value on the curve
-    USDC_CURVE_SCALE_DOWN = _usdcCurveScaleDown; //      // 100 instead of 100^2 because of the factor being 100x already
-    USDC_CURVE_TICK_SIZE = _usdcCurveTickSize; // 10 * 100; // Supply amount after which price increases
+    USDC_CURVE_CONSTANT = _usdcCurveConstant;    // e.g. 35 * 100
+    USDC_CURVE_SCALE_DOWN = _usdcCurveScaleDown; // e.g. 100
+    USDC_CURVE_TICK_SIZE = _usdcCurveTickSize;   // e.g. 10 * 100 for increase every 10 mints
   }
 
   
