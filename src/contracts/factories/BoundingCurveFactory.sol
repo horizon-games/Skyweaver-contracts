@@ -22,14 +22,20 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   // Assets
   IERC20 immutable public usdc;                      // USDC contract address
   ISkyweaverAssets immutable public skyweaverAssets; // ERC-1155 Skyweaver items contract
-  uint256 immutable public itemRangeMin;             // Lower bound for the range of items IDs that can be used to mint
-  uint256 immutable public itemRangeMax;             // Upper bound for the range of items IDs that can be used to mint
+  uint256  immutable internal itemRangeMin;          // Lower bound for the range of items IDs that can be used to mint
+  uint256 immutable internal itemRangeMax;           // Upper bound for the range of items IDs that can be used to mint
+
+  // Amount of items needed to be burnt per mint
+  uint256 internal immutable COST_IN_ITEMS;
 
   // Minting curve parameters
-  // TO DO
-  uint256 immutable costInItems; // Amount of items needed to be burnt per mint
-  uint256 immutable costInUSDC;  // Amount of USDC needed to be sent per mint
+  // Curve is (x + USDC_CURVE_CONSTANT)^2 / USDC_CURVE_SCALE_DOWN
+  uint256 internal immutable USDC_CURVE_CONSTANT;   // Starting X value on the curve
+  uint256 internal immutable USDC_CURVE_SCALE_DOWN; // Multiplier we use as denominator for the curve
+  uint256 internal immutable USDC_CURVE_TICK_SIZE;  // Supply amount after which price increases
 
+  // Mapping for tracking supplies
+  mapping (uint256 => uint256) public mintedAmounts; // Tracks number of items minted by this contract
 
   // Payment payload on erc-1155 transfer
   struct MintTokenRequest {
@@ -51,7 +57,9 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _itemRangeMin           Minimum id for silver cards
    * @param _itemRangeMax           Maximum id for silver cards
    * @param _costInItems            Amount of items needed to burn per mint
-   * @param _costInUSDC             Amount of USDC needed per mint
+   * @param _usdcCurveConstant      Starting X value on the curve
+   * @param _usdcCurveScaleDown     Multiplier we use as denominator for the curve
+   * @param _usdcCurveTickSize      Supply amount after which price increases
    */
   constructor(
     address _firstOwner,
@@ -60,7 +68,9 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256 _itemRangeMin,
     uint256 _itemRangeMax,
     uint256 _costInItems,
-    uint256 _costInUSDC
+    uint256 _usdcCurveConstant,
+    uint256 _usdcCurveScaleDown,
+    uint256 _usdcCurveTickSize
   ) TieredOwnable(_firstOwner) 
   {
     require(
@@ -76,8 +86,10 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     itemRangeMax = _itemRangeMax;
 
     // Parameters
-    costInItems = _costInItems;
-    costInUSDC = _costInUSDC;
+    COST_IN_ITEMS = _costInItems;
+    USDC_CURVE_CONSTANT = _usdcCurveConstant; // 35 * 100;  // Starting X value on the curve
+    USDC_CURVE_SCALE_DOWN = _usdcCurveScaleDown; //      // 100 instead of 100^2 because of the factor being 100x already
+    USDC_CURVE_TICK_SIZE = _usdcCurveTickSize; // 10 * 100; // Supply amount after which price increases
   }
 
   
@@ -149,14 +161,23 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256 nItemsReceived = _paidItemAmount(_ids, _amounts);
 
     // Validate payment is sufficient
-    require(nItemsReceived == costItems, "BoundingCurveFactory#constructor: INCORRECT NUMBER OF ITEMS SENT");
-    require(costUSDC <= req.maxUSDC, "BoundingCurveFactory#constructor: INSUFFICIENT USDC");
+    require(nItemsReceived == costItems, "BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT");
+    require(costUSDC <= req.maxUSDC, "BoundingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED");
+
+    // Transfer USDC to here
+    usdc.transferFrom(_from, address(this), costUSDC);
 
     // Burn items received
     skyweaverAssets.batchBurn(_ids, _amounts);
 
-    // Transfer USDC to here
-    usdc.transferFrom(_from, address(this), costUSDC);
+    // Increase supplies and insure there are no duplicated IDs
+    uint256 previousID = 0; // Can't mint id 0, so we use it as first ID
+    for (uint256 i = 0; i < req.itemsBoughtIDs.length; i++) {
+      uint256 id = req.itemsBoughtIDs[i];
+      require(id != 0 && id > previousID, "BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES");
+      mintedAmounts[id] = mintedAmounts[id].add(req.itemsBoughtAmounts[i]);
+      previousID = id;
+    }
 
     // Minting assets 
     address recipient = req.recipient == address(0x0) ? _from : req.recipient;
@@ -201,24 +222,15 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _amounts  Amount of each item to be minted
    */
   function getMintingTotalCost(uint256[] memory _ids, uint256[] memory _amounts) view public returns (uint256 nItems, uint256 nUSDC) {
-    nItems = 0; // Number of items to be burnt
-    nUSDC = 0;  // Number of USDC to be sent
-
-    // Load in memory because Solidity is dumb
-    uint256 itemCost = costInItems;
-    uint256 usdcCost = costInUSDC;
-
     // Count how many valid items were sent in total
+    uint256 totalAmount = 0;
     for (uint256 i = 0; i < _ids.length; i++) {
-      uint256 nMint = _amounts[i];
-      nItems = nItems.add(nMint.mul(itemCost));
-      nUSDC = nUSDC.add(nMint.mul(usdcCost));   // TODO replace by curve
+      totalAmount = totalAmount.add(_amounts[i]);
     }
-
-    return (nItems, nUSDC);
+    return (totalAmount.mul(COST_IN_ITEMS), usdcTotalCost(_ids, _amounts));
   }
 
-    /**
+  /**
    * @notice Get item and usdc cost of each item in an order
    * @param _ids      Ids of items to mint
    * @param _amounts  Amount of each item to be minted
@@ -228,18 +240,69 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256[] memory nItems = new uint256[](_ids.length);
     uint256[] memory nUSDC = new uint256[](_ids.length);
 
-    // Load in memory because Solidity is dumb
-    uint256 itemCost = costInItems;
-    uint256 usdcCost = costInUSDC;
-
     // Count how many valid items were sent in total
     for (uint256 i = 0; i < _ids.length; i++) {
-      uint256 nMint = _amounts[i];
-      nItems[i] = nMint.mul(itemCost);
-      nUSDC[i] = nMint.mul(usdcCost);   // TODO replace by id specific curve
+      nItems[i] =  _amounts[i].mul(COST_IN_ITEMS);
+      nUSDC[i] = usdcCost(_ids[i],  _amounts[i]);
     }
 
     return (nItems, nUSDC);
+  }
+
+  /**
+   * @notice Returns the cost in USDC, which is based on a bounding curve
+   * @param _ids     Ids of items to mint
+   * @param _amounts Amount of each item to be minted
+   */
+  function usdcTotalCost(uint256[] memory _ids, uint256[] memory _amounts) view public returns (uint256 nUSDC) {
+    for (uint256 i = 0; i < _ids.length; i++) {
+      nUSDC = nUSDC.add(usdcCost(_ids[i], _amounts[i]));
+    }
+    return nUSDC;
+  }
+
+    /**
+   * @notice Returns the cost in USDC, which is based on a bounding curve
+   * @param _id     ID of item to be minted
+   * @param _amount Amount of item to be minted
+   */
+  function usdcCost(uint256 _id, uint256 _amount) view public returns (uint256 nUSDC) {
+    uint256 supply = mintedAmounts[_id];
+    uint256 amount = _amount;
+
+    // Go over all the price ticks 
+    while (amount > 0) {
+      // Check how many can be minted in current tick
+      uint256 leftInTick = USDC_CURVE_TICK_SIZE.sub(supply % USDC_CURVE_TICK_SIZE);
+
+      // Check how many will be minted in current tick
+      uint256 amountInTick = leftInTick > amount ? amount : leftInTick;
+
+      // Add to the total cost
+      nUSDC = nUSDC.add(amountInTick.mul(usdcCurve(supply)));
+
+      // Remove amount to be minted in current tick from total amount
+      amount = amount.sub(amountInTick);
+
+      // Increase supply
+      supply = supply.add(amountInTick);
+    }
+
+    return nUSDC;
+  }
+
+  /**
+   * @notice Returns value in curve
+   * @dev Curve is (x+k)^2 / m
+   * @param _x point on the curve, multiple of 100
+   */
+  function usdcCurve(uint256 _x) view public returns (uint256 nUsdc) {
+    //Lower bound of the tick is the tick price
+    uint256 tickValue = _x / USDC_CURVE_TICK_SIZE * 100; 
+    // (x+k)^2 
+    uint256 exponent = (tickValue.add(USDC_CURVE_CONSTANT)).mul(tickValue.add(USDC_CURVE_CONSTANT));
+    // exponent / m
+    return exponent.div(USDC_CURVE_SCALE_DOWN);
   }
 
 

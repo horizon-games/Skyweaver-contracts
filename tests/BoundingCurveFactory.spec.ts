@@ -47,12 +47,19 @@ const {
   signer: randomSigner
 } = utils.createTestWallet(web3, 4)
 
+const {
+  wallet: treasuryWallet,
+  provider: treasuryProvider,
+  signer: treasurySigner
+} = utils.createTestWallet(web3, 4)
+
 const getBig = (id: number) => BigNumber.from(id);
 
 describe('BoundingCurveFactory ', () => {
   let ownerAddress: string
   let userAddress: string
   let randomAddress: string
+  let treasuryAddress: string
   let skyweaverAssetsAbstract: AbstractContract
   let usdcAbstract: AbstractContract
   let factoryAbstract: AbstractContract
@@ -74,11 +81,13 @@ describe('BoundingCurveFactory ', () => {
 
   // Token Param
   const nTokenTypes    = BigNumber.from(50)
-  const nTokensPerType = BigNumber.from(100).mul(100)
+  const nTokensPerType = BigNumber.from(500).mul(100)
 
-  // Minting costs 10 golds and 15 USDC
-  const unitPriceItem = BigNumber.from(10) // 10 golds
-  const unitPriceUSDC = BigNumber.from(15).mul(BigNumber.from(10).pow(6)).div(100) //15 USDC per 100 unit
+  // Minting costs 10 golds and scaling USDC
+  const COST_IN_ITEMS = BigNumber.from(10) // 10 golds
+  const USDC_CURVE_CONSTANT = 4375      // 43.75
+  const USDC_CURVE_SCALE_DOWN = 100     // 
+  const USDC_CURVE_TICK_SIZE = 10 * 100 // 10 mint per tick
 
   // Ticket token Param
   const ticketID = BigNumber.from(555);
@@ -110,6 +119,7 @@ describe('BoundingCurveFactory ', () => {
     ownerAddress = await ownerWallet.getAddress()
     userAddress = await userWallet.getAddress()
     randomAddress = await randomWallet.getAddress()
+    treasuryAddress = await treasuryWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     usdcAbstract = await AbstractContract.fromArtifactName('ERC20MintMock')
     factoryAbstract = await AbstractContract.fromArtifactName('BoundingCurveFactory')
@@ -132,8 +142,10 @@ describe('BoundingCurveFactory ', () => {
       skyweaverAssetsContract.address,
       goldMinRange, 
       goldMaxRange,
-      unitPriceItem,
-      unitPriceUSDC
+      COST_IN_ITEMS,
+      USDC_CURVE_CONSTANT,
+      USDC_CURVE_SCALE_DOWN,
+      USDC_CURVE_TICK_SIZE
     ]) as BoundingCurveFactory 
     userFactoryContract = await factoryContract.connect(userSigner) as BoundingCurveFactory 
 
@@ -178,31 +190,99 @@ describe('BoundingCurveFactory ', () => {
         expect(support).to.be.eql(true)
       })
     })
+
+    describe('usdcCurve()', () => {
+      it('Returns same value for x in same tick', async () => {
+        const val1 = await factoryContract.usdcCurve(0)
+        const val2 = await factoryContract.usdcCurve(USDC_CURVE_TICK_SIZE - 1)
+        expect(val1).to.be.eql(val2)
+      })
+
+      it('value increases for x in higher ticks', async () => {
+        const val1 = await factoryContract.usdcCurve(0)
+        const val2 = await factoryContract.usdcCurve(USDC_CURVE_TICK_SIZE)
+        const diff = val2.sub(val1).toNumber()
+        expect(diff).to.be.gt(0)
+      })
+    })
+
+    describe('usdcCost()', () => {
+      it('Returns same value for x in same tick', async () => {
+        const id = 1001
+        const val1 = (await factoryContract.usdcCost(id, 1)).mul(USDC_CURVE_TICK_SIZE - 1)
+        const val2 = await factoryContract.usdcCost(id, USDC_CURVE_TICK_SIZE - 1)
+        expect(val1).to.be.eql(val2)
+      })
+
+      it('value increases for x in higher ticks', async () => {
+        const id = 1001
+        const val1 = (await factoryContract.usdcCost(id, 1)).mul(USDC_CURVE_TICK_SIZE + 1)
+        const val2 = await factoryContract.usdcCost(id, USDC_CURVE_TICK_SIZE + 1)
+        const diff = val2.sub(val1).toNumber()
+        expect(diff).to.be.gt(0)
+      })
+    })
+
   })
 
   describe('BoundingCurveFactory', () => {
 
-    let recipientConditions =  [
+    let conditions =  [
       'Mint with sender being recipient',
-      'Mint with sender NOT being recipient'
+      'Mint with sender NOT being recipient',
+      'Mint more than tick size'
     ]
 
-    recipientConditions.forEach(function(condition) { 
+    conditions.forEach(function(condition) { 
       context(condition as string, () => {
         let data;
         let recipient;
-        const ids_to_mint = [1001, 1007]
-        const amounts_to_mint = [100, 200]
-        const ids_to_send = [1, 2, 3, 4, 5]
-        const amounts_to_send = [500, 500, 500, 500, 1000] // Total of 30 items
-        const usdc_total_cost = unitPriceUSDC.mul(300)
+        let ids_to_mint
+        let amounts_to_mint
+        let ids_to_send
+        let amounts_to_send
+        let usdc_total_cost: BigNumber
 
-        beforeEach(() => {
-          if (condition == recipientConditions[0]) {
-            recipient = userAddress
+        beforeEach(async () => {
+          if (condition == conditions[1]) {
+            recipient = randomAddress 
           } else {
-            recipient = randomAddress
+            recipient = userAddress
           }
+
+          // Mint more or less
+          ids_to_mint = [1001, 1003, 1007]
+          if (condition == conditions[2]) {
+            amounts_to_mint = [1100, 3100, 4200]
+            ids_to_send = [1, 2, 3, 4, 5]
+            amounts_to_send = [15000, 15000, 15000, 15000, 24000] // Total of 420 items
+
+            // Going over the curve manually to be safe
+            // ID 1001
+            usdc_total_cost = (await factoryContract.usdcCurve(0)).mul(1000)
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(1000)).mul(100))
+
+            // ID 1003
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(0)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(1000)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(2000)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(3000)).mul(100))
+
+            // ID 1007
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(0)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(1000)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(2000)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(3000)).mul(1000))
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(4000)).mul(200))
+
+          } else {
+            amounts_to_mint = [100, 200, 300]
+            ids_to_send = [1, 2, 3, 4, 5]
+            amounts_to_send = [1000, 1000, 1000, 1000, 2000] // Total of 60 items
+            usdc_total_cost = (await factoryContract.usdcCurve(0)).mul(600)
+          }
+
+          
           data = getMintTokenRequestData(recipient, ids_to_mint, amounts_to_mint, usdc_total_cost)
         })
 
@@ -211,11 +291,24 @@ describe('BoundingCurveFactory ', () => {
           await expect(tx).to.be.fulfilled
         })
 
+        it('should PASS if buying hero fraction', async () => {
+          amounts_to_mint[0] = amounts_to_mint[0] + 1
+          amounts_to_send[0] = amounts_to_send[0] + 10
+          if (condition == conditions[2]) {
+            usdc_total_cost = usdc_total_cost.add((await factoryContract.usdcCurve(1100)).mul(1))
+          } else {
+            usdc_total_cost = (await factoryContract.usdcCurve(0)).mul(601)
+          }
+          data = getMintTokenRequestData(recipient, ids_to_mint, amounts_to_mint, usdc_total_cost)
+
+          let tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
+          await expect(tx).to.be.fulfilled
+        })
+
         it('should PASS if receiver is 0x0', async () => {
           data = getMintTokenRequestData(ethers.constants.AddressZero, ids_to_mint, amounts_to_mint, usdc_total_cost)
           let tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
           await expect(tx).to.be.fulfilled
-
         })
 
         it('should REVERT if item is not correct', async () => {
@@ -224,22 +317,46 @@ describe('BoundingCurveFactory ', () => {
           await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"))
         })
 
+        it('should REVERT if items are not sorted by ascending order', async () => {
+          const unsortedIDsToMint = [1001, 1007, 1003]
+          const unsortedData = getMintTokenRequestData(recipient, unsortedIDsToMint, amounts_to_mint, usdc_total_cost)
+          const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, unsortedData, TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
+        })
+
+        it('should REVERT if items contain duplicate', async () => {
+          const dupIds = [1001, 1003, 1003]
+          const dupData = getMintTokenRequestData(recipient, dupIds, amounts_to_mint, usdc_total_cost)
+          const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, dupData, TX_PARAM)
+          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
+        })
+
         it('should REVERT if too few items were sent', async () => {
-          const bad_amounts_to_send = [500, 500, 500, 500, 900]
+          let bad_amounts_to_send
+          if (condition == conditions[2]) {
+            bad_amounts_to_send = [7400, 7500, 7500, 7500, 12000] 
+          } else {
+            bad_amounts_to_send = [500, 500, 500, 500, 900]
+          }
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, bad_amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#constructor: INCORRECT NUMBER OF ITEMS SENT"))
+          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
         })
 
         it('should REVERT if too many items were sent', async () => {
-          const bad_amounts_to_send = [500, 500, 500, 600, 1000]
+          let bad_amounts_to_send
+          if (condition == conditions[2]) {
+            bad_amounts_to_send = [7500, 7500, 7500, 7600, 12000] 
+          } else {
+            bad_amounts_to_send = [500, 500, 500, 600, 1000]
+          }
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, bad_amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#constructor: INCORRECT NUMBER OF ITEMS SENT"))
+          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
         })
 
         it('should REVERT if USDC needed exceeds maxUSDC', async () => {
           data = getMintTokenRequestData(userAddress, ids_to_mint, amounts_to_mint, usdc_total_cost.sub(1))
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#constructor: INSUFFICIENT USDC"))
+          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED"))
         })
 
         it('should REVERT if user doesnt have enough usdc', async () => {
@@ -288,6 +405,24 @@ describe('BoundingCurveFactory ', () => {
             expect(balance).to.be.eql( baseTokenAmount.sub(usdc_total_cost))
           })
 
+          it('should update minted supplies', async () => {
+            for (let i = 0; i < ids_to_mint.length; i++) {
+              const supply = await factoryContract.mintedAmounts(ids_to_mint[i])
+              expect(supply).to.be.eql(BigNumber.from(amounts_to_mint[i]))
+            }
+          })
+
+          it('should increase cost to mint further hero if new tick', async () => {
+            if (condition == conditions[2]) {
+              const newCost = await factoryContract.usdcTotalCost(ids_to_mint, amounts_to_mint)
+              const diff = newCost.sub(usdc_total_cost).toNumber()
+              expect(diff).to.be.gt(0)
+            } else {
+              const newCost = await factoryContract.usdcTotalCost(ids_to_mint, amounts_to_mint)
+              expect(newCost).to.be.eql(usdc_total_cost)
+            }
+          })
+          
           describe('withdrawERC20() function', () => {
             it('should PASS if caller is owner', async () => {
               const tx = factoryContract.withdrawERC20(recipient, usdcContract.address, TX_PARAM)
@@ -305,8 +440,9 @@ describe('BoundingCurveFactory ', () => {
             })
       
             context('When USDC is withdrawn', () => {
+
               beforeEach(async () => {
-                await factoryContract.withdrawERC20(recipient, usdcContract.address)
+                await factoryContract.withdrawERC20(treasuryAddress, usdcContract.address)
               })
       
               it('should update factory usdc balance', async () => {
@@ -315,12 +451,8 @@ describe('BoundingCurveFactory ', () => {
               })
         
               it('should update recipient usdc balance', async () => {
-                let recipient_balance = await usdcContract.balanceOf(recipient)
-                if (condition == recipientConditions[0]) {
-                  expect(recipient_balance).to.be.eql(baseTokenAmount)
-                } else {
-                  expect(recipient_balance).to.be.eql(usdc_total_cost)
-                }
+                let recipient_balance = await usdcContract.balanceOf(treasuryAddress)
+                expect(recipient_balance).to.be.eql(usdc_total_cost)
               })
             })
           })

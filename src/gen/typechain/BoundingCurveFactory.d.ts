@@ -27,11 +27,15 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     "getOwnerTier(address)": FunctionFragment;
     "itemRangeMax()": FunctionFragment;
     "itemRangeMin()": FunctionFragment;
+    "mintedAmounts(uint256)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "skyweaverAssets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "usdc()": FunctionFragment;
+    "usdcCost(uint256,uint256)": FunctionFragment;
+    "usdcCurve(uint256)": FunctionFragment;
+    "usdcTotalCost(uint256[],uint256[])": FunctionFragment;
     "withdrawERC20(address,address)": FunctionFragment;
   };
 
@@ -60,6 +64,10 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "mintedAmounts",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
@@ -76,6 +84,18 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "usdc", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "usdcCost",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "usdcCurve",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "usdcTotalCost",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
     values: [string, string]
@@ -106,6 +126,10 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "mintedAmounts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
   ): Result;
@@ -122,6 +146,12 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "usdc", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "usdcCost", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "usdcCurve", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "usdcTotalCost",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawERC20",
     data: BytesLike
@@ -236,6 +266,16 @@ export class BoundingCurveFactory extends Contract {
 
     "itemRangeMin()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    mintedAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "mintedAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     onERC1155BatchReceived(
       arg0: string,
       _from: string,
@@ -289,6 +329,40 @@ export class BoundingCurveFactory extends Contract {
     usdc(overrides?: CallOverrides): Promise<[string]>;
 
     "usdc()"(overrides?: CallOverrides): Promise<[string]>;
+
+    usdcCost(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUSDC: BigNumber }>;
+
+    "usdcCost(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUSDC: BigNumber }>;
+
+    usdcCurve(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUsdc: BigNumber }>;
+
+    "usdcCurve(uint256)"(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUsdc: BigNumber }>;
+
+    usdcTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUSDC: BigNumber }>;
+
+    "usdcTotalCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { nUSDC: BigNumber }>;
 
     withdrawERC20(
       _recipient: string,
@@ -354,6 +428,16 @@ export class BoundingCurveFactory extends Contract {
 
   "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  mintedAmounts(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "mintedAmounts(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   onERC1155BatchReceived(
     arg0: string,
     _from: string,
@@ -407,6 +491,37 @@ export class BoundingCurveFactory extends Contract {
   usdc(overrides?: CallOverrides): Promise<string>;
 
   "usdc()"(overrides?: CallOverrides): Promise<string>;
+
+  usdcCost(
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "usdcCost(uint256,uint256)"(
+    _id: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  usdcCurve(_x: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "usdcCurve(uint256)"(
+    _x: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  usdcTotalCost(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "usdcTotalCost(uint256[],uint256[])"(
+    _ids: BigNumberish[],
+    _amounts: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   withdrawERC20(
     _recipient: string,
@@ -476,6 +591,16 @@ export class BoundingCurveFactory extends Contract {
 
     "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    mintedAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "mintedAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     onERC1155BatchReceived(
       arg0: string,
       _from: string,
@@ -529,6 +654,37 @@ export class BoundingCurveFactory extends Contract {
     usdc(overrides?: CallOverrides): Promise<string>;
 
     "usdc()"(overrides?: CallOverrides): Promise<string>;
+
+    usdcCost(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "usdcCost(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    usdcCurve(_x: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "usdcCurve(uint256)"(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    usdcTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "usdcTotalCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     withdrawERC20(
       _recipient: string,
@@ -606,6 +762,16 @@ export class BoundingCurveFactory extends Contract {
 
     "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    mintedAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "mintedAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     onERC1155BatchReceived(
       arg0: string,
       _from: string,
@@ -659,6 +825,37 @@ export class BoundingCurveFactory extends Contract {
     usdc(overrides?: CallOverrides): Promise<BigNumber>;
 
     "usdc()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    usdcCost(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "usdcCost(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    usdcCurve(_x: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "usdcCurve(uint256)"(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    usdcTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "usdcTotalCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     withdrawERC20(
       _recipient: string,
@@ -728,6 +925,16 @@ export class BoundingCurveFactory extends Contract {
 
     "itemRangeMin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    mintedAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "mintedAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     onERC1155BatchReceived(
       arg0: string,
       _from: string,
@@ -783,6 +990,40 @@ export class BoundingCurveFactory extends Contract {
     usdc(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "usdc()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    usdcCost(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "usdcCost(uint256,uint256)"(
+      _id: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    usdcCurve(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "usdcCurve(uint256)"(
+      _x: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    usdcTotalCost(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "usdcTotalCost(uint256[],uint256[])"(
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
       _recipient: string,
