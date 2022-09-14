@@ -86,7 +86,7 @@ describe('BoundingCurveFactory ', () => {
   // Minting costs 10 golds and scaling USDC
   const COST_IN_ITEMS = BigNumber.from(10) // 10 golds
   const USDC_CURVE_CONSTANT = 4375      // 43.75
-  const USDC_CURVE_SCALE_DOWN = 100     // 
+  const USDC_CURVE_SCALE_DOWN = 1       // No scaling
   const USDC_CURVE_TICK_SIZE = 10 * 100 // 10 mint per tick
 
   // Ticket token Param
@@ -204,6 +204,25 @@ describe('BoundingCurveFactory ', () => {
         const diff = val2.sub(val1).toNumber()
         expect(diff).to.be.gt(0)
       })
+
+      it('value should match spreadsheet', async () => {
+        const val1 = await factoryContract.usdcCurve(0)
+        const val2 = await factoryContract.usdcCurve(10 * 100)
+        const val3 = await factoryContract.usdcCurve(30 * 100)
+        const val4 = await factoryContract.usdcCurve(40 * 100)
+        const val5 = await factoryContract.usdcCurve(100 * 100)
+        const val6 = await factoryContract.usdcCurve(250 * 100)
+        const val7 = await factoryContract.usdcCurve(1000 * 100)
+
+        expect(val1.toNumber()).to.be.eql(19140625)
+        expect(val2.toNumber()).to.be.eql(28890625)
+        expect(val3.toNumber()).to.be.eql(54390625)
+        expect(val4.toNumber()).to.be.eql(70140625)
+        expect(val5.toNumber()).to.be.eql(206640625)
+        expect(val6.toNumber()).to.be.eql(862890625)
+        expect(val7.toNumber()).to.be.eql(10894140625)
+      })
+
     })
 
     describe('usdcCost()', () => {

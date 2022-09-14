@@ -25,8 +25,6 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
     "getMintingCost(uint256[],uint256[])": FunctionFragment;
     "getMintingTotalCost(uint256[],uint256[])": FunctionFragment;
     "getOwnerTier(address)": FunctionFragment;
-    "itemRangeMax()": FunctionFragment;
-    "itemRangeMin()": FunctionFragment;
     "mintedAmounts(uint256)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -54,14 +52,6 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getOwnerTier",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "itemRangeMax",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "itemRangeMin",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mintedAmounts",
@@ -115,14 +105,6 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getOwnerTier",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "itemRangeMax",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "itemRangeMin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -257,14 +239,6 @@ export class BoundingCurveFactory extends Contract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    itemRangeMax(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "itemRangeMax()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    itemRangeMin(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "itemRangeMin()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mintedAmounts(
       arg0: BigNumberish,
@@ -420,14 +394,6 @@ export class BoundingCurveFactory extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  itemRangeMax(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "itemRangeMax()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  itemRangeMin(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   mintedAmounts(
     arg0: BigNumberish,
     overrides?: CallOverrides
@@ -582,14 +548,6 @@ export class BoundingCurveFactory extends Contract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    itemRangeMax(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "itemRangeMax()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    itemRangeMin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     mintedAmounts(
       arg0: BigNumberish,
@@ -754,14 +712,6 @@ export class BoundingCurveFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    itemRangeMax(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "itemRangeMax()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    itemRangeMin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "itemRangeMin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     mintedAmounts(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -916,14 +866,6 @@ export class BoundingCurveFactory extends Contract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    itemRangeMax(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "itemRangeMax()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    itemRangeMin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "itemRangeMin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mintedAmounts(
       arg0: BigNumberish,
