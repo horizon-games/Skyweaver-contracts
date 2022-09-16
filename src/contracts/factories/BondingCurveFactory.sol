@@ -300,8 +300,9 @@ contract BondingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     //Lower bound of the tick is the price
     // E.g. 1500 will be priced at 1000
     uint256 tickValue = _x.div(USDC_CURVE_TICK_SIZE).mul(USDC_CURVE_TICK_SIZE); 
-    // (x+k)^2 
-    uint256 exponent = (tickValue.add(USDC_CURVE_CONSTANT)).mul(tickValue.add(USDC_CURVE_CONSTANT));
+    // (x+k)^2
+    uint256 base = tickValue.add(USDC_CURVE_CONSTANT);
+    uint256 exponent = base.mul(base);
     // exponent / m
     return exponent.div(USDC_CURVE_SCALE_DOWN);
   }
