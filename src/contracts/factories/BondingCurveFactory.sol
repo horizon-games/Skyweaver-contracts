@@ -12,7 +12,7 @@ import "@0xsequence/erc-1155/contracts/interfaces/IERC1155TokenReceiver.sol";
  * @notice Allows players mint items in exchange for burning items and some USDC
  *         Minting logic supports bonding curve for USDC.
  */
-contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
+contract BondingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   using SafeMath for uint256;
   
   /***********************************|
@@ -76,7 +76,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     require(
       _skyweaverAssetsAddress != address(0) && 
       _itemRangeMin < _itemRangeMax,
-      "BoundingCurveFactory#constructor: INVALID_INPUT"
+      "BondingCurveFactory#constructor: INVALID_INPUT"
     );
 
     // Assets
@@ -101,7 +101,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @notice Prevents receiving Ether or calls to unsuported methods
    */
   fallback () external {
-    revert("BoundingCurveFactory#_: UNSUPPORTED_METHOD");
+    revert("BondingCurveFactory#_: UNSUPPORTED_METHOD");
   }
 
   /**
@@ -147,7 +147,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   { 
     require(
       msg.sender == address(skyweaverAssets), 
-      "BoundingCurveFactory#onERC1155BatchReceived: INVALID_TOKEN_ADDRESS"
+      "BondingCurveFactory#onERC1155BatchReceived: INVALID_TOKEN_ADDRESS"
     );
 
     // Decode MintTokenRequest from _data to call _mint()
@@ -161,8 +161,8 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256 nItemsReceived = _paidItemAmount(_ids, _amounts);
 
     // Validate payment is sufficient
-    require(nItemsReceived == costItems, "BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT");
-    require(costUSDC <= req.maxUSDC, "BoundingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED");
+    require(nItemsReceived == costItems, "BondingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT");
+    require(costUSDC <= req.maxUSDC, "BondingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED");
 
     // Transfer USDC to here
     usdc.transferFrom(_from, address(this), costUSDC);
@@ -174,7 +174,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
     uint256 previousID = 0; // Can't mint id 0, so we use it as first ID
     for (uint256 i = 0; i < req.itemsBoughtIDs.length; i++) {
       uint256 id = req.itemsBoughtIDs[i];
-      require(id != 0 && id > previousID, "BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES");
+      require(id != 0 && id > previousID, "BondingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES");
       mintedAmounts[id] = mintedAmounts[id].add(req.itemsBoughtAmounts[i]);
       previousID = id;
     }
@@ -200,15 +200,11 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   function _paidItemAmount(uint256[] memory _ids, uint256[] memory _amounts) view internal returns (uint256 nItems) {
     nItems = 0; // Number of valid Items sent
 
-    // Load in memory because Solidity is dumb
-    uint256 minRange = itemRangeMin;
-    uint256 maxRange = itemRangeMax;
-
     // Count how many valid items were sent in total
     for (uint256 i = 0; i < _ids.length; i++) {
       require(
-        minRange <= _ids[i] && _ids[i] <= maxRange, 
-        "BoundingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"
+        itemRangeMin <= _ids[i] && _ids[i] <= itemRangeMax, 
+        "BondingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"
       );
       nItems = nItems.add(_amounts[i]);
     }
@@ -250,7 +246,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
   /**
-   * @notice Returns the cost in USDC, which is based on a bounding curve
+   * @notice Returns the cost in USDC, which is based on a bonding curve
    * @param _ids     Ids of items to mint
    * @param _amounts Amount of each item to be minted
    */
@@ -262,7 +258,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   }
 
     /**
-   * @notice Returns the cost in USDC, which is based on a bounding curve
+   * @notice Returns the cost in USDC, which is based on a bonding curve
    * @param _id     ID of item to be minted
    * @param _amount Amount of item to be minted
    */
@@ -297,11 +293,12 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _x point on the curve, multiple of 100
    */
   function usdcCurve(uint256 _x) view public returns (uint256 nUsdc) {
-    //Lower bound of the tick is the price
+    // Lower bound of the tick is the price
     // E.g. 1500 will be priced at 1000
     uint256 tickValue = _x.div(USDC_CURVE_TICK_SIZE).mul(USDC_CURVE_TICK_SIZE); 
-    // (x+k)^2 
-    uint256 exponent = (tickValue.add(USDC_CURVE_CONSTANT)).mul(tickValue.add(USDC_CURVE_CONSTANT));
+    // (x+k)^2
+    uint256 base = tickValue.add(USDC_CURVE_CONSTANT);
+    uint256 exponent = base.mul(base);
     // exponent / m
     return exponent.div(USDC_CURVE_SCALE_DOWN);
   }
@@ -313,7 +310,7 @@ contract BoundingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _erc20     Address of ERC-20 token to transfer out
    */
   function withdrawERC20(address _recipient, address _erc20) external onlyOwnerTier(HIGHEST_OWNER_TIER) {
-    require(_recipient != address(0x0), "BoundingCurveFactory#withdrawERC20: INVALID_RECIPIENT");
+    require(_recipient != address(0x0), "BondingCurveFactory#withdrawERC20: INVALID_RECIPIENT");
     uint256 this_balance = IERC20(_erc20).balanceOf(address(this));
     IERC20(_erc20).transfer(_recipient, this_balance);
   }

@@ -13,7 +13,7 @@ import * as utils from './utils'
 import { 
   SkyweaverAssets,
   ERC20MintMock,
-  BoundingCurveFactory
+  BondingCurveFactory
 } from 'src/gen/typechain'
 
 import { BigNumber, constants } from 'ethers'
@@ -55,7 +55,7 @@ const {
 
 const getBig = (id: number) => BigNumber.from(id);
 
-describe('BoundingCurveFactory ', () => {
+describe('BondingCurveFactory ', () => {
   let ownerAddress: string
   let userAddress: string
   let randomAddress: string
@@ -71,10 +71,10 @@ describe('BoundingCurveFactory ', () => {
   // Skyweaver Assets
   let skyweaverAssetsContract: SkyweaverAssets
   let userSkyweaverAssetContract: SkyweaverAssets
-  let factoryContract: BoundingCurveFactory 
+  let factoryContract: BondingCurveFactory 
 
   // Factory manager
-  let userFactoryContract: BoundingCurveFactory 
+  let userFactoryContract: BondingCurveFactory 
 
   // Pass gas since ganache can't figure it out
   let TX_PARAM = {gasLimit: 2000000}
@@ -122,7 +122,7 @@ describe('BoundingCurveFactory ', () => {
     treasuryAddress = await treasuryWallet.getAddress()
     skyweaverAssetsAbstract = await AbstractContract.fromArtifactName('SkyweaverAssets')
     usdcAbstract = await AbstractContract.fromArtifactName('ERC20MintMock')
-    factoryAbstract = await AbstractContract.fromArtifactName('BoundingCurveFactory')
+    factoryAbstract = await AbstractContract.fromArtifactName('BondingCurveFactory')
   })
 
   // deploy before each test, to reset state of contract
@@ -146,8 +146,8 @@ describe('BoundingCurveFactory ', () => {
       USDC_CURVE_CONSTANT,
       USDC_CURVE_SCALE_DOWN,
       USDC_CURVE_TICK_SIZE
-    ]) as BoundingCurveFactory 
-    userFactoryContract = await factoryContract.connect(userSigner) as BoundingCurveFactory 
+    ]) as BondingCurveFactory 
+    userFactoryContract = await factoryContract.connect(userSigner) as BondingCurveFactory 
 
     // Assing vars
     factory = factoryContract.address
@@ -244,7 +244,7 @@ describe('BoundingCurveFactory ', () => {
 
   })
 
-  describe('BoundingCurveFactory', () => {
+  describe('BondingCurveFactory', () => {
 
     let conditions =  [
       'Mint with sender being recipient',
@@ -333,21 +333,21 @@ describe('BoundingCurveFactory ', () => {
         it('should REVERT if item is not correct', async () => {
           await skyweaverAssetsContract.batchMint(userAddress, [goldMaxRange.add(1), goldMaxRange.add(2)], [nTokensPerType, nTokensPerType] , [])
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, [goldMaxRange.add(1), goldMaxRange.add(2)], [1500, 1500], data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"))
         })
 
         it('should REVERT if items are not sorted by ascending order', async () => {
           const unsortedIDsToMint = [1001, 1007, 1003]
           const unsortedData = getMintTokenRequestData(recipient, unsortedIDsToMint, amounts_to_mint, usdc_total_cost)
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, unsortedData, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
         })
 
         it('should REVERT if items contain duplicate', async () => {
           const dupIds = [1001, 1003, 1003]
           const dupData = getMintTokenRequestData(recipient, dupIds, amounts_to_mint, usdc_total_cost)
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, dupData, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: UNSORTED itemsBoughtIDs ARRAY OR CONTAIN DUPLICATES"))
         })
 
         it('should REVERT if too few items were sent', async () => {
@@ -358,7 +358,7 @@ describe('BoundingCurveFactory ', () => {
             bad_amounts_to_send = [500, 500, 500, 500, 900]
           }
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, bad_amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
         })
 
         it('should REVERT if too many items were sent', async () => {
@@ -369,13 +369,13 @@ describe('BoundingCurveFactory ', () => {
             bad_amounts_to_send = [500, 500, 500, 600, 1000]
           }
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, bad_amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: INCORRECT NUMBER OF ITEMS SENT"))
         })
 
         it('should REVERT if USDC needed exceeds maxUSDC', async () => {
           data = getMintTokenRequestData(userAddress, ids_to_mint, amounts_to_mint, usdc_total_cost.sub(1))
           const tx = userSkyweaverAssetContract.safeBatchTransferFrom(userAddress, factory, ids_to_send, amounts_to_send, data, TX_PARAM)
-          await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED"))
+          await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#onERC1155BatchReceived: MAX USDC EXCEEDED"))
         })
 
         it('should REVERT if user doesnt have enough usdc', async () => {
@@ -455,7 +455,7 @@ describe('BoundingCurveFactory ', () => {
         
             it('should REVERT if recipient is 0x0', async () => {
               const tx = factoryContract.withdrawERC20(ZERO_ADDRESS, usdcContract.address, TX_PARAM)
-              await expect(tx).to.be.rejectedWith(RevertError("BoundingCurveFactory#withdrawERC20: INVALID_RECIPIENT"))
+              await expect(tx).to.be.rejectedWith(RevertError("BondingCurveFactory#withdrawERC20: INVALID_RECIPIENT"))
             })
       
             context('When USDC is withdrawn', () => {

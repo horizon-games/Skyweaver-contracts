@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
+interface BondingCurveFactoryInterface extends ethers.utils.Interface {
   functions: {
     "assignOwnership(address,uint256)": FunctionFragment;
     "getMintingCost(uint256[],uint256[])": FunctionFragment;
@@ -146,7 +146,7 @@ interface BoundingCurveFactoryInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipGranted"): EventFragment;
 }
 
-export class BoundingCurveFactory extends Contract {
+export class BondingCurveFactory extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -187,7 +187,7 @@ export class BoundingCurveFactory extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: BoundingCurveFactoryInterface;
+  interface: BondingCurveFactoryInterface;
 
   functions: {
     assignOwnership(
