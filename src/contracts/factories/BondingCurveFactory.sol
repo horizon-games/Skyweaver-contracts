@@ -297,7 +297,7 @@ contract BondingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
    * @param _x point on the curve, multiple of 100
    */
   function usdcCurve(uint256 _x) view public returns (uint256 nUsdc) {
-    //Lower bound of the tick is the price
+    // Lower bound of the tick is the price
     // E.g. 1500 will be priced at 1000
     uint256 tickValue = _x.div(USDC_CURVE_TICK_SIZE).mul(USDC_CURVE_TICK_SIZE); 
     // (x+k)^2
