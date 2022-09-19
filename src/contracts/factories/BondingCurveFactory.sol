@@ -200,14 +200,10 @@ contract BondingCurveFactory is IERC1155TokenReceiver, TieredOwnable {
   function _paidItemAmount(uint256[] memory _ids, uint256[] memory _amounts) view internal returns (uint256 nItems) {
     nItems = 0; // Number of valid Items sent
 
-    // Load in memory because Solidity is dumb
-    uint256 minRange = itemRangeMin;
-    uint256 maxRange = itemRangeMax;
-
     // Count how many valid items were sent in total
     for (uint256 i = 0; i < _ids.length; i++) {
       require(
-        minRange <= _ids[i] && _ids[i] <= maxRange, 
+        itemRangeMin <= _ids[i] && _ids[i] <= itemRangeMax, 
         "BondingCurveFactory#onERC1155BatchReceived: ID_IS_INVALID"
       );
       nItems = nItems.add(_amounts[i]);
