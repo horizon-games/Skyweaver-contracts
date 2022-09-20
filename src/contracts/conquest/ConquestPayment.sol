@@ -30,6 +30,7 @@ contract ConquestPayment is IERC1155TokenReceiver, TieredOwnable {
    * @notice Create factory, link skyweaver items and store initial parameters
    * @param _firstOwner             Address of the first owner
    * @param _skyweaverAssetsAddress The address of the ERC-1155 Assets Token contract
+   * @param _conquestEntryTokenId   ID of conquest ticket
    * @param _silverRangeMin         Minimum id for silver cards
    * @param _silverRangeMax         Maximum id for silver cards
    */

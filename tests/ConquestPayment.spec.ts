@@ -261,7 +261,7 @@ describe('ConquestPayment', () => {
       })
     })
     
-    describe('withdraw() function', () => {
+    describe('withdrawERC20() function', () => {
       let recipient = randomWallet.address
 
       beforeEach(async () => {
