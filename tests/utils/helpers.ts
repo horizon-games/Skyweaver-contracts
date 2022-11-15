@@ -21,11 +21,23 @@ export type MintTokenRequest = {
   maxUSDC: number | string | BigNumber
 }
 
+export type BurnOrderRequest = {
+  itemRecipient: string
+  nonce: number | string | BigNumber
+  itemIDsPurchased: number[] | string[] | BigNumber[]
+}
+
 export const MintTokenRequestType = `tuple(
   address recipient,
   uint256[] itemsBoughtIDs,
   uint256[] itemsBoughtAmounts,
   uint256 maxUSDC
+)`
+
+export const BurnOrderRequestType = `tuple(
+  address itemRecipient,
+  uint32 nonce,
+  uint256[] itemIDsPurchased
 )`
 
 export const getMintTokenRequestData = (
@@ -36,6 +48,15 @@ export const getMintTokenRequestData = (
 ) => {
   const request: MintTokenRequest = { recipient, itemsBoughtIDs, itemsBoughtAmounts, maxUSDC }
   return ethers.utils.defaultAbiCoder.encode([MintTokenRequestType], [request])
+}
+
+export const getBurnOrderRequestData = (
+  itemRecipient: string,
+  nonce: number | BigNumber,
+  itemIDsPurchased: number[] | BigNumber[]
+) => {
+  const request: BurnOrderRequest = { itemRecipient, nonce, itemIDsPurchased }
+  return ethers.utils.defaultAbiCoder.encode([BurnOrderRequestType], [request])
 }
 
 // createTestWallet creates a new wallet
