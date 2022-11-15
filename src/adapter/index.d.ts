@@ -12,7 +12,6 @@ import type * as tokens from "./tokens";
 export type { tokens };
 import type * as utils from "./utils";
 export type { utils };
-export * as factories from "./factories";
 export type { Conquest } from "./conquest/Conquest";
 export { Conquest__factory } from "./factories/conquest/Conquest__factory";
 export type { ConquestPayment } from "./conquest/ConquestPayment";

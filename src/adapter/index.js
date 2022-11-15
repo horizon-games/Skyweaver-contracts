@@ -1,4 +1,3 @@
-export * as factories from "./factories";
 export { Conquest__factory } from "./factories/conquest/Conquest__factory";
 export { ConquestPayment__factory } from "./factories/conquest/ConquestPayment__factory";
 export { ConquestV2__factory } from "./factories/conquest/ConquestV2__factory";
