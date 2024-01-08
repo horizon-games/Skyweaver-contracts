@@ -146,7 +146,7 @@ contract RewardFactory is TieredOwnable {
    * @param _data    Byte array passed to recipient if recipient is a contract
    */
   function batchMint(address _to, uint256[] calldata _ids, uint256[] calldata _amounts, bytes calldata _data)
-    external onlyOwnerTier(1)
+    public virtual onlyOwnerTier(1)
   {
     uint256 live_period = livePeriod();
     uint256 stored_period = period;
