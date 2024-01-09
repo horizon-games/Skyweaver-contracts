@@ -262,10 +262,10 @@ export class ExclusiveRewardFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    isMinted(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+    isMinted(id: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
     "isMinted(uint256)"(
-      arg0: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -375,10 +375,10 @@ export class ExclusiveRewardFactory extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  isMinted(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  isMinted(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   "isMinted(uint256)"(
-    arg0: BigNumberish,
+    id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -488,10 +488,10 @@ export class ExclusiveRewardFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isMinted(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    isMinted(id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     "isMinted(uint256)"(
-      arg0: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -629,10 +629,10 @@ export class ExclusiveRewardFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isMinted(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    isMinted(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     "isMinted(uint256)"(
-      arg0: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -751,12 +751,12 @@ export class ExclusiveRewardFactory extends Contract {
     ): Promise<PopulatedTransaction>;
 
     isMinted(
-      arg0: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isMinted(uint256)"(
-      arg0: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -8,7 +8,9 @@ import "./RewardFactory.sol";
  * @dev This contract should only be able to mint some asset types
  */
 contract ExclusiveRewardFactory is RewardFactory {
-    mapping(uint256 => bool) public isMinted;
+
+    // Packed booleans
+    mapping(uint256 => uint256) private mintedBitMap;
 
     /***********************************|
     |            Constructor            |
@@ -34,6 +36,34 @@ contract ExclusiveRewardFactory is RewardFactory {
     {} // solhint-disable-line no-empty-blocks
 
     /***********************************|
+    |            Minted Functions       |
+    |__________________________________*/
+
+    /**
+     * @notice Returns whether a given token id has been minted or not
+     * @param id The id of the token to check
+     * @return Whether the token has been minted or not
+     */
+    function isMinted(uint256 id) public view returns (bool) {
+        uint256 mintedWordIdx = id / 256;
+        uint256 mintedBitIdx = id % 256;
+        uint256 mintedWord = mintedBitMap[mintedWordIdx];
+        uint256 mask = (1 << mintedBitIdx);
+        return mintedWord & mask == mask;
+    }
+
+    /**
+     * @notice Sets a given token id as minted
+     * @param id The id of the token to set as minted
+     * @dev This setting cannot be reversed
+     */
+    function _setMinted(uint256 id) private {
+        uint256 mintedWordIdx = id / 256;
+        uint256 mintedBitIdx = id % 256;
+        mintedBitMap[mintedWordIdx] = mintedBitMap[mintedWordIdx] | (1 << mintedBitIdx);
+    }
+
+    /***********************************|
     |            Mint Functions         |
     |__________________________________*/
 
@@ -53,9 +83,9 @@ contract ExclusiveRewardFactory is RewardFactory {
         // Each id can only be minted once
         for (uint256 i = 0; i < _ids.length; i++) {
             uint256 id = _ids[i];
-            require(!isMinted[id], "ExclusiveRewardFactory#batchMint: ID_ALREADY_MINTED");
+            require(!isMinted(id), "ExclusiveRewardFactory#batchMint: ID_ALREADY_MINTED");
             require(_amounts[i] == 1, "ExclusiveRewardFactory#batchMint: NON_EXCLUSIVE_MINTING");
-            isMinted[id] = true;
+            _setMinted(id);
         }
 
         super.batchMint(_to, _ids, _amounts, _data);
