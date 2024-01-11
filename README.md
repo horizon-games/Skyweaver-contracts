@@ -8,7 +8,9 @@ Skyweaver trading card smart contracts built on Ethereum. Skyweaver cards follow
 Skyweaver assets and market are in production on the Polygon mainnet as of Nov 25, 2021. The production contract address are:
 
 * **Skyweaver Assets (aka the Skyweaver cards):** [0x631998e91476DA5B870D741192fc5Cbc55F5a52E](https://polygonscan.com/address/0x631998e91476DA5B870D741192fc5Cbc55F5a52E#tokentxns)
-* **Skyweaver Niftyswap Exchange (aka Skyweaver Market):** [0x8bb759bb68995343ff1e9d57ac85ff5c5fb79334](https://polygonscan.com/address/0x8bb759bb68995343ff1e9d57ac85ff5c5fb79334#tokentxns)
+* **Skyweaver Niftyswap Exchange (aka Skyweaver Market):** [0x8ea1792998ca57b736a849e84bddb967e3eab194](https://polygonscan.com/address/0x8ea1792998ca57b736a849e84bddb967e3eab194#tokentxns)
+
+* NOTE: Prior to Dec 21, 2023, the Skyweaver Market was on Niftyswap contract [0x8bb759bb68995343ff1e9d57ac85ff5c5fb79334](https://polygonscan.com/address/0x8bb759bb68995343ff1e9d57ac85ff5c5fb79334#tokentxns), and after this date moved to the new/current contract as mentioned above, to migrate from USDC.e liquidity pools to USDC liqudity pools.
 
 * NOTE: Prior to Sept 22, 2022 the Skyweaver Market was on Niftyswap contract [0x9B609Bf3A3977Ee7254210E0A0D835251540c4D5](https://polygonscan.com/address/0x9B609Bf3A3977Ee7254210E0A0D835251540c4D5#tokentxns), and after this date moved to the new/current contract as mentioned above to the latest version of Niftyswap.
 
