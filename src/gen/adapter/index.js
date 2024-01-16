@@ -7,7 +7,7 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
     o[k2] = m[k];
 }));
 exports.__esModule = true;
-exports.TieredOwnable__factory = exports.Ownable__factory = exports.DelayedOwner__factory = exports.SkyweaverAssets__factory = exports.TieredOwnableMock__factory = exports.OwnableMock__factory = exports.FactoryMock__factory = exports.ERC20MintMock__factory = exports.ERC1155Mock__factory = exports.ISkyweaverAssets__factory = exports.IRewardFactory__factory = exports.IConquest__factory = exports.RewardFactory__factory = exports.FreemintFactory__factory = exports.ExclusiveRewardFactory__factory = exports.ConquestEntriesFactory__factory = exports.BondingCurveFactory__factory = exports.ConquestV3__factory = exports.ConquestV2__factory = exports.ConquestPayment__factory = exports.Conquest__factory = void 0;
+exports.TieredOwnable__factory = exports.Ownable__factory = exports.DelayedOwner__factory = exports.SkyweaverAssets__factory = exports.TieredOwnableMock__factory = exports.OwnableMock__factory = exports.FactoryMock__factory = exports.ERC20MintMock__factory = exports.ERC1155Mock__factory = exports.ISkyweaverAssets__factory = exports.IRewardFactory__factory = exports.IConquest__factory = exports.VariantRewardFactory__factory = exports.RewardFactory__factory = exports.FreemintFactory__factory = exports.ExclusiveRewardFactory__factory = exports.ConquestEntriesFactory__factory = exports.BondingCurveFactory__factory = exports.ConquestV3__factory = exports.ConquestV2__factory = exports.ConquestPayment__factory = exports.Conquest__factory = void 0;
 var Conquest__factory_1 = require("./factories/Conquest__factory");
 __createBinding(exports, Conquest__factory_1, "Conquest__factory");
 var ConquestPayment__factory_1 = require("./factories/ConquestPayment__factory");
@@ -26,6 +26,8 @@ var FreemintFactory__factory_1 = require("./factories/FreemintFactory__factory")
 __createBinding(exports, FreemintFactory__factory_1, "FreemintFactory__factory");
 var RewardFactory__factory_1 = require("./factories/RewardFactory__factory");
 __createBinding(exports, RewardFactory__factory_1, "RewardFactory__factory");
+var VariantRewardFactory__factory_1 = require("./factories/VariantRewardFactory__factory");
+__createBinding(exports, VariantRewardFactory__factory_1, "VariantRewardFactory__factory");
 var IConquest__factory_1 = require("./factories/IConquest__factory");
 __createBinding(exports, IConquest__factory_1, "IConquest__factory");
 var IRewardFactory__factory_1 = require("./factories/IRewardFactory__factory");

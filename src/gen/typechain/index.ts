@@ -10,6 +10,7 @@ export type { ConquestEntriesFactory } from "./ConquestEntriesFactory";
 export type { ExclusiveRewardFactory } from "./ExclusiveRewardFactory";
 export type { FreemintFactory } from "./FreemintFactory";
 export type { RewardFactory } from "./RewardFactory";
+export type { VariantRewardFactory } from "./VariantRewardFactory";
 export type { IConquest } from "./IConquest";
 export type { IRewardFactory } from "./IRewardFactory";
 export type { ISkyweaverAssets } from "./ISkyweaverAssets";
@@ -32,6 +33,7 @@ export { ConquestEntriesFactory__factory } from "./factories/ConquestEntriesFact
 export { ExclusiveRewardFactory__factory } from "./factories/ExclusiveRewardFactory__factory";
 export { FreemintFactory__factory } from "./factories/FreemintFactory__factory";
 export { RewardFactory__factory } from "./factories/RewardFactory__factory";
+export { VariantRewardFactory__factory } from "./factories/VariantRewardFactory__factory";
 export { IConquest__factory } from "./factories/IConquest__factory";
 export { IRewardFactory__factory } from "./factories/IRewardFactory__factory";
 export { ISkyweaverAssets__factory } from "./factories/ISkyweaverAssets__factory";
