@@ -1,3 +1,10 @@
+<!-- archived-repository-notice -->
+> [!WARNING]
+> **This repository is archived and no longer maintained.**
+>
+> It is kept here for reference only and will not receive bug fixes,
+> security patches or releases.
+
 Skyweaver Card Contracts
 ========================
 
